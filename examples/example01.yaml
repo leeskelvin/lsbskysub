@@ -1,0 +1,41 @@
+psf : 
+    type : Moffat
+    beta : 3.5   # Exponent of Moffat profile
+    fwhm : 2
+
+gal :
+    type : Sum
+    items :
+        -  # disk
+            type : Sum
+            items :
+                -  # smooth component
+                    type : Exponential
+                    half_light_radius : 25
+                    flux : 0.89
+                -  # knots
+                    type : RandomWalk
+                    npoints: 25
+                    half_light_radius : 25
+                    flux : 0.01
+            ellip : 
+                type : QBeta
+                q : 0.5
+                beta : 45 degrees
+        - # bulge
+            type : DeVaucouleurs
+            half_light_radius : 5
+            ellip : 
+                type : QBeta
+                q : 1
+                beta : 0 degrees
+            flux : 0.1
+    flux : 1.e7
+
+image :
+    pixel_scale : 0.2
+    xsize : 1000
+    ysize : 1000
+    noise : {sky_level : 1e3}
+    random_seed : 8241573
+
