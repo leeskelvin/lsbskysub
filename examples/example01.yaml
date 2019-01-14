@@ -34,8 +34,10 @@ gal :
 
 image :
     pixel_scale : 0.2
-    xsize : 1000
-    ysize : 1000
+    xsize : 1001
+    ysize : 1001
     noise : {sky_level : 1e3}
     random_seed : 8241573
 
+output :
+    dir : output
