@@ -1,0 +1,55 @@
+# smoothing kernel
+psf : 
+    type : Moffat
+    beta : 4    # Exponent of Moffat profile
+    fwhm : 2
+
+# central galaxy (bulge + disk with SF knots)
+gal :
+    type : Sum
+    items :
+        -  # disk
+            type : Sum
+            items :
+                -  # smooth component
+                    type : Exponential
+                    half_light_radius : 25
+                    flux : { type : Catalog , col : 1 }
+                -  # knots
+                    type : RandomWalk
+                    npoints: 25
+                    half_light_radius : 25
+                    flux : { type : Catalog , col : 0 }
+            ellip : 
+                type : QBeta
+                q : 0.5
+                beta : 45 degrees
+        - # bulge
+            type : DeVaucouleurs
+            half_light_radius : 5
+            ellip : 
+                type : QBeta
+                q : 1
+                beta : 0 degrees
+            flux : 0.1
+    flux : 1.e7
+
+# global image properties
+image :
+    pixel_scale : 0.2
+    xsize : 1001
+    ysize : 1001
+    noise : {sky_level : 1e3}
+    random_seed : { type : Catalog , col : 2 }
+
+# input setup
+input :
+    catalog :
+        dir : input
+        file_name : input02.asc
+
+# output setup
+output :
+    type : MultiFits
+    dir : output
+
