@@ -2,7 +2,7 @@
 psf : 
     type : Moffat
     beta : 4    # Exponent of Moffat profile
-    fwhm : 2
+    fwhm : 2    # arcsec
 
 # central galaxy (bulge + disk with SF knots)
 gal :

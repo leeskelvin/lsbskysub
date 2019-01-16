@@ -1,0 +1,39 @@
+# smoothing kernel
+psf : {type : Moffat , beta : 4 , fwhm : 2}
+
+# global image properties
+image :
+    pixel_scale : 0.2
+    random_seed : 8241573
+
+---
+
+# output setup
+output :
+    type : Fits
+    dir : output
+    file_name : psf03.fits
+
+---
+
+# central galaxy (bulge + disk with SF knots)
+gal : 
+    type : Exponential
+    half_light_radius : 5
+    flux : 1e7
+    ellip : {type : QBeta , q : 0.5 , beta : 45 degrees}
+
+# global image properties
+image :
+    pixel_scale : 0.2
+    xsize : 1001
+    ysize : 501
+    noise : {sky_level : 1e3}
+    random_seed : 8241573
+
+# output setup
+output :
+    type : Fits
+    dir : output
+    file_name : example03.fits
+
