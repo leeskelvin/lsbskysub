@@ -10,6 +10,8 @@ A simple de Vaucouleurs bulge + exponential disk, with 25 added star-forming kno
 
 A test at reading in catalogue data from an external file. A similar galaxy as in example01 is used, with a varying SF knot flux from 1-15% (ensuring always that knot flux + disk flux = 90%).
 
+![example02](https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example02.jpeg)
+
 ## example03
 
 Showing the ability to pull multiple files from one YAML document. Here I output the convolution PSF first, before outputting the convolved galaxy image second. This necessitates the use of two '---' dividers, splitting the document into three parts: A) global properties, B) output the PSF image, C) output the galaxy image. To quote the demo text, this does this:
@@ -40,5 +42,5 @@ First attempt at generating an image with multiple galaxies. This image contains
 
 This example also outputs the input parameters into a catalogue for later further processing. GalSim can be instructed to use all available processors in order to speed up the image generation process.
 
-
+![example06](https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example06.jpeg)
 
