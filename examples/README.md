@@ -42,5 +42,9 @@ First attempt at generating an image with multiple galaxies. This image contains
 
 This example also outputs the input parameters into a catalogue for later further processing. GalSim can be instructed to use all available processors in order to speed up the image generation process.
 
+Two output images are constructed: with and without noise. To facilitate this in a single file, use of the above '---' divider notation is required.
+
 ![example06](https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example06.jpeg)
+
+![example06_panel](https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example06_panel.jpeg | width=800)
 
