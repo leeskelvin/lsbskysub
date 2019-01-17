@@ -30,9 +30,34 @@ image :
         type : XY
         x : { type : Random , min : 1 , max : 512 }
         y : { type : Random , min : 1 , max : 512 }
-    noise : {sky_level : 1.0e2}  # ADU / arcsec^2
+    # noise : {sky_level : 1.0e2}  # ADU / arcsec^2
     random_seed : 8383721
     
+---
+
+# output setup
+output :
+    type : Fits
+    dir : output
+    nproc : -1 # use as many processors as available to construct the image
+    truth : # also generate a 'truth' catalogue recording input parameters
+        file_name : truth06.dat
+            # type : NumberedFile
+            # root : 'truth' # string appended at beginning of file name
+            # ext : '.dat' # ascii file
+        columns : # list all columns desired in output truth catalogue
+            object_id : obj_num
+            image_id : image_num
+            file_id : file_num
+            flux : gal.flux
+            radius : gal.half_light_radius
+            h_over_r : gal.scale_h_over_r
+            inclination : gal.inclination # .rad will be appended to make explicit units in radians
+            theta : gal.rotation # as above
+            image_pos : image_pos
+
+--- 
+
 # output setup
 output :
     type : Fits
