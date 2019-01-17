@@ -48,5 +48,4 @@ Two output images are constructed: with and without noise. To facilitate this in
 
 <img alt="example06panel" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example06_panel.jpeg" width="800px">
 
-![example06_panel](https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example06_panel.jpeg | width=800)
 
