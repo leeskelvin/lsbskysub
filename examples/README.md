@@ -42,10 +42,15 @@ First attempt at generating an image with multiple galaxies. This image contains
 
 This example also outputs the input parameters into a catalogue for later further processing. GalSim can be instructed to use all available processors in order to speed up the image generation process.
 
-Two output images are constructed: with and without noise. To facilitate this in a single file, use of the above '---' divider notation is required.
+Four output images are constructed: with and without noise, each with and without galaxy profile clipping. To facilitate this in a single file, use of the above '---' divider notation is required.
 
+### example06: 100 inclined exponential disk galaxies on a 512x512 image
 ![example06](https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example06.jpeg)
 
+### example06: residual = with noise - without noise
 <img alt="example06panel" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example06_panel.jpeg" width="800px">
+
+### example06: boundary box clipping
+<img alt="example06clipping" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example06_clipping.jpeg" width="800px">
 
 
