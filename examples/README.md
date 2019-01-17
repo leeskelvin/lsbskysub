@@ -24,3 +24,21 @@ Showing the ability to pull multiple files from one YAML document. Here I output
 > &#35;   doc[0] + doc[3]  
 > &#35;   ...  
 
+## example04
+
+Using the index Sequence type to repeat each item in a list a given number of times. 
+
+## example05
+
+Testing the ability for GalSim to randomly assign object properties, in this case galaxy size (half light radius) via the 'dilate' argument.
+
+Additionally, postage stamps of 64x64 pixels are constructed on a 10x10 grid, and output to a single FITS file. A zero count border of 1 pixel in the x direction and 5 pixels in the y direction is included, for clarity.
+
+## example06
+
+First attempt at generating an image with multiple galaxies. This image contains 100 'InclinedExponential' galaxies randomly scattered across the field of view. Flux values are drawn from a power law distribution. Other key parameters are drawn from random uniform distributions. A flat sky pedestal is assumed in order to calculate Poisson noise for each pixel. 
+
+This example also outputs the input parameters into a catalogue for later further processing. GalSim can be instructed to use all available processors in order to speed up the image generation process.
+
+
+

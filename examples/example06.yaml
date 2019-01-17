@@ -1,0 +1,57 @@
+# smoothing kernel
+psf : {type : Moffat , beta : 4 , fwhm : 2}
+
+# Define the galaxy profile
+gal :
+    type : InclinedExponential
+    half_light_radius : { type : Random , min : 0.05 , max : 25 }
+    scale_h_over_r : { type : Random , min : 0.1 , max : 0.2 }
+    flux :
+        type : RandomDistribution
+        function : x**-1.5 # power law random distribution
+        x_min : 1.0e4
+        x_max : 1.0e7
+    inclination :
+        type : Radians
+        theta :
+            type : RandomDistribution
+            function : "0.5 * math.sin(x)" # note python language used here
+            x_min : 0
+            x_max : { type : Eval, str : "math.pi" } # more python here
+    rotation : 
+        type : Random # to ensure that the Inclined Exponential is rotated about a random axis.
+    
+# global image properties
+image : 
+    type : Scattered # scatter the galaxies across the image
+    size : 512 # pixels # could also use xsize and ysize
+    nobjects : 100
+    image_pos :
+        type : XY
+        x : { type : Random , min : 1 , max : 512 }
+        y : { type : Random , min : 1 , max : 512 }
+    noise : {sky_level : 1.0e2}  # ADU / arcsec^2
+    random_seed : 8383721
+    
+# output setup
+output :
+    type : Fits
+    dir : output
+    nproc : -1 # use as many processors as available to construct the image
+    truth : # also generate a 'truth' catalogue recording input parameters
+        file_name : truth06.dat
+            # type : NumberedFile
+            # root : 'truth' # string appended at beginning of file name
+            # ext : '.dat' # ascii file
+        columns : # list all columns desired in output truth catalogue
+            object_id : obj_num
+            image_id : image_num
+            file_id : file_num
+            flux : gal.flux
+            radius : gal.half_light_radius
+            h_over_r : gal.scale_h_over_r
+            inclination : gal.inclination # .rad will be appended to make explicit units in radians
+            theta : gal.rotation # as above
+            image_pos : image_pos
+    
+
