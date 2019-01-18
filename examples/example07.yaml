@@ -1,0 +1,22 @@
+# smoothing kernel
+psf : {type : Moffat , beta : 4 , fwhm : 2}
+
+# Define the galaxy profile
+gal :
+    type : Sersic
+    half_light_radius : 5
+    n : 1
+    flux : 1e5
+    
+# global image properties
+image : 
+    size : 512 # pixels # could also use xsize and ysize
+    # noise : {sky_level : 0}  # ADU / arcsec^2
+    random_seed : 8383721
+
+# output setup
+output :
+    type : Fits
+    dir : output
+    nproc : -1 # use as many processors as available to construct the image
+

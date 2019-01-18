@@ -53,4 +53,9 @@ Four output images are constructed: with and without noise, each with and withou
 ### example06: boundary box clipping
 <img alt="example06clipping" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example06_clipping.jpeg" width="800px">
 
+## example07
+
+A simple circular exponential (Re=5 px, flux=1E5 counts) on a 512x512 plane. Constructed to highlight background artefacts introduced during the model generation stage. 
+
+<img alt="example07" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example07.jpeg" width="800px">
 
