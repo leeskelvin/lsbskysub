@@ -63,7 +63,9 @@ The second image shows the difference imparted on profile generation when using 
 
 Both topics are for discussion as to how best to manage going forward. 
 
+### artefacts
 <img alt="example07clipping" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example07_clipping.jpeg" width="800px">
 
+### discretisation
 <img alt="example07discrete" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example07_discrete.jpeg" width="800px">
 
