@@ -55,7 +55,15 @@ Four output images are constructed: with and without noise, each with and withou
 
 ## example07
 
-A simple circular exponential (Re=5 px, flux=1E5 counts) on a 512x512 plane. Constructed to highlight background artefacts introduced during the model generation stage. 
+A simple circular exponential (Re=5 px, flux=1E5 counts) on a 512x512 plane. 
 
-<img alt="example07" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example07.jpeg" width="800px">
+The first image highlights background artefacts introduced during the model generation stage. 
+
+The second image shows the difference imparted on profile generation when using no noise and applying Poisson noise at zero counts. Poisson noise must be discretised, which introduces this effect.
+
+Both topics are for discussion as to how best to manage going forward. 
+
+<img alt="example07clipping" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example07_clipping.jpeg" width="800px">
+
+<img alt="example07discrete" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example07_discrete.jpeg" width="800px">
 
