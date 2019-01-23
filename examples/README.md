@@ -69,3 +69,7 @@ Both topics are for discussion as to how best to manage going forward.
 ### discretisation
 <img alt="example07discrete" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/examples/output/example07_discrete.jpeg" width="800px">
 
+## example08
+
+Store PSF and truth catalogue information in extension HDUs, rather than additional files. Opening the resultant output FITS file in DS9 will show 2 image HDUs (science image and associated PSFs), whilst opening in TOPCAT will show the complete truth catalogue.
+
