@@ -1,4 +1,5 @@
 # GalSim Test Runs
+<a name="top"></a>
 
 Some basic tests, testing the capabilities of GalSim
 
@@ -81,5 +82,5 @@ Almost final prep file, exhibiting most (all?) of the desired markup for our pur
 
 Final test. Based on test09 above, but reading in all galaxy specific markers from a pre-defined input file. A similar setup to be used in furter LSB source detection efforts.
 
-<a href="#----">↥ back to top</a>
+<a href="#top">↥ back to top</a>
 
