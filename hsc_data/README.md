@@ -6,6 +6,7 @@ Source HSC data, upon which our LSB simulated images are based
 
 * [calexp](calexp) : HSC SSC DR1 calexp image files (stripped of mask and weight HDUs)
   * files are in the format 'calexp-FACILITY-BAND-TRACT-PATCH.image.fits'.
+* [sourcecats](sourcecats) : generation of source catalogues for 57 unique tract/patch r-band HSC SSC DR1 images.
 
 ## manifest_HSC.rds
 
