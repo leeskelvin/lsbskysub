@@ -1,4 +1,4 @@
-# tests
+# GalSim Test Runs
 
 Some basic tests, testing the capabilities of GalSim
 
@@ -77,7 +77,7 @@ Store PSF and truth catalogue information in extension HDUs, rather than additio
 
 Almost final prep file, exhibiting most (all?) of the desired markup for our purposes. Simulates 5 Sersic galaxies, at given positions, with CCD noise (Poisson shot + Gaussian read).
 
-# test10
+## test10
 
 Final test. Based on test09 above, but reading in all galaxy specific markers from a pre-defined input file. A similar setup to be used in furter LSB source detection efforts.
 
