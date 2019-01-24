@@ -1,4 +1,4 @@
 # GalSim Demo Runs
 
-Copies of all in-build GalSim 'example' *.yaml files, with links to their outputs.
+Copies of all in-built GalSim 'example' *.yaml files. Demos have been run, and outputs produced, for reference. 
 
