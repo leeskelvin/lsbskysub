@@ -4,8 +4,8 @@ A minimally aggressive LSB sky subtraction software package for use with LSST/HS
 
 ## Resources
 
-Google Doc: http://tinyurl.com/lsbskysub
-GitHub: https://github.com/leeskelvin/lsbskysub
+* Google Doc: http://tinyurl.com/lsbskysub
+* GitHub: https://github.com/leeskelvin/lsbskysub
 
 ## Folder Structure
 

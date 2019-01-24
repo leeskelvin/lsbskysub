@@ -4,6 +4,6 @@ Testing of several core features of GalSim, with a mind towards producing releva
 
 ## Sub-folder Structure
 
-* demos : copy of GalSim demo files
-* examples : LSK constructed example files, testing various aspects of GalSim
+* [demos](demos) : copy of GalSim demo files
+* [examples] : LSK constructed example files, testing various aspects of GalSim
 
