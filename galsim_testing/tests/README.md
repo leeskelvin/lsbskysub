@@ -10,7 +10,7 @@ A simple de Vaucouleurs bulge + exponential disk, with 25 added star-forming kno
 
 A test at reading in catalogue data from an external file. A similar galaxy as in test01 is used, with a varying SF knot flux from 1-15% (ensuring always that knot flux + disk flux = 90%).
 
-![test02](https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/tests/output/test02.jpeg)
+![test02](output/test02.jpeg)
 
 ## test03
 
@@ -45,13 +45,13 @@ This test also outputs the input parameters into a truth catalogue for later fur
 Four output images are constructed: with and without noise, each with and without galaxy profile clipping. To facilitate this in a single file, use of the above '---' divider notation is required.
 
 ### test06: 100 inclined exponential disk galaxies on a 512x512 image
-![test06](https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/tests/output/test06.jpeg)
+![test06](output/test06.jpeg)
 
 ### test06: residual = with noise - without noise
-<img alt="test06panel" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/tests/output/test06_panel.jpeg" width="800px">
+<img alt="test06panel" src="output/test06_panel.jpeg" width="800px">
 
 ### test06: boundary box clipping
-<img alt="test06clipping" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/tests/output/test06_clipping.jpeg" width="800px">
+<img alt="test06clipping" src="output/test06_clipping.jpeg" width="800px">
 
 ## test07
 
@@ -64,10 +64,10 @@ The second image shows the difference imparted on profile generation when using 
 Both topics are for discussion as to how best to manage going forward. 
 
 ### artefacts
-<img alt="test07clipping" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/tests/output/test07_clipping.jpeg" width="800px">
+<img alt="test07clipping" src="output/test07_clipping.jpeg" width="800px">
 
 ### discretisation
-<img alt="test07discrete" src="https://raw.githubusercontent.com/leeskelvin/lsbskysub/master/tests/output/test07_discrete.jpeg" width="800px">
+<img alt="test07discrete" src="output/test07_discrete.jpeg" width="800px">
 
 ## test08
 
