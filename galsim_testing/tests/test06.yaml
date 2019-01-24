@@ -40,7 +40,7 @@ image :
 output :
     type : Fits
     dir : output
-    file_name : example06_nonoise_stamplimit.fits
+    file_name : test06_nonoise_stamplimit.fits
     nproc : -1 # use as many processors as available to construct the image
     truth : # also generate a 'truth' catalogue recording input parameters
         file_name : truth06.dat
@@ -68,7 +68,7 @@ image :
 output :
     type : Fits
     dir : output
-    file_name : example06_noise_stamplimit.fits
+    file_name : test06_noise_stamplimit.fits
     nproc : -1 # use as many processors as available to construct the image
     
 

@@ -38,7 +38,7 @@ image :
 output :
     type : Fits
     dir : output
-    file_name : example08.fits
+    file_name : test08.fits
     nproc : -1 # use as many processors as available to construct the image
     
     # Put the PSF image in hdu=1 (the first extension after the primary HDU)

@@ -1,0 +1,6 @@
+#   image_pos.x image_pos.y gal.n   gal.half_light_radius   gal.flux    gal.ellip.q gal.ellip.beta
+    25          25          4       5                       1e5         0.5         45
+    25          487         4       5                       1e5         0.5         45
+    487         487         4       5                       1e5         0.5         45
+    487         25          4       5                       1e5         0.5         45
+    256         256         4       5                       1e5         0.5         45

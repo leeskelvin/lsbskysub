@@ -137,4 +137,4 @@ output :
         type : NumberedFile
         root : lsst_chip
         digits : 3
-    nproc : -1            # -1 here means to use the number of CPUs.
+    nproc : 1            # -1 here means to use the number of CPUs. (LSK modified)

@@ -1,0 +1,59 @@
+# smoothing kernel
+psf :
+    type : Moffat
+    beta : 4
+    fwhm : 2
+
+# NOTE Re: Sersic in GalSim
+# The allowed range of values for the n parameter is 0.3 <= n <= 6.2. An 
+# exception will be thrown if you provide a value outside that range. Below 
+# n=0.3, there are severe numerical problems. Above n=6.2, we found that the 
+# code begins to be inaccurate when sheared or magnified (at the level of 
+# upcoming shear surveys), so we do not recommend extending beyond this. 
+# See Issues #325 and #450 for more details.
+
+# Define the galaxy profile
+gal :
+    type : Sersic
+    n : { type : Catalog , col : 2 }
+    half_light_radius : { type : Catalog , col : 3 } # arcsec
+    flux : { type : Catalog , col : 4 }
+    ellip : 
+        type : QBeta 
+        q : { type : Catalog , col : 5 }
+        beta : { type : Catalog , col : 6 }
+
+# global image properties
+image : 
+    pixel_scale : 0.2 # arcsec / pixel
+    sky_level : 100 # ADU / arcsec^2
+    random_seed : 8383721
+    nproc : 3
+    type : Scattered
+    xsize : 512 # pixel
+    ysize : 512 # pixel
+    nobjects : 5 # not required when reading in catalogue
+    stamp_xsize : { type : Eval , str : '@image.xsize * 2' }
+    stamp_ysize : { type : Eval , str : '@image.ysize * 2' }
+    image_pos :
+        type : XY
+        x : { type : Catalog , col : 0 }
+        y : { type : Catalog , col : 1 }
+    noise :
+        type : CCD
+        sky_level : 1e2 # ADU / arcsec^2
+        gain : 5 # e-/ADU
+        read_noise : 0 # ADU
+
+# input setup
+input :
+    catalog :
+        file_name : input10.dat
+        dir : input
+
+# output setup
+output :
+    dir : output
+    nproc : 3
+    type : Fits # Fits/MultiFits/DataCube
+

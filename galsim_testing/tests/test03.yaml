@@ -35,5 +35,5 @@ image :
 output :
     type : Fits
     dir : output
-    file_name : example03.fits
+    file_name : test03.fits
 

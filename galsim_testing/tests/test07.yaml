@@ -19,5 +19,5 @@ output :
     type : Fits
     dir : output
     nproc : -1 # use as many processors as available to construct the image
-    file_name : example07_noise0.fits
+    file_name : test07_noise0.fits
 
