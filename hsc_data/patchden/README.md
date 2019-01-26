@@ -1,2 +1,0 @@
-![patchden.pdf](patchden.pdf)
-
