@@ -1,6 +1,6 @@
 # HSC Data Files
 
-Source HSC data, upon which our LSB simulated images are based
+Source HSC data, upon which our LSB simulated images are based. 
 
 ## Sub-folder Structure
 
