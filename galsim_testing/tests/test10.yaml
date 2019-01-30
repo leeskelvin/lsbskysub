@@ -21,7 +21,12 @@ gal :
     ellip : 
         type : QBeta 
         q : { type : Catalog , col : 5 }
-        beta : { type : Catalog , col : 6 }
+        beta : 
+            type : Degrees 
+            theta : { type : Catalog , col : 6 }
+    gsparams : 
+        kvalue_accuracy : 1.e-8
+        maxk_threshold : 1.1e-4
 
 # global image properties
 image : 
