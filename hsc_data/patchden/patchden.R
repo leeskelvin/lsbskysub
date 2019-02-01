@@ -21,8 +21,8 @@ cairo_pdf(file="patchden.pdf", width=5, height=5)
 par("mar"=c(4,3.5,1,1))
 
 # analysis plot
-hist(numden, breaks=seq(4000,14000,by=500), freq=TRUE, axes=FALSE, main="", xlab="", ylab="", col="#f1a340", border=NA, xlim=c(5000,13000))
-abline(v=seq(4000,14000,by=500), col="white", lwd=5)
+hist(numden, breaks=seq(5500,13000,by=500), freq=TRUE, axes=FALSE, main="", xlab="", ylab="", col="#f1a340", border=NA, xlim=c(5500,13000))
+abline(v=seq(5500,13000,by=500), col="white", lwd=5)
 rug(numden, col="#998ec3", lwd=1.25, lend=3)
 axis(side=1)
 axis(side=2, las=1)

@@ -9,8 +9,10 @@ imarith = "~/software/cexamples/imarith" # imarith
 astconvertt = "/usr/local/bin/astconvertt" # GNU astro ConvertType
 astarithmetic = "/usr/local/bin/astarithmetic" # GNU astro arithmetic
 convert = "/usr/bin/convert" # imagemagick convert
+imsize = "/usr/bin/imsize" # imsize
 
 # loop
+areas = {}
 for(i in 1:length(fnames)){
     
     #cat("\b\b\b\b\b     \b\b\b\b\b", i, " ", sep="", collapse="")
@@ -21,7 +23,9 @@ for(i in 1:length(fnames)){
     fcat = paste0(strsplit(fnames[i], ".fits.fz")[[1]], ".dat")
     fcheck = paste0(strsplit(fnames[i], ".fits.fz")[[1]], ".check.fits")
     system(paste0(funpack, " -O ", getwd(), "/", fproc, " ", indir, "/", fnames[i]))
-    system(paste0(sex, " -c default.sex -CATALOG_NAME ", fcat, " -CATALOG_TYPE ASCII -CHECKIMAGE_TYPE SEGMENTATION -CHECKIMAGE_NAME ", fcheck, " ", fproc))
+    #threshtext = ""
+    threshtext = paste0("-THRESH_TYPE ABSOLUTE -DETECT_THRESH 0.07 -ANALYSIS_THRESH 0.07")
+    system(paste0(sex, " -c default.sex -CATALOG_NAME ", fcat, " -CATALOG_TYPE ASCII -CHECKIMAGE_TYPE SEGMENTATION -CHECKIMAGE_NAME ", fcheck, " ", threshtext, " ", fproc))
     
     # JPEG check image
     fbinary = paste0(strsplit(fnames[i], ".fits.fz")[[1]], ".binary.fits")
@@ -36,8 +40,17 @@ for(i in 1:length(fnames)){
     system(paste0(convert, " ", jtemp, " ", pimage))
     #convert xc:white xc:red xc:orange xc:yellow xc:green xc:blue xc:blueviolet +append -filter Cubic -resize 600x30! -flop cmap.jpeg
     
+    # areas
+    iminfo = strsplit(system(paste0(imsize, " -d ", fproc), intern=TRUE), " +")[[1]]
+    degs = as.numeric(strsplit(iminfo[5], "x")[[1]])
+    areas = c(areas, prod(degs))
+    
     # clean up
     unlink(c(fproc,fcheck,fbinary,fmodulo,fmodify,jtemp))
     
 }
+
+# write areas catalogue
+temp = cbind(FILE=fnames, AREA=areas)
+write.csv(temp, file="areas.csv", row.names=FALSE, quote=FALSE)
 

@@ -1,17 +1,18 @@
-NUMBER
-FLUX_AUTO
-MAG_AUTO
-KRON_RADIUS
-PETRO_RADIUS
-BACKGROUND
-X_IMAGE
-Y_IMAGE
-A_IMAGE
-B_IMAGE
-THETA_IMAGE
-ELLIPTICITY
-CLASS_STAR
-FLUX_RADIUS
+NUMBER          # 1
+FLUX_AUTO       # 2
+MAG_AUTO        # 3
+KRON_RADIUS     # 4
+PETRO_RADIUS    # 5
+BACKGROUND      # 6
+THRESHOLD       # 7
+X_IMAGE         # 8
+Y_IMAGE         # 9
+A_IMAGE         # 10
+B_IMAGE         # 11
+THETA_IMAGE     # 12
+ELLIPTICITY     # 13
+CLASS_STAR      # 14
+FLUX_RADIUS     # 15
 
 #NUMBER                   Running object number                                    
 #EXT_NUMBER               FITS extension number                                    
