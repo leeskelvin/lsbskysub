@@ -1,17 +1,21 @@
 #!/usr/bin/Rscript --no-init-file
 
-# definitions
-dat = read.csv("patchden.csv", stringsAsFactors=FALSE)
-
 # chosen ones
-mindencat = dat[which.min(dat[,"NUMDEN"]),"CAT"]
-maxdencat = dat[which.max(dat[,"NUMDEN"]),"CAT"]
-mindenfits = paste0(strsplit(mindencat, ".dat")[[1]], ".fits.fz")
-maxdenfits = paste0(strsplit(maxdencat, ".dat")[[1]], ".fits.fz")
+chosen = c("calexp-HSC-R-8283-38.image.dat", "calexp-HSC-R-9592-20.image.dat")
+mindenfits = paste0(strsplit(chosen[1], ".dat")[[1]], ".fits.fz")
+maxdenfits = paste0(strsplit(chosen[2], ".dat")[[1]], ".fits.fz")
 
-# calexp
+# calexp clean
 calexpdir = dir("../calexp/")
 calexpall = grep(".fits.fz", calexpdir, value=TRUE)
 calexpbad = calexpall[-which(calexpall %in% c(mindenfits,maxdenfits))]
-unlink(paste0("../calexp/", calexpbad))
+if(length(calexpbad) > 0){unlink(paste0("../calexp/", calexpbad))}
+
+# copy segmaps and initial detection catalogues
+mindensegmap = paste0(strsplit(chosen[1], ".dat")[[1]], ".png")
+maxdensegmap = paste0(strsplit(chosen[2], ".dat")[[1]], ".png")
+system(paste0("cp ../sourcecats/", chosen[1], " ../calexp/"))
+system(paste0("cp ../sourcecats/", chosen[2], " ../calexp/"))
+system(paste0("cp ../sourcecats/", mindensegmap, " ../calexp/"))
+system(paste0("cp ../sourcecats/", maxdensegmap, " ../calexp/"))
 
