@@ -22,7 +22,7 @@ for(i in 1:length(tractpatch)){
     for(j in 1:length(tpfiles)){
         
         # unpack
-        system(paste0(funpack, " -O ", tpfiles[j], " ", tpfilesfz[i]))
+        system(paste0(funpack, " -O ", tpfiles[j], " ", tpfilesfz[j]))
         
         # cutout
         xlo = xcen[i] - (xdim[i]+1)/2
