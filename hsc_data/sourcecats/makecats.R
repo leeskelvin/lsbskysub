@@ -1,8 +1,9 @@
 #!/usr/bin/Rscript --no-init-file
 
 # definitions
-indir = normalizePath("../calexp")
-fnames = grep(".fits.fz", dir("../calexp"), value=TRUE)
+#indir = normalizePath("../calexp")
+indir = normalizePath("~/Desktop/calexp")
+fnames = grep(".fits.fz", dir(indir), value=TRUE)
 sex = "/usr/bin/sextractor" # local SEx binary
 funpack = "/usr/bin/funpack" # local FITS unpack binary
 imarith = "~/software/cexamples/imarith" # imarith
@@ -12,7 +13,7 @@ convert = "/usr/bin/convert" # imagemagick convert
 imsize = "/usr/bin/imsize" # imsize
 
 # loop
-areas = {}
+areas = backs = rmss = threshs = {}
 for(i in 1:length(fnames)){
     
     #cat("\b\b\b\b\b     \b\b\b\b\b", i, " ", sep="", collapse="")
@@ -25,7 +26,7 @@ for(i in 1:length(fnames)){
     system(paste0(funpack, " -O ", getwd(), "/", fproc, " ", indir, "/", fnames[i]))
     #threshtext = ""
     threshtext = paste0("-THRESH_TYPE ABSOLUTE -DETECT_THRESH 0.07 -ANALYSIS_THRESH 0.07")
-    system(paste0(sex, " -c default.sex -CATALOG_NAME ", fcat, " -CATALOG_TYPE ASCII -CHECKIMAGE_TYPE SEGMENTATION -CHECKIMAGE_NAME ", fcheck, " ", threshtext, " ", fproc))
+    output = system(paste0(sex, " -c default.sex -CATALOG_NAME ", fcat, " -CATALOG_TYPE ASCII -CHECKIMAGE_TYPE SEGMENTATION -CHECKIMAGE_NAME ", fcheck, " ", threshtext, " ", fproc, " 2>&1"), intern=T)
     
     # JPEG check image
     fbinary = paste0(strsplit(fnames[i], ".fits.fz")[[1]], ".binary.fits")
@@ -45,12 +46,18 @@ for(i in 1:length(fnames)){
     degs = as.numeric(strsplit(iminfo[5], "x")[[1]])
     areas = c(areas, prod(degs))
     
+    # SEx stats
+    obits = strsplit(grep("RMS:", output, value=TRUE), " +")[[1]]
+    backs = c(backs, as.numeric(obits[3]))
+    rmss = c(rmss, as.numeric(obits[5]))
+    threshs = c(threshs, as.numeric(obits[8]))
+    
     # clean up
     unlink(c(fproc,fcheck,fbinary,fmodulo,fmodify,jtemp))
     
 }
 
 # write areas catalogue
-temp = cbind(FILE=fnames, AREA=areas)
-write.csv(temp, file="areas.csv", row.names=FALSE, quote=FALSE)
+temp = cbind(FILE=fnames, AREA=areas, BACK=backs, RMS=rmss, THRESH=threshs)
+write.csv(temp, file="imstats.csv", row.names=FALSE, quote=FALSE)
 
