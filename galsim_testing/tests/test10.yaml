@@ -1,8 +1,8 @@
 # smoothing kernel
 psf :
-    type : Moffat
-    beta : 4
-    fwhm : 2
+    type : InterpolatedImage
+    image : "input/example_sdss_psf_sky0.fits"
+    scale : 0.2 # arcsec / pixel
 
 # NOTE Re: Sersic in GalSim
 # The allowed range of values for the n parameter is 0.3 <= n <= 6.2. An 
@@ -24,9 +24,9 @@ gal :
         beta : 
             type : Degrees 
             theta : { type : Catalog , col : 6 }
-    gsparams : 
-        kvalue_accuracy : 1.e-8
-        maxk_threshold : 1.1e-4
+    gsparams: 
+        kvalue_accuracy : 1.e-8 # smaller better
+        maxk_threshold : 1.1e-4 # smaller better
 
 # global image properties
 image : 
@@ -37,9 +37,10 @@ image :
     type : Scattered
     xsize : 512 # pixel
     ysize : 512 # pixel
-    nobjects : 5 # not required when reading in catalogue
-    stamp_xsize : { type : Eval , str : '@image.xsize * 2' }
-    stamp_ysize : { type : Eval , str : '@image.ysize * 2' }
+    # nobjects : 1 # not required when reading in catalogue
+    # stamp_xsize : { type : Eval , str : '@image.xsize * 2' }
+    # stamp_ysize : { type : Eval , str : '@image.ysize * 2' }
+    stamp_size : { type : Catalog , col : 7 } # pixel
     image_pos :
         type : XY
         x : { type : Catalog , col : 0 }
