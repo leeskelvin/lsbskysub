@@ -69,10 +69,11 @@ aimage(residdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, 
 label("topleft", lab="Residuals", col="white", cex=cextext, inset=insettext)
 
 par("mar"=c(4.1,4.1,1,0.5))
-aplot(rads, sbs, type="n", xlim=c(0,5), ylim=c(30,19.5), xlab=bquote(paste("radius / arcsec")), ylab=bquote(paste(mu, " / mag ", arcsec^{-2})), las=1, cex.lab=1.25)
+aplot(rads, sbs, type="n", xlim=c(0,5), ylim=c(30,19.5), xlab=bquote(paste("radius / arcsec")), ylab=bquote(paste(mu, " / mag ", arcsec^{-2})), las=1, cex.lab=1.25, axes=FALSE)
 shade(rads, sbslo, sbshi, col="#f1a340")
 lines(rads, sbs, type="b", pch=16, col="black")
 legend("topright", fill="#f1a340", bty="n", legend="95% CI", cex=1.25, inset=0.05, border="#f1a340")
+box(col="grey75"); aaxes(las=1)
 
 # finish up
 graphics.off()
