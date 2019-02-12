@@ -18,6 +18,7 @@ system(paste0(funpack, " -O ", samp, " ", sampfz))
 system(paste0(funpack, " -O ", resid, " ", residfz))
 
 # data
+errs = read.csv("skyerr.csv")
 sampdat = read.fitsim(samp)
 residdat = read.fitsim(resid)
 psfdat = read.fitsim(psf)
@@ -25,34 +26,6 @@ psfdat = read.fitsim(psf)
 # psf norm
 psfdat = psfdat / sum(psfdat)
 psfdat = psfdat * 10^(-0.4*(20-27)) # ~20th mag star
-
-# sky error
-skydat = residdat
-skydat[abs(skydat) < 0.01] = NA
-means = {}
-n = 100
-for(i in 1:n){
-    temp = sample(x=residdat, size=length(residdat), replace=TRUE)
-    means = c(means, mean(temp))
-}
-
-
-
-
-xx = seq(1, dim(residdat)[1], by=101)
-yy = seq(1, dim(residdat)[2], by=101)
-rad = 5
-means = {}
-for(i in 1:length(xx)){
-    for(j in 1:length(yy)){
-        ijdat = residdat[
-            (max(c(1, xx[i]-rad))):(min(c(dim(residdat)[1], xx[i]+rad)))
-            ,(max(c(1, yy[i]-rad))):(min(c(dim(residdat)[2], yy[i]+rad)))
-            ]
-        means = c(means, mean(ijdat))
-    }
-}
-skyerr = sd(means)
 
 # lineprof
 xdim = ydim = 55
@@ -62,8 +35,8 @@ counts = apply(counts, 2, median)
 rads = 1:101 * 0.168
 sbs = sbslo = sbshi = rep(50, length(rads))
 sbs[1:length(counts)] = suppressWarnings(-2.5 * log10(counts / (0.168^2)) + 27)
-sbslo[1:length(counts)] = suppressWarnings(-2.5 * log10((counts-skyerr) / (0.168^2)) + 27)
-sbshi[1:length(counts)] = suppressWarnings(-2.5 * log10((counts+skyerr) / (0.168^2)) + 27)
+sbslo[1:length(counts)] = suppressWarnings(-2.5 * log10((counts+errs[,"ERR95LO"]) / (0.168^2)) + 27)
+sbshi[1:length(counts)] = suppressWarnings(-2.5 * log10((counts+errs[,"ERR95HI"]) / (0.168^2)) + 27)
 if(any(is.na(sbs))){sbs[is.na(sbs)] = 50}
 if(any(is.na(sbslo))){sbslo[is.na(sbslo)] = 50}
 if(any(is.na(sbshi))){sbshi[is.na(sbshi)] = 50}
@@ -71,23 +44,35 @@ if(any(is.na(sbshi))){sbshi[is.na(sbshi)] = 50}
 # dev
 png(file="psfcheck.png", width=8, height=8, units="in", res=300)
 par("mar"=c(0,0,0,0))
-layout(rbind(c(1,1,1,1,1,1,1,1,1),c(0,2,2,2,4,4,4,4,0),c(3,3,3,3,3,3,3,3,3)))
+layout(rbind(rep(1,18),c(0,rep(2,6),0,rep(4,9),0),rep(3,18)))
 
 # plot
 linecol = "grey75"
-linewd = 3
+linewd = 2
 fwhm = 1
 zlo = 1*-0.07
 zhi = 15*0.07
-aimage(sampdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=3*101, ydim=9*101, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=101), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=101), col=linecol, lwd=linewd); box(col="white", lwd=3)
+cextext = 2
+insettext = c(0.5,0.5)
+insetscale = 7
+scalelen = 5
+
+aimage(sampdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=9*101, ydim=3*101, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=101), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=101), col=linecol, lwd=linewd); box(col="white", lwd=3)
+label("topleft", lab="Point Source Samples", col="white", cex=cextext, inset=insettext)
 
 aimage(psfdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab="", xdim=101, ydim=101, padvalue=0); box(col="white", lwd=3)
+label("topleft", lab="PSF", col="white", cex=cextext, inset=insettext)
+lines(x=c((par("usr")[2]-insetscale),((par("usr")[2]-insetscale-(scalelen/0.168)))), y=rep(par("usr")[3]+insetscale,2), lwd=5, lend=3, col="white")
+text(x=(par("usr")[2]-insetscale), y=(par("usr")[3]+insetscale+3), lab=paste(scalelen, "arcsec"), col="white", adj=c(1,0), cex=1.25)
 
-aimage(residdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=3*101, ydim=9*101, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=101), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=101), col=linecol, lwd=linewd); box(col="white", lwd=3)
+aimage(residdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=9*101, ydim=3*101, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=101), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=101), col=linecol, lwd=linewd); box(col="white", lwd=3)
+label("topleft", lab="Residuals", col="white", cex=cextext, inset=insettext)
 
-aplot(rads, sbs, type="n", xlim=c(0,4.5), ylim=c(30,19.5), xlab=bquote(paste("radius / arcsec")), ylab=bquote(paste(mu, " / mag ", arcsec^{-2})), las=1)
+par("mar"=c(4.1,4.1,1,0.5))
+aplot(rads, sbs, type="n", xlim=c(0,5), ylim=c(30,19.5), xlab=bquote(paste("radius / arcsec")), ylab=bquote(paste(mu, " / mag ", arcsec^{-2})), las=1, cex.lab=1.25)
 shade(rads, sbslo, sbshi, col="#f1a340")
 lines(rads, sbs, type="b", pch=16, col="black")
+legend("topright", fill="#f1a340", bty="n", legend="95% CI", cex=1.25, inset=0.05, border="#f1a340")
 
 # finish up
 graphics.off()
