@@ -26,12 +26,14 @@ psfdat = read.fitsim(psf)
 # psf norm
 #psfdat = psfdat / sum(psfdat)
 psfdat = psfdat * 10^(-0.4*(20-27)) # ~20th mag star
+psfdatxl = regrid(psfdat, fact=10) * 10*10
 
 # lineprof
-xx = yy = seq(1,55,by=1)-28
-xy = cbind(expand.grid(xx,yy),as.numeric(psfdat))
+
+xx = yy = as.numeric(rownames(psfdatxl))-28
+xy = cbind(expand.grid(xx,yy),as.numeric(psfdatxl))
 if(any(xy[,3] < 0)){xy[(xy[,3]<0),3] = 0}
-rad = ceiling(sqrt((xy[,1]^2) + (xy[,2]^2)))
+rad = round(sqrt((xy[,1]^2) + (xy[,2]^2)))
 xy = cbind(xy,rad)
 groups = split(xy[,3], xy[,4])
 counts = as.numeric(lapply(groups, median))
@@ -42,7 +44,7 @@ rads = as.numeric(names(groups)) * 0.168
 #counts = rbind((psfdat[xcen,ycen:1]), (psfdat[xcen,ycen:ydim]), (psfdat[xcen:1,ycen]), (psfdat[xcen:xdim,ycen]))
 #if(any(counts < 0)){counts[counts < 0] = 0}
 #counts = apply(counts, 2, median, na.rm=TRUE)
-#rads = 1:size * 0.168
+#rads = 0:(length(counts)-1) * 0.168
 
 sbs = sbslo = sbshi = rep(50, length(rads))
 sbs[1:length(counts)] = suppressWarnings(-2.5 * log10(counts / (0.168^2)) + 27)
