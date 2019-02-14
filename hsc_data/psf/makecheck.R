@@ -88,6 +88,13 @@ lines(rads, sbs, type="b", pch=16, col="black")
 legend("topright", fill="#f1a340", bty="n", legend="95% CI", cex=1.25, inset=0.05, border="#f1a340")
 box(col="grey75"); aaxes(las=1)
 
+# gaussian
+fwhm = c(0.7, 3)
+lambda = c(10,1)
+xval = seq(0,6,len=100)
+yval = -2.5*log10(gauss1d(xval, fwhm=fwhm, lambda=lambda))+27; yval = yval - diff(c(sbs[1], yval[1]))
+lines(xval, yval, col="red")
+
 # finish up
 graphics.off()
 unlink(c(samp,resid))
