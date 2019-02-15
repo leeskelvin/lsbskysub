@@ -89,8 +89,16 @@ legend("topright", fill="#f1a340", bty="n", legend="95% CI", cex=1.25, inset=0.0
 box(col="grey75"); aaxes(las=1)
 
 # gaussian
-fwhm = c(0.7, 3)
-lambda = c(10,1)
+gauss1dnorm = function(norm,x,fwhm,lambda){return(norm*gauss1d(x=x,fwhm=fwhm,lambda=lambda))}
+fitted = fit(y=counts, func=gauss1dnorm, vars=list(norm=1, fwhm=c(1,1), lambda=c(1,1)), pars=list(x=rads), sigma=1)
+yval = -2.5*log10(gauss1d(rads, fwhm=fitted$par$fwhm) * fitted$par$norm) + 27
+lines(rads, yval, col="red")
+
+
+
+yval = yval - diff(c(sbs[1], yval[1]))
+
+
 xval = seq(0,6,len=100)
 yval = -2.5*log10(gauss1d(xval, fwhm=fwhm, lambda=lambda))+27; yval = yval - diff(c(sbs[1], yval[1]))
 lines(xval, yval, col="red")
