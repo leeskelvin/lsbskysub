@@ -68,7 +68,7 @@ zhi = 15*0.07
 cextext = 2
 insettext = c(0.5,0.5)
 insetscale = 3
-scalelen = 5
+scalelen = 2.5
 
 aimage(sampdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=9*size, ydim=3*size, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=size), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=size), col=linecol, lwd=linewd); box(col="white", lwd=3)
 label("topleft", lab="Point Source Samples", col="white", cex=cextext, inset=insettext)
@@ -81,27 +81,40 @@ text(x=(par("usr")[2]-insetscale), y=(par("usr")[3]+insetscale+2), lab=paste(sca
 aimage(residdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=9*size, ydim=3*size, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=size), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=size), col=linecol, lwd=linewd); box(col="white", lwd=3)
 label("topleft", lab="Residuals", col="white", cex=cextext, inset=insettext)
 
+# line plot
 par("mar"=c(4.1,4.1,1,0.5))
 aplot(rads, sbs, type="n", xlim=c(0,5), ylim=c(30,19.5), xlab=bquote(paste("radius / arcsec")), ylab=bquote(paste(mu, " / mag ", arcsec^{-2})), las=1, cex.lab=1.25, axes=FALSE)
 shade(rads, sbslo, sbshi, col="#f1a340")
-lines(rads, sbs, type="b", pch=16, col="black")
-legend("topright", fill="#f1a340", bty="n", legend="95% CI", cex=1.25, inset=0.05, border="#f1a340")
+
+## gaussian
+#cdat = counts; cdat[cdat == 0] = NA
+#err = sqrt(cdat+0.001)
+#gfit = fit(data=cdat, par=list(I0=c(1,2,3), fwhm=c(1,2,3)), fn=gauss1d, arg=list(r=rads), sigma=err, method="BFGS")
+#yval = -2.5*log10(gauss1d(r=rads, I0=gfit$par$I0, fwhm=gfit$par$fwhm) / (0.168^2)) + 27
+#lines(rads, yval, col="red", lwd=5)
+
+# moffat
+cdat = counts; cdat[rads>3.5] = NA
+#err = sqrt(errs[,"ERR95LO"]^2 + errs[,"ERR95HI"]^2)
+err = sqrt(cdat)
+mfit = fit(data=cdat, par=list(I0=c(20), beta=c(2), fwhm=c(0.6)), fn=moffat1d, arg=list(r=rads), sigma=err, method="BFGS", lower=c(0,0,0))
+yval = -2.5*log10(moffat1d(r=seq(0,max(rads),len=1001), I0=mfit$par$I0, beta=mfit$par$beta, fwhm=mfit$par$fwhm) / (0.168^2)) + 27
+lines(seq(0,max(rads),len=1001), yval, col="#998ec3", lwd=2.5)
+
+## sersic
+#cdat = counts; cdat[cdat == 0] = NA
+#err = sqrt(cdat+0.001)
+#sfit = fit(data=cdat, par=list(Ie=c(1,2,3), n=c(1,2,3), re=c(1,2,3)), fn=sersic1d, arg=list(r=rads), sigma=err, method="L-BFGS-B", lower=0)
+#yval = -2.5*log10(sersic1d(r=rads, Ie=sfit$par$Ie, n=sfit$par$n, re=sfit$par$re) / (0.168^2)) + 27
+#lines(rads, yval, col="blue", lwd=5)
+
+# line data
+lines(rads, sbs, type="p", pch=16, col="white", cex=1.5)
+lines(rads, sbs, type="p", pch=16, col="black", lwd=2, lend=3)
+#legend("topright", fill=c("#f1a340",NA), bty="n", legend=c("95% CI",paste0("Moffat (Γ = ", formatC(mfit$par$fwhm,format="f",digits=2), ", β = ", formatC(mfit$par$beta,format="f",digits=2), ")")), cex=1.25, inset=0.05, border=c("#f1a340",NA), lty=c(NA,1), lwd=c(NA,5), col=c(NA,"#998ec3"), merge=TRUE, xjust=1, seg.len=c(1.25,2))
+legend("topright", fill="#f1a340", bty="n", legend="95% CI", cex=1.25, inset=c(0.05,0.15), border="#f1a340")
+legend("topright", col="#998ec3", lty=1, lwd=2.5, bty="n", legend=paste0("Moffat: Γ = ", formatC(mfit$par$fwhm,format="f",digits=2), ", β = ", formatC(mfit$par$beta,format="f",digits=2)), cex=1.25, inset=0.05)
 box(col="grey75"); aaxes(las=1)
-
-# gaussian
-gauss1dnorm = function(norm,x,fwhm,lambda){return(norm*gauss1d(x=x,fwhm=fwhm,lambda=lambda))}
-fitted = fit(y=counts, func=gauss1dnorm, vars=list(norm=1, fwhm=c(1,1), lambda=c(1,1)), pars=list(x=rads), sigma=1)
-yval = -2.5*log10(gauss1d(rads, fwhm=fitted$par$fwhm) * fitted$par$norm) + 27
-lines(rads, yval, col="red")
-
-
-
-yval = yval - diff(c(sbs[1], yval[1]))
-
-
-xval = seq(0,6,len=100)
-yval = -2.5*log10(gauss1d(xval, fwhm=fwhm, lambda=lambda))+27; yval = yval - diff(c(sbs[1], yval[1]))
-lines(xval, yval, col="red")
 
 # finish up
 graphics.off()
