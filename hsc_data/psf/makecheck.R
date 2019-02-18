@@ -83,7 +83,7 @@ label("topleft", lab="Residuals", col="white", cex=cextext, inset=insettext)
 
 # line plot
 par("mar"=c(4.1,4.1,1,0.5))
-aplot(rads, sbs, type="n", xlim=c(0,5), ylim=c(30,19.5), xlab=bquote(paste("radius / arcsec")), ylab=bquote(paste(mu, " / mag ", arcsec^{-2})), las=1, cex.lab=1.25, axes=FALSE)
+aplot(rads, sbs, type="n", xlim=c(0,5), ylim=c(30,19.5), xlab=bquote(paste("radius / arcsec")), ylab=bquote(paste(mu, " / mag ", arcsec^{-2})), las=1, cex.lab=1.25, axes=FALSE, xnmin=3, ynmin=1)
 shade(rads, sbslo, sbshi, col="#f1a340")
 
 ## gaussian
