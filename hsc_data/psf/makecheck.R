@@ -83,7 +83,7 @@ label("topleft", lab="Residuals", col="white", cex=cextext, inset=insettext)
 
 # line plot
 par("mar"=c(4.1,4.1,1,0.5))
-aplot(rads, sbs, type="n", xlim=c(0,5), ylim=c(30,19.5), xlab=bquote(paste("radius / arcsec")), ylab=bquote(paste(mu, " / mag ", arcsec^{-2})), las=1, cex.lab=1.25, axes=FALSE, xnmin=3, ynmin=1)
+aplot(rads, sbs, type="n", xlim=c(0,5), ylim=c(30,19.5), xlab=bquote(paste("radius / arcsec")), ylab=bquote(paste(mu, " / mag ", arcsec^{-2})), las=1, cex.lab=1.25, axes=FALSE)
 shade(rads, sbslo, sbshi, col="#f1a340")
 
 ## gaussian
@@ -114,7 +114,7 @@ lines(rads, sbs, type="p", pch=16, col="black", lwd=2, lend=3)
 #legend("topright", fill=c("#f1a340",NA), bty="n", legend=c("95% CI",paste0("Moffat (Γ = ", formatC(mfit$par$fwhm,format="f",digits=2), ", β = ", formatC(mfit$par$beta,format="f",digits=2), ")")), cex=1.25, inset=0.05, border=c("#f1a340",NA), lty=c(NA,1), lwd=c(NA,5), col=c(NA,"#998ec3"), merge=TRUE, xjust=1, seg.len=c(1.25,2))
 legend("topright", fill="#f1a340", bty="n", legend="95% CI", cex=1.25, inset=c(0.05,0.15), border="#f1a340")
 legend("topright", col="#998ec3", lty=1, lwd=2.5, bty="n", legend=paste0("Moffat: Γ = ", formatC(mfit$par$fwhm,format="f",digits=2), ", β = ", formatC(mfit$par$beta,format="f",digits=2)), cex=1.25, inset=0.05)
-box(col="grey75"); aaxes(las=1)
+box(col="grey75"); aaxes(las=1, xnmin=3, ynmin=1)
 
 # finish up
 graphics.off()
