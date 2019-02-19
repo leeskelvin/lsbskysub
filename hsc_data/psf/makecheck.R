@@ -25,7 +25,14 @@ psfdat = read.fitsim(psf)
 
 # psf norm
 #psfdat = psfdat / sum(psfdat)
-psfdat = psfdat * 10^(-0.4*(20-27)) # ~20th mag star
+psfdat = psfdat * 10^(-0.4*(16-27)) * (0.168^2) # ~nth mag star
+#psfdat = (psfdat / max(psfdat)) * 5
+#pxx = seq(28,nrow(sampdat),by=55)
+#pyy = seq(28,ncol(sampdat),by=55)
+#pxy = expand.grid(pxx,pyy)
+#pindex = (pxy[,2] - 1) * nrow(sampdat) + pxy[,1]
+#pscens = sampdat[pindex]
+#psfdat = (psfdat / max(psfdat)) * quantile(pscens,0.9)
 psfdatxl = regrid(psfdat, fact=10) * 10*10
 
 # lineprof
@@ -68,12 +75,14 @@ zhi = 15*0.07
 cextext = 2
 insettext = c(0.5,0.5)
 insetscale = 3
-scalelen = 2.5
+scalelen = 2
 
 aimage(sampdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=9*size, ydim=3*size, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=size), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=size), col=linecol, lwd=linewd); box(col="white", lwd=3)
 label("topleft", lab="Point Source Samples", col="white", cex=cextext, inset=insettext)
 
-aimage(psfdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab="", xdim=size, ydim=size, padvalue=0); box(col="white", lwd=3)
+#aimage(psfdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab="", xdim=size, ydim=size, padvalue=0)
+aimage(psfdat, col.map="sls", scale.type="log", scale.mode=99.5, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab="", xdim=size, ydim=size, padvalue=0)
+box(col="white", lwd=3)
 label("topleft", lab="PSF", col="white", cex=cextext, inset=insettext)
 lines(x=c((par("usr")[2]-insetscale),((par("usr")[2]-insetscale-(scalelen/0.168)))), y=rep(par("usr")[3]+insetscale,2), lwd=5, lend=3, col="white")
 text(x=(par("usr")[2]-insetscale), y=(par("usr")[3]+insetscale+2), lab=paste(scalelen, "arcsec"), col="white", adj=c(1,0), cex=1.25)
@@ -113,7 +122,7 @@ lines(rads, sbs, type="p", pch=16, col="white", cex=1.5)
 lines(rads, sbs, type="p", pch=16, col="black", lwd=2, lend=3)
 #legend("topright", fill=c("#f1a340",NA), bty="n", legend=c("95% CI",paste0("Moffat (Γ = ", formatC(mfit$par$fwhm,format="f",digits=2), ", β = ", formatC(mfit$par$beta,format="f",digits=2), ")")), cex=1.25, inset=0.05, border=c("#f1a340",NA), lty=c(NA,1), lwd=c(NA,5), col=c(NA,"#998ec3"), merge=TRUE, xjust=1, seg.len=c(1.25,2))
 legend("topright", fill="#f1a340", bty="n", legend="95% CI", cex=1.25, inset=c(0.05,0.15), border="#f1a340")
-legend("topright", col="#998ec3", lty=1, lwd=2.5, bty="n", legend=paste0("Moffat: Γ = ", formatC(mfit$par$fwhm,format="f",digits=2), ", β = ", formatC(mfit$par$beta,format="f",digits=2)), cex=1.25, inset=0.05)
+legend("topright", col="#998ec3", lty=1, lwd=2.5, bty="n", legend=paste0("Moffat: Γ = ", formatC(mfit$par$fwhm,format="f",digits=2), "'', β = ", formatC(mfit$par$beta,format="f",digits=2)), cex=1.25, inset=0.05)
 box(col="grey75"); aaxes(las=1, xnmin=3, ynmin=1)
 
 # finish up
