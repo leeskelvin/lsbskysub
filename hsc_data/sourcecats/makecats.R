@@ -13,7 +13,7 @@ convert = "/usr/bin/convert" # imagemagick convert
 imsize = "/usr/bin/imsize" # imsize
 
 # loop
-areas = backs = rmss = threshs = {}
+xdims = ydims = areas = backs = rmss = threshs = nobjs = {}
 for(i in 1:length(fnames)){
     
     #cat("\b\b\b\b\b     \b\b\b\b\b", i, " ", sep="", collapse="")
@@ -44,6 +44,8 @@ for(i in 1:length(fnames)){
     # areas
     iminfo = strsplit(system(paste0(imsize, " -d ", fproc), intern=TRUE), " +")[[1]]
     degs = as.numeric(strsplit(iminfo[5], "x")[[1]])
+    xdims = c(xdims, degs[1])
+    ydims = c(ydims, degs[2])
     areas = c(areas, prod(degs))
     
     # SEx stats
@@ -51,6 +53,7 @@ for(i in 1:length(fnames)){
     backs = c(backs, as.numeric(obits[3]))
     rmss = c(rmss, as.numeric(obits[5]))
     threshs = c(threshs, as.numeric(obits[8]))
+    nobjs = c(nobjs, nrow(read.table(fcat, stringsAsFactors=FALSE)))
     
     # clean up
     unlink(c(fproc,fcheck,fbinary,fmodulo,fmodify,jtemp))
@@ -58,6 +61,6 @@ for(i in 1:length(fnames)){
 }
 
 # write areas catalogue
-temp = cbind(FILE=fnames, AREA=areas, BACK=backs, RMS=rmss, THRESH=threshs)
+temp = cbind(FILE=fnames, XDIM=xdims, YDIM=ydims, AREA=areas, BACK=backs, RMS=rmss, THRESH=threshs, NOBJ=nobjs)
 write.csv(temp, file="imstats.csv", row.names=FALSE, quote=FALSE)
 
