@@ -14,20 +14,20 @@ cairo_pdf(file="numcounts.pdf", width=8, height=4)
 # par
 layout(cbind(1,2))
 par("mar"=c(0.5,0.5,0.5,0.5))
-par("oma"=c(2.5,3.5,1,3.5))
+par("oma"=c(2.5,3.5,1,1.5))
 
 # loop
 for(i in 1:length(infiles)){
     
     # plot
-    aplot(NA, xlim=c(14.5,30.5), ylim=c(10^0,10^7), log="y", yformat="p", las=1, type="n", xlab=bquote(paste("apparent magnitude : ", m[r])), ylab=bquote(paste(N[obj], " ", deg^{-2}, " ", mag^{-1})), xnmin=1, axes=FALSE)
+    aplot(NA, xlim=c(14.5,30.5), ylim=c(4*10^1,2*10^7), log="y", yformat="p", las=1, type="n", xlab=bquote(paste("apparent magnitude : ", m[r])), ylab=bquote(paste(N[obj], " ", deg^{-2}, " ", mag^{-1})), xnmin=1, axes=FALSE)
     mtext(side=3, line=0.25, text=c("low density region : 8283-38", "high-density region : 9592-20")[i])
     
     # raw data
     dat = read.table(infiles[i], stringsAsFactors=FALSE)
     colnames(dat) = c("NUMBER", "FLUX_AUTO", "MAG_AUTO", "KRON_RADIUS", "PETRO_RADIUS", "BACKGROUND", "THRESHOLD", "X_IMAGE", "Y_IMAGE", "A_IMAGE", "B_IMAGE", "THETA_IMAGE", "ELLIPTICITY", "CLASS_STAR", "FLUX_RADIUS")
     mags = dat[,"MAG_AUTO"]; if(any(mags == 99)){mags[mags==99]=NA}; mags = mags + 27
-    area = imstats[grep(strsplit(basename(infiles[i]), ".dat")[[1]][1], imstats),"AREA"]
+    area = imstats[grep(strsplit(basename(infiles[i]), ".dat")[[1]][1], imstats[,"FILE"]),"AREA"]
     
     # binned data
     breaks = c(seq(0,50,by=bw) - (bw/2), 50 + (bw/2))
@@ -48,32 +48,48 @@ for(i in 1:length(infiles)){
     binfaintlog = suppressWarnings(log10(binfaint))
     
     # plot
+    objlim = (1/area)/bw
+    maglower = binmag[which(binexp >= objlim)[1]-1]
     magupper = 30
-    lines(binmag[binmag>=magfaint & binmag<=magupper], binfaint[binmag>=magfaint & binmag<=magupper], col="grey90", type="h", lwd=7.5, lend=3)
+    lines(binmag[binmag>=maglower & binmag<=magbright], binexp[binmag>=maglower & binmag<=magbright], col="grey50", type="h", lwd=10, lend=3)
+    lines(binmag[binmag>=magfaint & binmag<=magupper], binfaint[binmag>=magfaint & binmag<=magupper], col="grey75", type="h", lwd=10, lend=3)
     lines(binmag-bw/2, bindat, col=c("#5e3c99","#e66101")[i], type="s", lwd=2, lend=3)
     lines(binmag+bw/2, bindat, col=c("#5e3c99","#e66101")[i], type="S", lwd=2, lend=3)
     abline(a=fitdat$par$a, b=0.4, col=c("#b2abd2","#fdb863")[i], lwd=1.5)
     abline(v=c(magbright,magfaint), lty=2, lend=3, lwd=1.5)
+    abline(h=objlim, lty=3, lend=3)
     
     # legend
     cex = 0.5
     inset = c(0.025,0.025)
-    legend("topleft", legend=c("detected","","faint missing"), lty=c(1,1,NA), lwd=c(2,1.5,NA), col=c("#5e3c99","#b2abd2",NA), fill=c(NA,NA,"grey90"), border=NA, bty="n", inset=inset, cex=cex, merge=T)
+    legend("topleft", legend=c("detected","","faint missing"), lty=c(1,1,NA), lwd=c(2,1.5,NA), col=c("#5e3c99","#b2abd2",NA), fill=c(NA,NA,"grey75"), border=NA, bty="n", inset=inset, cex=cex, merge=T)
     legend("topleft", legend=bquote(paste("log"[10], N["obj"]," = ", .(formatC(fitdat$par$a,format="f",digits=2)), " + 0.4", m[r], sep="")), lwd=1.5, col=c("#b2abd2","#fdb863")[i], bty="n", inset=inset+c(0,0.031), cex=cex)
     
     # finish up
-    aaxes(las=1, yformat="p", labels=list(c(1,2),c(1,4))[[i]], xnmin=4)
-    mtext(side=c(2,4)[i], line=2.5, text=bquote(paste(N[obj], " ", deg^{-2}, " ", mag^{-1})))
+    aaxes(las=1, yformat="p", labels=list(c(1,2),c(1,4))[[i]], xnmin=9, mgp=c(2,0.25,0))
+    mtext(side=c(2,5)[i], line=2, text=bquote(paste(N[obj], " ", deg^{-2}, " ", mag^{-1})))
+    
+    # sim-relevant data
+    simmag = binmag
+    simden = rep(0, length(simmag))
+    simden[simmag >= maglower & simmag <= magbright] = binexp[simmag >= maglower & simmag <= magbright]
+    simden[simmag >= magfaint & simmag <= magupper] = binfaint[simmag >= magfaint & simmag <= magupper]
+    simcat = cbind(MAG=simmag, DEN=simden, NUM=simden*bw*area)
+    write.csv(simcat, row.names=FALSE, quote=FALSE, file=paste0(strsplit(basename(infiles[i]), ".image.dat")[[1]][1], ".extra.csv"))
+    
+    # numbers
+    ncex = 0.75
+    nreal = sum(bindat[binmag > magbright] * bw * area)
+    nextra.bright = sum(ceiling(simden[simmag<=magbright] * bw * area))
+    nextra.faint = sum(ceiling(binfaint[binmag>=magfaint & binmag<=magupper] * bw * area))
+    text(x=magbright, y=objlim, lab=nextra.bright, col="white", adj=c(1.25,-0.5), cex=ncex)
+    text(x=mean(c(magbright,magfaint)), y=objlim, lab=nreal, col="black", adj=c(0.5,-0.5), cex=ncex)
+    text(x=magfaint, y=objlim, lab=nextra.faint, col="white", adj=c(-0.25,-0.5), cex=ncex)
     
 }
 
-## trend lines
-#mr = seq(0,50,by=bw)
-#logn = 10
-#lines(x,y*1e2)
-
 # finish up
 layout(1)
-mtext(side=1, line=2, text=bquote(paste("apparent magnitude : ", m[r])))
+mtext(side=1, line=1.75, text=bquote(paste("apparent magnitude : ", m[r])))
 graphics.off()
 
