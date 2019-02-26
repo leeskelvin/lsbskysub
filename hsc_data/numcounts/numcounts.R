@@ -51,15 +51,19 @@ for(i in 1:length(infiles)){
     objlim = (1/area)/bw
     maglower = binmag[which(binexp >= objlim)[1]-1]
     magupper = 30
-    lines(binmag[binmag>=maglower & binmag<=magbright], binexp[binmag>=maglower & binmag<=magbright], col="grey50", type="h", lwd=10, lend=3)
-    lines(binmag[binmag>=magfaint & binmag<=magupper], binfaint[binmag>=magfaint & binmag<=magupper], col="grey75", type="h", lwd=10, lend=3)
-    lines(binmag-bw/2, bindat, col=c("#5e3c99","#e66101")[i], type="s", lwd=2, lend=3)
-    lines(binmag+bw/2, bindat, col=c("#5e3c99","#e66101")[i], type="S", lwd=2, lend=3)
+    bars(x=binmag[binmag>=maglower & binmag<=magbright], y=binexp[binmag>=maglower & binmag<=magbright], width=bw, col="grey50")
+    bars(x=binmag[binmag>=magfaint & binmag<=magupper], y=binfaint[binmag>=magfaint & binmag<=magupper], width=bw, col="grey75")
+    bars(x=binmag, y=bindat, width=bw, col=NA, border=c("#5e3c99","#e66101")[i], joined=TRUE, lwd=2, ljoin=1)
+    bars(x=binmag[binmag>magbright], y=bindat[binmag>magbright], col=c("#5e3c99","#e66101")[i], density=25, angle=45, joined=TRUE)
     abline(a=fitdat$par$a, b=0.4, col=c("#b2abd2","#fdb863")[i], lwd=1.5)
     abline(v=c(magbright,magfaint), lty=2, lend=3, lwd=1.5)
     abline(h=objlim, lty=3, lend=3)
     
     # legend
+    alegend("topleft", legend=c("detected", "expected", "bright substitutes", "faint missing", "detected adopted"), type=list(l=list(),l=list(),f=list(),f=list(),f=list(density=25)))
+    
+    
+    
     cex = 0.5
     inset = c(0.025,0.025)
     legend("topleft", legend=c("detected","","faint missing"), lty=c(1,1,NA), lwd=c(2,1.5,NA), col=c("#5e3c99","#b2abd2",NA), fill=c(NA,NA,"grey75"), border=NA, bty="n", inset=inset, cex=cex, merge=T)
