@@ -51,23 +51,16 @@ for(i in 1:length(infiles)){
     objlim = (1/area)/bw
     maglower = binmag[which(binexp >= objlim)[1]-1]
     magupper = 30
-    bars(x=binmag[binmag>=maglower & binmag<=magbright], y=binexp[binmag>=maglower & binmag<=magbright], width=bw, col="grey50")
-    bars(x=binmag[binmag>=magfaint & binmag<=magupper], y=binfaint[binmag>=magfaint & binmag<=magupper], width=bw, col="grey75")
+    bars(x=binmag[binmag>=maglower & binmag<=magbright], y=binexp[binmag>=maglower & binmag<=magbright], width=bw, col="grey50", joined=TRUE)
+    bars(x=binmag[binmag>=magfaint & binmag<=magupper], y=binfaint[binmag>=magfaint & binmag<=magupper], width=bw, col="grey75", joined=TRUE)
     bars(x=binmag, y=bindat, width=bw, col=NA, border=c("#5e3c99","#e66101")[i], joined=TRUE, lwd=2, ljoin=1)
-    bars(x=binmag[binmag>magbright], y=bindat[binmag>magbright], col=c("#5e3c99","#e66101")[i], density=25, angle=45, joined=TRUE)
+    bars(x=binmag[binmag>magbright], y=bindat[binmag>magbright], col=c("#5e3c99","#e66101")[i], density=25, angle=-45, joined=TRUE)
     abline(a=fitdat$par$a, b=0.4, col=c("#b2abd2","#fdb863")[i], lwd=1.5)
     abline(v=c(magbright,magfaint), lty=2, lend=3, lwd=1.5)
     abline(h=objlim, lty=3, lend=3)
     
     # legend
-    alegend("topleft", legend=c("detected", "expected", "bright substitutes", "faint missing", "detected adopted"), type=list(l=list(),l=list(),f=list(),f=list(),f=list(density=25)))
-    
-    
-    
-    cex = 0.5
-    inset = c(0.025,0.025)
-    legend("topleft", legend=c("detected","","faint missing"), lty=c(1,1,NA), lwd=c(2,1.5,NA), col=c("#5e3c99","#b2abd2",NA), fill=c(NA,NA,"grey75"), border=NA, bty="n", inset=inset, cex=cex, merge=T)
-    legend("topleft", legend=bquote(paste("log"[10], N["obj"]," = ", .(formatC(fitdat$par$a,format="f",digits=2)), " + 0.4", m[r], sep="")), lwd=1.5, col=c("#b2abd2","#fdb863")[i], bty="n", inset=inset+c(0,0.031), cex=cex)
+    alegend("topleft", legend=c("detected", "expected", "bright substitutes", "faint missing", "detected adopted"), type=list(l=list(col=c("#5e3c99","#e66101")[i],lwd=2,lend=1), l=list(col=c("#b2abd2","#fdb863")[i],lwd=1.5,lend=1), f=list(col="grey50",border=NA), f=list(col="grey75",border=NA), f=list(col=c("#5e3c99","#e66101")[i],density=25,angle=-45,border=NA)), cex=0.75)
     
     # finish up
     aaxes(las=1, yformat="p", labels=list(c(1,2),c(1,4))[[i]], xnmin=9, mgp=c(2,0.25,0))
