@@ -9,7 +9,7 @@ imstats = read.csv("../sourcecats/imstats.csv", stringsAsFactors=FALSE)
 bw = 0.5 # magnitude bin width
 
 # dev
-cairo_pdf(file="numcounts.pdf", width=8, height=4)
+pdf(file="numcounts.pdf", width=8, height=4)
 
 # par
 layout(cbind(1,2))
@@ -20,7 +20,7 @@ par("oma"=c(2.5,3.5,1,1.5))
 for(i in 1:length(infiles)){
     
     # plot
-    aplot(NA, xlim=c(14.5,30.5), ylim=c(4*10^1,2*10^7), log="y", yformat="p", las=1, type="n", xlab=bquote(paste("apparent magnitude : ", m[r])), ylab=bquote(paste(N[obj], " ", deg^{-2}, " ", mag^{-1})), xnmin=1, axes=FALSE)
+    aplot(NA, xlim=c(14.5,30.5), ylim=c(4*10^1,2*10^7), log="y", yformat="p", las=1, type="n", xlab="", ylab="", xnmin=1, axes=FALSE)
     mtext(side=3, line=0.25, text=c("low density region : 8283-38", "high-density region : 9592-20")[i])
     
     # raw data
@@ -59,13 +59,6 @@ for(i in 1:length(infiles)){
     abline(v=c(magbright,magfaint), lty=2, lend=3, lwd=1.5)
     abline(h=objlim, lty=3, lend=3)
     
-    # legend
-    alegend("topleft", legend=c("detected", "expected", "bright substitutes", "faint missing", "detected adopted"), type=list(l=list(col=c("#5e3c99","#e66101")[i],lwd=2,lend=1), l=list(col=c("#b2abd2","#fdb863")[i],lwd=1.5,lend=1), f=list(col="grey50",border=NA), f=list(col="grey75",border=NA), f=list(col=c("#5e3c99","#e66101")[i],density=25,angle=-45,border=NA)), cex=0.75)
-    
-    # finish up
-    aaxes(las=1, yformat="p", labels=list(c(1,2),c(1,4))[[i]], xnmin=9, mgp=c(2,0.25,0))
-    mtext(side=c(2,5)[i], line=2, text=bquote(paste(N[obj], " ", deg^{-2}, " ", mag^{-1})))
-    
     # sim-relevant data
     simmag = binmag
     simden = rep(0, length(simmag))
@@ -79,9 +72,11 @@ for(i in 1:length(infiles)){
     nreal = sum(bindat[binmag > magbright] * bw * area)
     nextra.bright = sum(ceiling(simden[simmag<=magbright] * bw * area))
     nextra.faint = sum(ceiling(binfaint[binmag>=magfaint & binmag<=magupper] * bw * area))
-    text(x=magbright, y=objlim, lab=nextra.bright, col="white", adj=c(1.25,-0.5), cex=ncex)
-    text(x=mean(c(magbright,magfaint)), y=objlim, lab=nreal, col="black", adj=c(0.5,-0.5), cex=ncex)
-    text(x=magfaint, y=objlim, lab=nextra.faint, col="white", adj=c(-0.25,-0.5), cex=ncex)
+    
+    # finish up
+    aaxes(las=1, yformat="p", labels=list(c(1,2),c(1,4))[[i]], xnmin=9, mgp=c(2,0.25,0))
+    mtext(side=c(2,NA)[i], line=2, text=bquote(paste(N[obj], " ", deg^{-2}, " ", mag^{-1})))
+    alegend("topleft", legend=c(paste0("detected (",nrow(dat),")"), bquote("log"[10]*N["obj"]*"="*.(formatC(fitdat$par$a,format="f",digits=2))*"+0.4"*m["r"]), paste0("bright mocks (",nextra.bright,")"), paste0("detected & used (",nreal,")"), paste0("faint missing (",nextra.faint,")")), type=list(l=list(col=c("#5e3c99","#e66101")[i],lwd=2,lend=1), l=list(col=c("#b2abd2","#fdb863")[i],lwd=1.5,lend=1), f=list(col="grey50",border=NA), f=list(col=c("#5e3c99","#e66101")[i],density=25,angle=-45,border=NA), f=list(col="grey75",border=NA)), cex=0.65, seg.len=1.25, seg.gap=0.35)
     
 }
 
