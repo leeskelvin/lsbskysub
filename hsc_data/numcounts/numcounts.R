@@ -76,7 +76,7 @@ for(i in 1:length(infiles)){
     # finish up
     aaxes(las=1, yformat="p", labels=list(c(1,2),c(1,4))[[i]], xnmin=9, mgp=c(2,0.25,0))
     mtext(side=c(2,NA)[i], line=2, text=bquote(paste(N[obj], " ", deg^{-2}, " ", mag^{-1})))
-    alegend("topleft", legend=c(paste0("detected (",nrow(dat),")"), bquote("log"[10]*N["obj"]*"="*.(formatC(fitdat$par$a,format="f",digits=2))*"+0.4"*m["r"]), paste0("bright mocks (",nextra.bright,")"), paste0("detected & used (",nreal,")"), paste0("faint missing (",nextra.faint,")")), type=list(l=list(col=c("#5e3c99","#e66101")[i],lwd=2,lend=1), l=list(col=c("#b2abd2","#fdb863")[i],lwd=1.5,lend=1), f=list(col="grey50",border=NA), f=list(col=c("#5e3c99","#e66101")[i],density=25,angle=-45,border=NA), f=list(col="grey75",border=NA)), cex=0.65, seg.len=1.25, seg.gap=0.35)
+    alegend("topleft", legend=c(paste0("detected (",nrow(dat),")"), bquote("log"[10]*N["obj"]*"="*.(formatC(fitdat$par$a,format="f",digits=2))*"+0.4"*m["r"]), paste0("bright mocks (",nextra.bright,")"), paste0("detected & used (",nreal,")"), paste0("faint missing (",nextra.faint,")")), type=list(l=list(col=c("#5e3c99","#e66101")[i],lwd=2,lend=1), l=list(col=c("#b2abd2","#fdb863")[i],lwd=1.5,lend=1), f=list(col="grey50",border=NA), f=list(col=c("#5e3c99","#e66101")[i],density=25,angle=-45,border=NA), f=list(col="grey75",border=NA)), cex=0.65, seg.len=1.25, seg.gap=0.35, inset=0.45)
     
 }
 
