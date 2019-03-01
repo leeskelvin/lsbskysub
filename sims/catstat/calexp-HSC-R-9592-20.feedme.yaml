@@ -1,6 +1,6 @@
 psf :
     type : InterpolatedImage
-    image : "../hsc_data/psf/calexp-HSC-R-8283-38.psf.fits"
+    image : "../../hsc_data/psf/calexp-HSC-R-8283-38.psf.fits"
     scale : 0.168 # arcsec
 
 gal :

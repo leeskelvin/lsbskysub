@@ -8,6 +8,7 @@ set.seed(5)
 datas = paste0("../../hsc_data/calexp/", grep(".dat", dir("../../hsc_data/calexp/"), value=TRUE))
 extras = paste0("../../hsc_data/numcounts/", grep(".csv", dir("../../hsc_data/numcounts/"), value=TRUE))
 pixelsize = 0.168 # arcsec/pixel
+n = 1
 
 # loop
 for(i in 1:length(datas)){
@@ -32,31 +33,24 @@ for(i in 1:length(datas)){
     bgalmags = rep(bdat[,"MAG"], times=ceiling(bdat[,"NUM"])) + runif(sum(ceiling(bdat[,"NUM"])), min=-bw/2, max=bw/2)
     file.regrid = paste0("../regrid/", strsplit(basename(datas[i]), ".image.dat")[[1]], ".regrid.fits")
     imdat.regrid = read.fitsim(file.regrid)
-    imdat.probs = (imdat.regrid - min(imdat.regrid)) / (max(imdat.regrid) - min(imdat.regrid))
-    imdat.probs = (imdat.probs * 0.5) + 0.5 # p = 0.5-1.0
-    xy = expand.grid(1:nrow(imdat.regrid), 1:ncol(imdat.regrid))
-    xy.selected = xy[sample(1:length(imdat.regrid), size=sum(ceiling(bdat[,"NUM"])), prob=imdat.probs),]
-    
-    
-    
-    
-    limit.regrid = sort(imdat.regrid, decreasing=T)[sum(ceiling(bdat[,"NUM"]))]
-    xy.regrid = which(imdat.regrid >= limit.regrid, arr.ind=T)
-    for(j in 1:nrow(bdat)){
-        
-    }
-    
-    # derived/assigned quantities
-    n = rep(1, nrow(dat))
-    stamp_size = ceiling(2*sersic.fluxfrac2r(0.999, n=n, r.ref=dat[,"FLUX_RADIUS"], fluxfrac.ref=0.5)) # pixels
+    imdat.probs = sqrt((imdat.regrid - min(imdat.regrid)) / (max(imdat.regrid) - min(imdat.regrid)))
+    xy.all = expand.grid(1:nrow(imdat.regrid), 1:ncol(imdat.regrid))
+    xy.bright = xy.all[sample(1:nrow(xy.all), size=sum(ceiling(bdat[,"NUM"])), prob=imdat.probs),]
+    colnames(xy.bright) = c("x","y")
+    xy.bright[,1] = xy.bright[,1]*100 + runif(n=nrow(xy.bright), min=-100, max=0)
+    xy.bright[,2] = xy.bright[,2]*100 + runif(n=nrow(xy.bright), min=-100, max=0)
+    out.bright = data.frame(x=xy.bright[,"x"], y=xy.bright[,"y"], flux=10^(-0.4*(bgalmags-27)), half_light_radius=5, q=1, theta=0, n=n)
     
     # generate GalSim input catalogue: n, half_light_radius, flux, q, theta, stamp_size, x, y
-    out = data.frame(x=dat[,"X_IMAGE"], y=dat[,"Y_IMAGE"], flux=dat[,"FLUX_AUTO"], half_light_radius=dat[,"FLUX_RADIUS"]*pixelsize, q=1-dat[,"ELLIPTICITY"], theta=dat[,"THETA_IMAGE"], n=n, stamp_size=stamp_size)
+    out.dat = data.frame(x=dat[,"X_IMAGE"], y=dat[,"Y_IMAGE"], flux=dat[,"FLUX_AUTO"], half_light_radius=dat[,"FLUX_RADIUS"]*pixelsize, q=1-dat[,"ELLIPTICITY"], theta=dat[,"THETA_IMAGE"], n=rep(n, nrow(dat)))
     
     # bright/faint additions here
     
     
     # write
+    out = rbind(out.dat, out.bright)
+    stamp_size = ceiling(2*sersic.fluxfrac2r(0.999, n=n, r.ref=out[,"half_light_radius"]/pixelsize, fluxfrac.ref=0.5)) # pixels
+    out = cbind(out, stamp_size=stamp_size)
     outname = paste0(strsplit(basename(datas[i]), ".image.dat")[[1]], ".input.dat")
     write.table(out, file=outname, sep=" ", row.names=FALSE, quote=FALSE, col.names=FALSE)
     
