@@ -20,6 +20,7 @@ par("oma"=c(2.5,3.5,1,1.5))
 for(i in 1:length(infiles)){
     
     # plot
+    palette(c("#000000","#f1a340","#998ec3","#edf8b1","#7fcdbb","#2c7fb8"))
     aplot(NA, xlim=c(14.5,30.5), ylim=c(4*10^1,2*10^7), log="y", yformat="p", las=1, type="n", xlab="", ylab="", xnmin=1, axes=FALSE)
     mtext(side=3, line=0.25, text=c("low density region : 8283-38", "high-density region : 9592-20")[i])
     
@@ -41,7 +42,7 @@ for(i in 1:length(infiles)){
     magfaint = 25
     fn = function(x, a){return(a + 0.4*x)}
     good = which(binmag >= magbright & binmag <= magfaint)
-    fitdat = fit(data=bindatlog[good], par=list(a=1), fn=fn, arg=list(x=binmag[good]))
+    fitdat = chisq.fit(data=bindatlog[good], par=list(a=1), fn=fn, arg=list(x=binmag[good]))
     binexplog = fn(x=binmag, a=fitdat$par$a)
     binexp = 10^binexplog
     binfaint = binexp - bindat
@@ -54,8 +55,9 @@ for(i in 1:length(infiles)){
     bars(x=binmag[binmag>=maglower & binmag<=magbright], y=binexp[binmag>=maglower & binmag<=magbright], width=bw, col="grey50", joined=TRUE)
     bars(x=binmag[binmag>=magfaint & binmag<=magupper], y=binfaint[binmag>=magfaint & binmag<=magupper], width=bw, col="grey75", joined=TRUE)
     bars(x=binmag, y=bindat, width=bw, col=NA, border=c("#5e3c99","#e66101")[i], joined=TRUE, lwd=2, ljoin=1)
-    bars(x=binmag[binmag>magbright], y=bindat[binmag>magbright], col=c("#5e3c99","#e66101")[i], density=25, angle=-45, joined=TRUE)
-    abline(a=fitdat$par$a, b=0.4, col=c("#b2abd2","#fdb863")[i], lwd=1.5)
+    
+    bars(x=binmag[binmag>magbright], y=bindat[binmag>magbright], col=i+1, density=25, angle=-45, joined=TRUE)
+    abline(a=fitdat$par$a, b=0.4, col=i+1, lwd=1.5)
     abline(v=c(magbright,magfaint), lty=2, lend=3, lwd=1.5)
     abline(h=objlim, lty=3, lend=3)
     
@@ -75,6 +77,7 @@ for(i in 1:length(infiles)){
     
     # finish up
     aaxes(las=1, yformat="p", labels=list(c(1,2),c(1,4))[[i]], xnmin=9, mgp=c(2,0.25,0))
+    abox()
     mtext(side=c(2,NA)[i], line=2, text=bquote(paste(N[obj], " ", deg^{-2}, " ", mag^{-1})))
     alegend("topleft", legend=c(paste0("detected (",nrow(dat),")"), bquote("log"[10]*N["obj"]*"="*.(formatC(fitdat$par$a,format="f",digits=2))*"+0.4"*m["r"]), paste0("bright mocks (",nextra.bright,")"), paste0("detected & used (",nreal,")"), paste0("faint missing (",nextra.faint,")")), type=list(l=list(col=c("#5e3c99","#e66101")[i],lwd=2,lend=1), l=list(col=c("#b2abd2","#fdb863")[i],lwd=1.5,lend=1), f=list(col="grey50",border=NA), f=list(col=c("#5e3c99","#e66101")[i],density=25,angle=-45,border=NA), f=list(col="grey75",border=NA)), cex=0.65, seg.len=1.25, seg.gap=0.35, inset=0.45)
     
