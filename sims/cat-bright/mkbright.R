@@ -5,30 +5,22 @@ require("astro", quietly=TRUE)
 set.seed(5)
 
 # definitions
-datas = paste0("../../hsc_data/calexp/", grep(".dat", dir("../../hsc_data/calexp/"), value=TRUE))
-extras = paste0("../../hsc_data/numcounts/", grep(".csv", dir("../../hsc_data/numcounts/"), value=TRUE))
+cats = paste0("../../hsc_data/numcounts/", grep(".csv", dir("../../hsc_data/numcounts/"), value=TRUE))
 pixelsize = 0.168 # arcsec/pixel
-n = 1
+n = 1 # sersic index
 
 # loop
-for(i in 1:length(datas)){
+for(i in 1:length(cats)){
     
     # setup
-    dat = read.table(datas[i], stringsAsFactors=FALSE)
-    colnames(dat) = c("NUMBER", "FLUX_AUTO", "MAG_AUTO", "KRON_RADIUS", "PETRO_RADIUS", "BACKGROUND", "THRESHOLD", "X_IMAGE", "Y_IMAGE", "A_IMAGE", "B_IMAGE", "THETA_IMAGE", "ELLIPTICITY", "CLASS_STAR", "FLUX_RADIUS")
-    if(any(dat[,"FLUX_AUTO"] < 0)){dat = dat[-dat[,"FLUX_AUTO"]<0,]}
-    ext = read.csv(extras[i], stringsAsFactors=FALSE)
+    dat = read.csv(cats[i], stringsAsFactors=FALSE)
     
-    # trim bright sources
+    # define bright sources
     magbright = 22
-    magfaint = 25
-    magend = 30
     bw = 0.5
-    toobright = which( (dat[,"MAG_AUTO"]+27) <= (magbright+bw/2) )
-    dat = dat[-toobright,]
     
     # derive new mock bright sources
-    bdat = ext[which(ext[,"MAG"] <= magbright),]
+    bdat = dat[which(dat[,"MAG"] <= magbright),]
     bdat = bdat[-which(bdat[,"NUM"]==0),]
     bgalmags = rep(bdat[,"MAG"], times=ceiling(bdat[,"NUM"])) + runif(sum(ceiling(bdat[,"NUM"])), min=-bw/2, max=bw/2)
     file.regrid = paste0("../regrid/", strsplit(basename(datas[i]), ".image.dat")[[1]], ".regrid.fits")

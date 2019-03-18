@@ -4,9 +4,9 @@
 require("astro", quietly=TRUE)
 
 # definitions
-manifest = readRDS("../hsc_data/manifest_HSC.rds")
-datas = paste0("../hsc_data/calexp/", grep(".dat", dir("../hsc_data/calexp/"), value=TRUE))
-imstats = read.csv("../hsc_data/sourcecats/imstats.csv", stringsAsFactors=FALSE)
+manifest = readRDS("../../hsc_data/manifest_HSC.rds")
+datas = paste0("../../hsc_data/calexp/", grep(".dat", dir("../../hsc_data/calexp/"), value=TRUE))
+imstats = read.csv("../../hsc_data/sourcecats/imstats.csv", stringsAsFactors=FALSE)
 
 # loop
 for(i in 1:length(datas)){
