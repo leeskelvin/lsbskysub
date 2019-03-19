@@ -8,6 +8,14 @@ funpack = "/usr/bin/funpack"
 # definitions
 infiles = paste0("../../hsc_data/calexp/", c("calexp-HSC-R-8283-38.image.fits.fz", "calexp-HSC-R-9592-20.image.fits.fz"))
 
+# dev
+png(file="hireslores.png", width=8, height=8, units="in", res=300)
+
+# par
+layout(cbind(c(1,2),c(3,4)))
+par("oma"=c(0.5,0.5,2,0.5))
+par("mar"=c(0.25,0.5,0.25,0.5))
+
 # loop
 for(i in 1:length(infiles)){
     
@@ -27,5 +35,15 @@ for(i in 1:length(infiles)){
     
     unlink(unpackedfile)
     
+    scale.lo = -0.1
+    scale.hi = 25
+    aimage(imdat, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.1, scale.hi=25)
+    #label("topleft", label=c("8283-38 (low density)", "9592-20 (high density)")[i], cex=1.25, col="white")
+    mtext(side=3, line=0.5, text=c("8283-38 (low density region)", "9592-20 (high density region)")[i], cex=1.25)
+    aimage(imdat.small/(100*100), col.map="sls", scale.type="log", axes=FALSE, scale.lo=scale.lo/10, scale.hi=scale.hi/10)
+    
 }
+
+# finish up
+graphics.off()
 

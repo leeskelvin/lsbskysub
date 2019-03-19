@@ -14,10 +14,35 @@ for(i in 1:length(cats)){
     
     # setup
     dat = read.csv(cats[i], stringsAsFactors=FALSE)
+    lores = read.fitsim(paste0(strsplit(basename(cats[i]), ".extra.csv")[[1]], ".lores.fits"))
     
-    # define bright sources
+    # define bright sources and output results data frame
     magbright = 22
     bw = 0.5
+    dat = dat[dat[,"NUM"]>0 & dat[,"MAG"]<=(magbright+bw/2),]
+    out = data.frame(x=numeric(nrow(dat)), y=numeric(nrow(dat)), flux=numeric(nrow(dat)), half_light_radius=numeric(nrow(dat)), q=numeric(nrow(dat)), theta=numeric(nrow(dat)), n=n, stamp_size=numeric(nrow(dat)))
+    
+    # loop
+    for(j in 1:nrow(dat)){
+        
+        # setup
+        num = ceiling(dat[j,"NUM"])
+        mags = dat[j,"MAG"] + runif(num, min=-bw/2, max=bw/2) # r-band
+        flux = 10^(-0.4 * (mags - 27)) # counts
+        ## needs 25% spread ## half_light_radius = (-0.15 * mags) + 4.25 # arcsec
+        
+        
+    }
+    
+    
+    
+    out = data.frame(x=dat[,"X_IMAGE"], y=dat[,"Y_IMAGE"], flux=dat[,"FLUX_AUTO"], half_light_radius=dat[,"FLUX_RADIUS"]*pixelsize, q=1-dat[,"ELLIPTICITY"], theta=dat[,"THETA_IMAGE"], n=rep(n, nrow(dat)))
+    stamp_size = ceiling(2*sersic.fluxfrac2r(0.999, n=n, r.ref=out[,"half_light_radius"]/pixelsize, fluxfrac.ref=0.5)) # pixels
+    out = cbind(out, stamp_size=stamp_size)
+    
+    
+    
+    
     
     # derive new mock bright sources
     bdat = dat[which(dat[,"MAG"] <= magbright),]
