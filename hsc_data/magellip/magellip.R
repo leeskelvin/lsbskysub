@@ -66,10 +66,12 @@ for(i in 1:length(mags)){
 # 2D fit
 xyz = expand.grid(x=mags, y=1:4)
 xyz = cbind(xyz, z=c(e1s,e2s,e3s,e4s), num=c(n1s,n2s,n3s,n4s))
-if(any(is.na(xyz[,3]))){xyz = xyz[-which(is.na(xyz[,3])),]}
-x = xyz[,1]
-y = xyz[,2]
-z = xyz[,3]
+if(any(is.na(xyz[,"z"]))){xyz = xyz[-which(is.na(xyz[,"z"])),]}
+fitxyz = xyz
+fitxyz = fitxyz[-which(xyz[,"num"]<=5),]
+x = fitxyz[,"x"]
+y = fitxyz[,"y"]
+z = fitxyz[,"z"]
 fit = lm(z ~ y + x + I(x^2)); print(fit)
 uvw = expand.grid(x=mags, y=1:4)
 uvw = cbind(uvw, z = fit$coef[1] + fit$coef[2]*uvw[,"y"] + fit$coef[3]*uvw[,"x"] + fit$coef[4]*uvw[,"x"]^2)
@@ -87,7 +89,7 @@ par("mar"=c(0,0.75,0,0.75))
 par("oma"=c(3,3.5,3,0))
 col.map = "rainbow"
 scale.lo = 0.1
-scale.hi = 0.4
+scale.hi = 0.5
 cex = 3.7
 
 # plot
@@ -100,7 +102,7 @@ mtext(side=2, at=2.5, line=1.5, text="Observed")
 aaxis(side=1, at=16:30, tick=FALSE)
 rect(xl=16.22, xr=27.78, yb=0.45, yt=4.55, lwd=2, border="grey75")
 
-col.bar("top", horizontal=TRUE, flip=TRUE, col.map=col.map, scale.lo=scale.lo, scale.hi=scale.hi, inset=-1.75, seg.num=499, n=4)
+col.bar("top", horizontal=TRUE, flip=TRUE, col.map=col.map, scale.lo=scale.lo, scale.hi=scale.hi, inset=-1.75, seg.num=501, n=5)
 
 aplot(uvw[,1], uvw[,2], uvw[,3], pch=15, scale.lo=scale.lo, scale.hi=scale.hi, col.map=col.map, cex=cex, xlim=c(16.5,27.5), ylim=c(0.6,5.4), axes=FALSE, xlab="", ylab="")
 mtext(side=2, at=1:4, line=0, las=1, text=c("Q1","Q2","Q3","Q4"))

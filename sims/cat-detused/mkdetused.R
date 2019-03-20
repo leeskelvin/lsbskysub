@@ -29,7 +29,7 @@ for(i in 1:length(cats)){
     out = cbind(out, stamp_size=stamp_size)
     
     # write
-    outname = paste0(strsplit(basename(cats[i]), ".image.dat")[[1]], ".cat-detused.dat")
+    outname = paste0(strsplit(basename(cats[i]), ".image.dat")[[1]], ".cat-detused-n",n,".dat")
     write.table(out, file=outname, sep=" ", row.names=FALSE, quote=FALSE, col.names=FALSE)
     
 }
