@@ -7,7 +7,9 @@ set.seed(5)
 # definitions
 cats = paste0("../../hsc_data/numcounts/", grep(".csv", dir("../../hsc_data/numcounts/"), value=TRUE))
 pixelsize = 0.168 # arcsec/pixel
-n = 1 # sersic index
+#n = 4 # sersic index
+n = as.numeric(commandArgs(TRUE)); if(length(n) == 0){stop("specify n")}
+fluxfrac = 0.995
 
 # loop
 for(i in 1:length(cats)){
@@ -37,8 +39,9 @@ for(i in 1:length(cats)){
         ellip = pmin(pmax(0.5 + runif(binnum,min=-0.2,max=0.2), 0), 1)
         q = 1 - ellip # axis ratio
         theta = runif(binnum, min=-90, max=90) # degrees
-        stamp_size = ceiling(2*sersic.fluxfrac2r(0.999, n=n, r.ref=half_light_radius/pixelsize, fluxfrac.ref=0.5)) # pixels
-        out = rbind(out, cbind(x=x, y=y, flux=flux, half_light_radius=half_light_radius, q=q, theta=theta, n=n, stamp_size=stamp_size))
+        stamp_size = ceiling(2*sersic.fluxfrac2r(fluxfrac, n=n, r.ref=half_light_radius/pixelsize, fluxfrac.ref=0.5)) # pixels
+        # digits: x=1, y=1, flux=3, half_light_radius=3, q=2, theta=1, n=NA, stamp_size=NA
+        out = rbind(out, cbind(x=formatC(x,format="f",digits=1), y=formatC(y,format="f",digits=1), flux=formatC(flux,format="f",digits=3), half_light_radius=formatC(half_light_radius,format="f",digits=3), q=formatC(q,format="f",digits=2), theta=formatC(theta,format="f",digits=1), n=n, stamp_size=stamp_size))
         
     }
     
