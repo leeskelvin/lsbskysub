@@ -17,18 +17,18 @@ colnames(dat) = c("NUMBER", "FLUX_AUTO", "MAG_AUTO", "KRON_RADIUS", "PETRO_RADIU
 if(any(dat[,"MAG_AUTO"] == 99)){dat = dat[-which(dat[,"MAG_AUTO"]==99),]}
 dat[,"FLUX_RADIUS"] = dat[,"FLUX_RADIUS"] * pixelsize # now in arcsec
 dat[,"MAG_AUTO"] = dat[,"MAG_AUTO"] + 27 # zero point correction
-dat = dat[dat[,"CLASS_STAR"]<=0.03,] # remove probable stars
+dat = dat[dat[,"CLASS_STAR"]<=0.05,] # remove probable stars
 dat = dat[sample(x=nrow(dat)),] # randomise for plotting
 
 # loop
 bw = 0.5
 mags = seq(16.5, 27.5, by=bw)
-radlos = radhis = e1s = e2s = e3s = e4s = numeric(length(mags))
-for(i in 2:length(mags)){
+e1s = e2s = e3s = e4s = nums = rep(NA,length(mags))
+for(i in 1:length(mags)){
     samp = which(dat[,"MAG_AUTO"] >= mags[i]-bw/2 & dat[,"MAG_AUTO"] <= mags[i]+bw/2)
-    imag = dat[samp,"MAG_AUTO"]
     irad = dat[samp,"FLUX_RADIUS"]
     iellip = dat[samp,"ELLIPTICITY"]
+#    imag = dat[samp,"MAG_AUTO"]
 #    radmid = (-0.15 * imag) + 4.25
 #    radlo = radmid - 0.25*radmid
 #    radlomid = radmid - 0.125*radmid
@@ -46,41 +46,67 @@ for(i in 2:length(mags)){
 #    if(sum(radid==4) > 0){e4 = iellip[radid==4]}
 #    radlos[i] = ((-0.15 * mags[i]) + 4.25) - 0.25*((-0.15 * mags[i]) + 4.25)
 #    radhis[i] = ((-0.15 * mags[i]) + 4.25) + 0.25*((-0.15 * mags[i]) + 4.25)
-    qrad = quantile(irad)
-    e1 = iellip[irad >= qrad[1] & irad <= qrad[2]]
-    e2 = iellip[irad >= qrad[2] & irad <= qrad[3]]
-    e3 = iellip[irad >= qrad[3] & irad <= qrad[4]]
-    e4 = iellip[irad >= qrad[4] & irad <= qrad[5]]
-    e1s[i] = median(e1)
-    e2s[i] = median(e2)
-    e3s[i] = median(e3)
-    e4s[i] = median(e4)
+    nums[i] = length(irad)
+    if(length(irad) >= 1){
+        qrad = quantile(irad)
+        e1 = iellip[irad >= qrad[1] & irad <= qrad[2]]
+        e2 = iellip[irad >= qrad[2] & irad <= qrad[3]]
+        e3 = iellip[irad >= qrad[3] & irad <= qrad[4]]
+        e4 = iellip[irad >= qrad[4] & irad <= qrad[5]]
+        e1s[i] = median(e1)
+        e2s[i] = median(e2)
+        e3s[i] = median(e3)
+        e4s[i] = median(e4)
+    }
 }
 
+# 2D fit
+xyz = expand.grid(x=mags, y=1:4)
+xyz = cbind(xyz, z=c(e1s,e2s,e3s,e4s))
+if(any(is.na(xyz[,3]))){xyz = xyz[-which(is.na(xyz[,3])),]}
+x = xyz[,1]
+y = xyz[,2]
+z = xyz[,3]
+fit = lm(z ~ y + x + I(x^2)); print(fit)
+uvw = expand.grid(x=mags, y=1:4)
+uvw = cbind(uvw, z = fit$coef[1] + fit$coef[2]*uvw[,"y"] + fit$coef[3]*uvw[,"x"] + fit$coef[4]*uvw[,"x"]^2)
+colnames(uvw) = c("MAG", "QRAD", "ELLIP")
+oo = order(uvw[,1])
+uvw = uvw[oo,]
+write.csv(uvw, file="magellip.csv", row.names=FALSE, quote=FALSE)
+
 # dev
-pdf(file="magellip.pdf", width=8, height=2.75)
+pdf(file="magellip.pdf", width=8, height=4.25)
 
 # par
-par("mar"=c(3,3,3,1))
-
-# plot
+layout(rbind(1,2))
+par("mar"=c(0,0.75,0,0.75))
+par("oma"=c(3,3.5,3,0))
 col.map = "rainbow"
 scale.lo = 0.1
 scale.hi = 0.4
-xy = expand.grid(x=mags, y=1:4)
-xy = cbind(xy, c(e1s,e2s,e3s,e4s))
-aplot(xy[,1], xy[,2], xy[,3], pch=15, scale.lo=scale.lo, scale.hi=scale.hi, col.map=col.map, cex=3.5, xlim=c(16.5,27.5), ylim=c(0.5,5.5), axes=FALSE, xlab="", ylab="")
-mtext(side=2, at=1.5, line=0, las=1, text=bquote(Q[1]))
-mtext(side=2, at=2.5, line=0, las=1, text=bquote(Q[2]))
-mtext(side=2, at=3.5, line=0, las=1, text=bquote(Q[3]))
+cex = 3.7
+
+# plot
+aplot(xyz[,1], xyz[,2], xyz[,3], pch=15, scale.lo=scale.lo, scale.hi=scale.hi, col.map=col.map, cex=cex, xlim=c(16.5,27.5), ylim=c(0.6,5.4), axes=FALSE, xlab="", ylab="")
+mtext(side=2, at=1:4, line=0, las=1, text=c("Q1","Q2","Q3","Q4"))
+mtext(side=2, at=2.5, line=1.5, text="Observed")
 aaxis(side=1, at=16:30, tick=FALSE)
-mtext(side=1, line=1.75, text=bquote(paste("apparent magnitude : ", m[r])))
-mtext(side=2, line=1.75, text="half light radius", at=2.5)
-mtext(side=3, line=1.5, text="median ellipticity")
+rect(xl=16.22, xr=27.78, yb=0.45, yt=4.55, lwd=2, border="grey75")
+
 col.bar("top", horizontal=TRUE, flip=TRUE, col.map=col.map, scale.lo=scale.lo, scale.hi=scale.hi, inset=-1.75, seg.num=499, n=4)
-rect(xl=16.2, xr=27.8, yb=0.4, yt=4.6, lwd=2, border="grey75")
+
+aplot(uvw[,1], uvw[,2], uvw[,3], pch=15, scale.lo=scale.lo, scale.hi=scale.hi, col.map=col.map, cex=cex, xlim=c(16.5,27.5), ylim=c(0.6,5.4), axes=FALSE, xlab="", ylab="")
+mtext(side=2, at=1:4, line=0, las=1, text=c("Q1","Q2","Q3","Q4"))
+mtext(side=2, at=2.5, line=1.5, text="Modelled")
+aaxis(side=1, at=16:30, tick=FALSE)
+rect(xl=16.22, xr=27.78, yb=0.45, yt=4.55, lwd=2, border="grey75")
 
 # finish up
+layout(1)
+mtext(side=1, line=1.75, text=bquote(paste("apparent magnitude : ", m[r])))
+mtext(side=2, line=2.75, text="half light radius", at=2.5)
+mtext(side=3, line=1.5, text="median ellipticity")
 graphics.off()
 
 
