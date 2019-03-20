@@ -23,7 +23,7 @@ dat = dat[sample(x=nrow(dat)),] # randomise for plotting
 # loop
 bw = 0.5
 mags = seq(16.5, 27.5, by=bw)
-e1s = e2s = e3s = e4s = nums = rep(NA,length(mags))
+e1s = e2s = e3s = e4s = n1s = n2s = n3s = n4s = rep(NA,length(mags))
 for(i in 1:length(mags)){
     samp = which(dat[,"MAG_AUTO"] >= mags[i]-bw/2 & dat[,"MAG_AUTO"] <= mags[i]+bw/2)
     irad = dat[samp,"FLUX_RADIUS"]
@@ -46,8 +46,7 @@ for(i in 1:length(mags)){
 #    if(sum(radid==4) > 0){e4 = iellip[radid==4]}
 #    radlos[i] = ((-0.15 * mags[i]) + 4.25) - 0.25*((-0.15 * mags[i]) + 4.25)
 #    radhis[i] = ((-0.15 * mags[i]) + 4.25) + 0.25*((-0.15 * mags[i]) + 4.25)
-    nums[i] = length(irad)
-    if(length(irad) >= 1){
+    if(length(irad) >= 0){
         qrad = quantile(irad)
         e1 = iellip[irad >= qrad[1] & irad <= qrad[2]]
         e2 = iellip[irad >= qrad[2] & irad <= qrad[3]]
@@ -57,12 +56,16 @@ for(i in 1:length(mags)){
         e2s[i] = median(e2)
         e3s[i] = median(e3)
         e4s[i] = median(e4)
+        n1s[i] = length(e1)
+        n2s[i] = length(e2)
+        n3s[i] = length(e3)
+        n4s[i] = length(e4)
     }
 }
 
 # 2D fit
 xyz = expand.grid(x=mags, y=1:4)
-xyz = cbind(xyz, z=c(e1s,e2s,e3s,e4s))
+xyz = cbind(xyz, z=c(e1s,e2s,e3s,e4s), num=c(n1s,n2s,n3s,n4s))
 if(any(is.na(xyz[,3]))){xyz = xyz[-which(is.na(xyz[,3])),]}
 x = xyz[,1]
 y = xyz[,2]
@@ -89,6 +92,9 @@ cex = 3.7
 
 # plot
 aplot(xyz[,1], xyz[,2], xyz[,3], pch=15, scale.lo=scale.lo, scale.hi=scale.hi, col.map=col.map, cex=cex, xlim=c(16.5,27.5), ylim=c(0.6,5.4), axes=FALSE, xlab="", ylab="")
+sub = which(xyz[,"num"] <= 5); apoints(xyz[sub,1], xyz[sub,2], xyz[sub,3], pch=0, scale.lo=scale.lo, scale.hi=scale.hi, col="black", cex=cex-0.25, lwd=2, ljoin=1)
+#apolygon(x=c(16.25,16.25,18.75,18.75), y=c(0.5,4.5,4.5,0.5), border=NA, lend=1, density=4.55, col=col2rgba("grey75",0.75), lwd=5)
+#apolygon(x=c(27.25,27.25,27.75,27.75), y=c(0.5,4.5,4.5,0.5), border=NA, lend=1, density=4.55, col=col2rgba("grey75",0.75), lwd=5)
 mtext(side=2, at=1:4, line=0, las=1, text=c("Q1","Q2","Q3","Q4"))
 mtext(side=2, at=2.5, line=1.5, text="Observed")
 aaxis(side=1, at=16:30, tick=FALSE)
