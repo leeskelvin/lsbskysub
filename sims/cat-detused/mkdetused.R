@@ -9,7 +9,8 @@ cats = paste0("../../hsc_data/calexp/", grep(".dat", dir("../../hsc_data/calexp/
 pixelsize = 0.168 # arcsec/pixel
 #n = 4 # sersic index
 n = as.numeric(commandArgs(TRUE)); if(length(n) == 0){stop("specify n")}
-fluxfrac = 0.995
+fluxfrac = 0.995 # flux fraction holding stamp box
+stampextra = 10 # extra addition to stamp_size
 
 # loop
 for(i in 1:length(cats)){
@@ -28,7 +29,7 @@ for(i in 1:length(cats)){
     # generate GalSim input catalogue: x, y, flux, half_light_radius, q, theta, n, stamp_size
     # digits: x=1, y=1, flux=3, half_light_radius=3, q=2, theta=1, n=NA, stamp_size=NA
     out = data.frame(x=formatC(dat[,"X_IMAGE"],format="f",digits=1), y=formatC(dat[,"Y_IMAGE"],format="f",digits=1), flux=formatC(dat[,"FLUX_AUTO"],format="f",digits=3), half_light_radius=formatC(dat[,"FLUX_RADIUS"]*pixelsize,format="f",digits=3), q=formatC(1-dat[,"ELLIPTICITY"],format="f",digits=2), theta=formatC(dat[,"THETA_IMAGE"],format="f",digits=1), n=rep(n, nrow(dat)), stringsAsFactors=FALSE)
-    stamp_size = ceiling(2*sersic.fluxfrac2r(fluxfrac, n=n, r.ref=as.numeric(out[,"half_light_radius"])/pixelsize, fluxfrac.ref=0.5)) # pixels
+    stamp_size = ceiling(2*sersic.fluxfrac2r(fluxfrac, n=n, r.ref=as.numeric(out[,"half_light_radius"])/pixelsize, fluxfrac.ref=0.5)) + stampextra # pixels
     out = cbind(out, stamp_size=stamp_size)
     
     # write

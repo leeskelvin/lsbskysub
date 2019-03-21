@@ -17,7 +17,9 @@ colnames(dat) = c("NUMBER", "FLUX_AUTO", "MAG_AUTO", "KRON_RADIUS", "PETRO_RADIU
 if(any(dat[,"MAG_AUTO"] == 99)){dat = dat[-which(dat[,"MAG_AUTO"]==99),]}
 dat[,"FLUX_RADIUS"] = dat[,"FLUX_RADIUS"] * pixelsize # now in arcsec
 dat[,"MAG_AUTO"] = dat[,"MAG_AUTO"] + 27 # zero point correction
-dat = dat[dat[,"CLASS_STAR"]<=0.05,] # remove probable stars
+starthresh = 0.05
+cat("\nRemoved due to star-like : ", length(which(dat[,"CLASS_STAR"] > starthresh)), "/", nrow(dat), "\n")
+dat = dat[dat[,"CLASS_STAR"]<=starthresh,] # remove probable stars
 dat = dat[sample(x=nrow(dat)),] # randomise for plotting
 
 # loop
@@ -68,7 +70,9 @@ xyz = expand.grid(x=mags, y=1:4)
 xyz = cbind(xyz, z=c(e1s,e2s,e3s,e4s), num=c(n1s,n2s,n3s,n4s))
 if(any(is.na(xyz[,"z"]))){xyz = xyz[-which(is.na(xyz[,"z"])),]}
 fitxyz = xyz
-fitxyz = fitxyz[-which(xyz[,"num"]<=5),]
+numthresh = 25
+cat("\nRemoved due to low # sampling : ", sum(xyz[which(xyz[,"num"]<=numthresh),"num"]), "/", nrow(dat), "\n")
+fitxyz = fitxyz[-which(xyz[,"num"]<=numthresh),] # should low density patches be ignored?
 x = fitxyz[,"x"]
 y = fitxyz[,"y"]
 z = fitxyz[,"z"]
@@ -76,6 +80,20 @@ fit = lm(z ~ y + x + I(x^2)); print(fit)
 uvw = expand.grid(x=mags, y=1:4)
 uvw = cbind(uvw, z = fit$coef[1] + fit$coef[2]*uvw[,"y"] + fit$coef[3]*uvw[,"x"] + fit$coef[4]*uvw[,"x"]^2)
 colnames(uvw) = c("MAG", "QRAD", "ELLIP")
+
+lomag = min(xyz[which(xyz[,"num"]>numthresh & xyz[,"y"]==1),"x"])
+himag = max(xyz[which(xyz[,"num"]>numthresh & xyz[,"y"]==1),"x"])
+loq1 = which(xyz[,"num"]<=numthresh & xyz[,"y"]==1 & xyz[,"x"]<lomag)
+hiq1 = which(xyz[,"num"]<=numthresh & xyz[,"y"]==1 & xyz[,"x"]>himag)
+uvw[loq1,"ELLIP"] = uvw[which(uvw[,"MAG"]==lomag & uvw[,"QRAD"]==1),"ELLIP"]
+uvw[loq1+0.25*nrow(uvw),"ELLIP"] = uvw[which(uvw[,"MAG"]==lomag & uvw[,"QRAD"]==2),"ELLIP"]
+uvw[loq1+0.50*nrow(uvw),"ELLIP"] = uvw[which(uvw[,"MAG"]==lomag & uvw[,"QRAD"]==3),"ELLIP"]
+uvw[loq1+0.75*nrow(uvw),"ELLIP"] = uvw[which(uvw[,"MAG"]==lomag & uvw[,"QRAD"]==4),"ELLIP"]
+uvw[hiq1,"ELLIP"] = uvw[which(uvw[,"MAG"]==himag & uvw[,"QRAD"]==1),"ELLIP"]
+uvw[hiq1+0.25*nrow(uvw),"ELLIP"] = uvw[which(uvw[,"MAG"]==himag & uvw[,"QRAD"]==2),"ELLIP"]
+uvw[hiq1+0.50*nrow(uvw),"ELLIP"] = uvw[which(uvw[,"MAG"]==himag & uvw[,"QRAD"]==3),"ELLIP"]
+uvw[hiq1+0.75*nrow(uvw),"ELLIP"] = uvw[which(uvw[,"MAG"]==himag & uvw[,"QRAD"]==4),"ELLIP"]
+
 oo = order(uvw[,1])
 uvw = uvw[oo,]
 write.csv(uvw, file="magellip.csv", row.names=FALSE, quote=FALSE)
@@ -87,14 +105,16 @@ pdf(file="magellip.pdf", width=8, height=4.25)
 layout(rbind(1,2))
 par("mar"=c(0,0.75,0,0.75))
 par("oma"=c(3,3.5,3,0))
-col.map = "rainbow"
-scale.lo = 0.1
-scale.hi = 0.5
+col.map = "topo"
+scale.lo = 0.15
+scale.hi = 0.45
+cbn = 4
+cbseg = 499
 cex = 3.7
 
 # plot
 aplot(xyz[,1], xyz[,2], xyz[,3], pch=15, scale.lo=scale.lo, scale.hi=scale.hi, col.map=col.map, cex=cex, xlim=c(16.5,27.5), ylim=c(0.6,5.4), axes=FALSE, xlab="", ylab="")
-sub = which(xyz[,"num"] <= 5); apoints(xyz[sub,1], xyz[sub,2], xyz[sub,3], pch=0, scale.lo=scale.lo, scale.hi=scale.hi, col="black", cex=cex-0.25, lwd=2, ljoin=1)
+sub = which(xyz[,"num"] <= numthresh); apoints(xyz[sub,1], xyz[sub,2], xyz[sub,3], pch=0, scale.lo=scale.lo, scale.hi=scale.hi, col="black", cex=cex-0.25, lwd=2, ljoin=1)
 #apolygon(x=c(16.25,16.25,18.75,18.75), y=c(0.5,4.5,4.5,0.5), border=NA, lend=1, density=4.55, col=col2rgba("grey75",0.75), lwd=5)
 #apolygon(x=c(27.25,27.25,27.75,27.75), y=c(0.5,4.5,4.5,0.5), border=NA, lend=1, density=4.55, col=col2rgba("grey75",0.75), lwd=5)
 mtext(side=2, at=1:4, line=0, las=1, text=c("Q1","Q2","Q3","Q4"))
@@ -102,7 +122,7 @@ mtext(side=2, at=2.5, line=1.5, text="Observed")
 aaxis(side=1, at=16:30, tick=FALSE)
 rect(xl=16.22, xr=27.78, yb=0.45, yt=4.55, lwd=2, border="grey75")
 
-col.bar("top", horizontal=TRUE, flip=TRUE, col.map=col.map, scale.lo=scale.lo, scale.hi=scale.hi, inset=-1.75, seg.num=501, n=5)
+col.bar("top", horizontal=TRUE, flip=TRUE, col.map=col.map, scale.lo=scale.lo, scale.hi=scale.hi, inset=-1.75, seg.num=cbseg, n=cbn)
 
 aplot(uvw[,1], uvw[,2], uvw[,3], pch=15, scale.lo=scale.lo, scale.hi=scale.hi, col.map=col.map, cex=cex, xlim=c(16.5,27.5), ylim=c(0.6,5.4), axes=FALSE, xlab="", ylab="")
 mtext(side=2, at=1:4, line=0, las=1, text=c("Q1","Q2","Q3","Q4"))

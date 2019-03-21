@@ -9,7 +9,8 @@ cats = paste0("../../hsc_data/numcounts/", grep(".csv", dir("../../hsc_data/numc
 pixelsize = 0.168 # arcsec/pixel
 #n = 4 # sersic index
 n = as.numeric(commandArgs(TRUE)); if(length(n) == 0){stop("specify n")}
-fluxfrac = 0.995
+fluxfrac = 0.995 # flux fraction holding stamp box
+stampextra = 10 # extra addition to stamp_size
 
 # loop
 for(i in 1:length(cats)){
@@ -28,8 +29,8 @@ for(i in 1:length(cats)){
         
         # setup
         binnum = ceiling(dat[j,"NUM"])
-        x = runif(binnum, min=1, max=4200)
-        y = runif(binnum, min=1, max=4100)
+        x = runif(binnum, min=0.5, max=4200.5)
+        y = runif(binnum, min=0.5, max=4100.5)
         mags = dat[j,"MAG"] + runif(binnum, min=-bw/2, max=bw/2) # r-band
         flux = 10^(-0.4 * (mags - 27)) # counts
         hlrbase = pmax((-0.15 * mags) + 4.25, 1*pixelsize) # minimum size of 1 pixel
@@ -39,7 +40,7 @@ for(i in 1:length(cats)){
         ellip = pmin(pmax(0.5 + runif(binnum,min=-0.2,max=0.2), 0), 1)
         q = 1 - ellip # axis ratio
         theta = runif(binnum, min=-90, max=90) # degrees
-        stamp_size = ceiling(2*sersic.fluxfrac2r(fluxfrac, n=n, r.ref=half_light_radius/pixelsize, fluxfrac.ref=0.5)) # pixels
+        stamp_size = ceiling(2*sersic.fluxfrac2r(fluxfrac, n=n, r.ref=half_light_radius/pixelsize, fluxfrac.ref=0.5)) + stampextra # pixels
         # digits: x=1, y=1, flux=3, half_light_radius=3, q=2, theta=1, n=NA, stamp_size=NA
         out = rbind(out, cbind(x=formatC(x,format="f",digits=1), y=formatC(y,format="f",digits=1), flux=formatC(flux,format="f",digits=3), half_light_radius=formatC(half_light_radius,format="f",digits=3), q=formatC(q,format="f",digits=2), theta=formatC(theta,format="f",digits=1), n=n, stamp_size=stamp_size))
         

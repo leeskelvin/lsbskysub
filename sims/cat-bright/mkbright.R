@@ -11,7 +11,8 @@ ells = cbind(ells, ELLID=ells[,"MAG"]+ells[,"QRAD"]/10)
 pixelsize = 0.168 # arcsec/pixel
 #n = 4 # sersic index
 n = as.numeric(commandArgs(TRUE)); if(length(n) == 0){stop("specify n")}
-fluxfrac = 0.995
+fluxfrac = 0.995 # flux fraction holding stamp box
+stampextra = 10 # extra addition to stamp_size
 
 # loop
 for(i in 1:length(cats)){
@@ -41,7 +42,7 @@ for(i in 1:length(cats)){
         ellip = pmin(pmax(ells[match(ellid, ells[,"ELLID"]),"ELLIP"] + runif(binnum,min=-0.2,max=0.2), 0), 1)
         q = 1 - ellip # axis ratio
         theta = runif(binnum, min=-90, max=90) # degrees
-        stamp_size = ceiling(2*sersic.fluxfrac2r(fluxfrac, n=n, r.ref=half_light_radius/pixelsize, fluxfrac.ref=0.5)) # pixels
+        stamp_size = ceiling(2*sersic.fluxfrac2r(fluxfrac, n=n, r.ref=half_light_radius/pixelsize, fluxfrac.ref=0.5)) + stampextra # pixels
         # digits: x=1, y=1, flux=3, half_light_radius=3, q=2, theta=1, n=NA, stamp_size=NA
         out = rbind(out, cbind(x=NA, y=NA, flux=formatC(flux,format="f",digits=3), half_light_radius=formatC(half_light_radius,format="f",digits=3), q=formatC(q,format="f",digits=2), theta=formatC(theta,format="f",digits=1), n=n, stamp_size=stamp_size))
         
@@ -52,8 +53,8 @@ for(i in 1:length(cats)){
     xy.all = expand.grid(1:nrow(lores), 1:ncol(lores))
     xy.bright = xy.all[sample(1:nrow(xy.all), size=sum(ceiling(dat[,"NUM"])), prob=weights, replace=FALSE),]
     colnames(xy.bright) = c("x","y")
-    xy.bright[,1] = xy.bright[,1]*100 + runif(n=nrow(xy.bright), min=-99, max=0)
-    xy.bright[,2] = xy.bright[,2]*100 + runif(n=nrow(xy.bright), min=-99, max=0)
+    xy.bright[,1] = xy.bright[,1]*100 + runif(n=nrow(xy.bright), min=-99.5, max=0.5)
+    xy.bright[,2] = xy.bright[,2]*100 + runif(n=nrow(xy.bright), min=-99.5, max=0.5)
     out[,"x"] = formatC(xy.bright[,"x"],format="f",digits=1)
     out[,"y"] = formatC(xy.bright[,"y"],format="f",digits=1)
     
