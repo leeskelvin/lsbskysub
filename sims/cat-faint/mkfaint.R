@@ -37,7 +37,7 @@ for(i in 1:length(cats)){
         hlrzone = runif(binnum, min=-0.25, max=0.25)
         hlrquan = pmin(floor((hlrzone+0.25)*8),3)+1
         half_light_radius = hlrbase + (hlrzone*hlrbase) # arcsec
-        ellip = pmin(pmax(0.5 + runif(binnum,min=-0.2,max=0.2), 0), 1)
+        ellip = pmin(pmax(0.4 + runif(binnum,min=-0.2,max=0.2), 0), 1)
         q = 1 - ellip # axis ratio
         theta = runif(binnum, min=-90, max=90) # degrees
         stamp_size = ceiling(2*sersic.fluxfrac2r(fluxfrac, n=n, r.ref=half_light_radius/pixelsize, fluxfrac.ref=0.5)) + stampextra # pixels

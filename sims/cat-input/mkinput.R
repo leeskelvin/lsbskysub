@@ -25,6 +25,7 @@ for(i in 1:length(brights)){
     fdat = read.table(faints[i])
     
     out = rbind(bdat, ddat, fdat)
+#    out = rbind(bdat, ddat)
     
     outname = paste(strsplit(basename(brights[i]), ".cat-bright")[[1]], collapse=".cat-input")
     write.table(out, file=outname, sep=" ", row.names=FALSE, quote=FALSE, col.names=FALSE)
