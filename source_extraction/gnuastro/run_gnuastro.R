@@ -29,20 +29,20 @@ for(i in 1:length(files)){
     
     # setup
     cat("", i-1, "/", length(files), "\n")
-    segmap = paste0(bases[i], ".segmap.fits")
-    magmap = paste0(bases[i], ".magmap.fits")
-    detected = paste0(bases[i], ".detected.fits")
+    #segmap = paste0(bases[i], ".segmap.fits")
+    #magmap = paste0(bases[i], ".magmap.fits")
+    #detected = paste0(bases[i], ".detected.fits")
     
     # unpack
     system(paste(funpack, "-O temp.fits", files[i]))
     
-    # noisechisel (& gzip)
-    system(paste(noisechisel, "-h0 temp.fits --rawoutput --output", detected))
-    detdat = read.fits(detected)
-    system(paste(gzip, "--best", detected))
+    # noisechisel
+    system(paste(noisechisel, "-h0 temp.fits"))
+    #detdat = read.fits(detected)
+    #system(paste(gzip, "--best --force", detected))
     
     # segment
-    
+    system(paste(segment, "temp_detected.fits"))
     
     # clean up
     unlink(c("temp.fits"))
