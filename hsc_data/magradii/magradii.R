@@ -8,6 +8,7 @@ set.seed(3125)
 # definitions
 datas = paste0("../../hsc_data/calexp/", grep(".dat", dir("../../hsc_data/calexp/"), value=TRUE))
 pixelsize = 0.168
+starthresh = 0.0285
 
 # data
 dat1 = read.table(datas[1], stringsAsFactors=FALSE)
@@ -17,6 +18,8 @@ colnames(dat) = c("NUMBER", "FLUX_AUTO", "MAG_AUTO", "KRON_RADIUS", "PETRO_RADIU
 if(any(dat[,"MAG_AUTO"] == 99)){dat = dat[-which(dat[,"MAG_AUTO"]==99),]}
 dat[,"FLUX_RADIUS"] = dat[,"FLUX_RADIUS"] * pixelsize # now in arcsec
 dat[,"MAG_AUTO"] = dat[,"MAG_AUTO"] + 27 # zero point correction
+cat("\nRemoved due to star-like : ", length(which(dat[,"CLASS_STAR"] > starthresh)), "/", nrow(dat), "\n")
+dat = dat[dat[,"CLASS_STAR"]<=starthresh,] # remove probable stars
 dat = dat[sample(x=nrow(dat)),] # randomise for plotting
 
 # fit
@@ -41,13 +44,13 @@ par("mar"=c(3,3,1,3))
 
 # plot
 palette(c("#000000", "#e66101", "#5e3c99", "#fdb863", "#b2abd2", "#edf8b1", "#7fcdbb", "#2c7fb8"))
-aplot(NA, xlim=c(16,27.5), ylim=c(0.18,2.5), log="y", xlab=NA, ylab=NA, las=1, xnmin=1, axes=FALSE)
+aplot(NA, xlim=c(18.5,27.5), ylim=c(0.18,2.5), log="y", xlab=NA, ylab=NA, las=1, xnmin=1, axes=FALSE)
 #apolygon(x=px, y=py, lend=1, ljoin=1, col=col2rgba(3,0.5), border=col2rgba(3,0.5), lwd=2, density=10)
 points(dat[,"MAG_AUTO"], dat[,"FLUX_RADIUS"], pch=".", cex=0.25, col=col2rgba(dat[,"SOURCE"]+1,0.5))
 shade(x=xx, ylo=yy[,1]-zone*yy[,1], yhi=yy[,1]+zone*yy[,1], col=col2rgba(1,0.25), border=1, lty=2, lend=1)
 lines(xx, yy[,1], col=1, lwd=2.5)
-alegend("topright", bg="white", bty="o", box.col=NA, legend=c("low density data", "high density data", bquote(paste(r[e], " = ", .(fit$coef[2]), m[r], " + ", .(formatC(fit$coef[1],format="f",digits=2)))), paste0("trendline ± ",zone*100,"%")), type=list(p=list(pch=".",cex=5,col=2), p=list(pch=".",cex=5,col=3), l=list(col=col2rgba(1), lwd=2.5, lend=1), f=list(col=col2rgba(1,0.25), border=1, lty=2, lend=1)), cex=0.75)
-aaxes(side=1:3, xnmin=1, las=1)
+alegend("bottomleft", inset=1, bg="white", bty="o", box.col=NA, legend=c("low density data", "high density data", bquote(paste(r[e], " = ", .(fit$coef[2]), m[r], " + ", .(formatC(fit$coef[1],format="f",digits=2)))), paste0("trendline ± ",zone*100,"%")), type=list(p=list(pch=".",cex=5,col=2), p=list(pch=".",cex=5,col=3), l=list(col=col2rgba(1), lwd=2.5, lend=1), f=list(col=col2rgba(1,0.25), border=1, lty=2, lend=1)), cex=0.75)
+aaxes(side=1:3, xnmin=3, las=1)
 aaxis(side=4, fn=function(x){x/pixelsize}, las=1)
 abox()
 mtext(side=1, line=1.75, text=bquote(paste("apparent magnitude : ", m[r])))
