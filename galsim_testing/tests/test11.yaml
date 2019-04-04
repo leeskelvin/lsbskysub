@@ -1,0 +1,45 @@
+parameters : 
+    - &output output/test11.fits
+    - &sky_level_pixel 25 # 1.6450475
+    - &gain 1 # 557.9267374
+
+gal :
+    type : Sersic
+    n : 1
+    half_light_radius : 1 # arcsec
+    flux : 0
+    ellip : 
+        type : QBeta 
+        q : 1
+        beta : 
+            type : Degrees 
+            theta : 0
+    gsparams: 
+        kvalue_accuracy : 1.e-8
+        maxk_threshold : 1.1e-4
+
+image : 
+    pixel_scale : 0.168 # arcsec / pixel
+    sky_level : 0 # ADU / arcsec^2
+    random_seed : 3125
+    nproc : 3
+    type : Scattered
+    xsize : 420 # pixel
+    ysize : 410 # pixel
+    stamp_size : 1 # pixel
+    nobjects : 1
+    image_pos :
+        type : XY
+        x : 5000
+        y : 5000
+    noise :
+        type : CCD
+        sky_level_pixel : *sky_level_pixel # ADU/pixel
+        gain : *gain # e-/ADU
+        read_noise : 0 # ADU
+
+output :
+    file_name : *output
+    nproc : 3
+    type : Fits
+

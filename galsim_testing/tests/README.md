@@ -81,3 +81,7 @@ Almost final prep file, exhibiting most (all?) of the desired markup for our pur
 
 Final test. Based on test09 above, but reading in all galaxy specific markers from a pre-defined input file. In addition, a real PSF is used as an input, rather than a parametric Moffat function. This test brings us close to a similar setup to be used in furter LSB source detection and simulation efforts.
 
+# test11
+
+Following a question from Craig Lage, this test file determines how Poisson noise is added to an image. 
+
