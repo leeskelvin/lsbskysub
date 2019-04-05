@@ -24,11 +24,15 @@ for(i in 1:length(brights)){
     ddat = read.table(detuseds[i])
     fdat = read.table(faints[i])
     
-#    out = rbind(bdat, ddat, fdat)
-    out = rbind(bdat, ddat)
+    outa = rbind(bdat, ddat, fdat)
+    outb = rbind(bdat, ddat)
     
     outname = paste(strsplit(basename(brights[i]), ".cat-bright")[[1]], collapse=".cat-input")
-    write.table(out, file=outname, sep=" ", row.names=FALSE, quote=FALSE, col.names=FALSE)
+    outaname = paste0(strsplit(outname, ".dat")[[1]], "-a.dat")
+    outbname = paste0(strsplit(outname, ".dat")[[1]], "-b.dat")
+    
+    write.table(outa, file=outaname, sep=" ", row.names=FALSE, quote=FALSE, col.names=FALSE)
+    write.table(outb, file=outbname, sep=" ", row.names=FALSE, quote=FALSE, col.names=FALSE)
     
 }
 
