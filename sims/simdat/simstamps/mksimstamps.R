@@ -10,10 +10,10 @@ tpids = c("8283-38","9592-20")
 # loop
 for(i in 1:length(tpids)){
     
-    n1a = paste0("v3/calexp-HSC-R-",tpids[i],".simulated-n1.fits.fz")
-    n1b = paste0("v3/calexp-HSC-R-",tpids[i],".simulated-n1-nofaint.fits.fz")
-    n4a = paste0("v3/calexp-HSC-R-",tpids[i],".simulated-n4.fits.fz")
-    n4b = paste0("v3/calexp-HSC-R-",tpids[i],".simulated-n4-nofaint.fits.fz")
+    n1a = paste0("../v4/calexp-HSC-R-",tpids[i],".simulated-n1-a.fits.fz")
+    n1b = paste0("../v4/calexp-HSC-R-",tpids[i],".simulated-n1-b.fits.fz")
+    n4a = paste0("../v4/calexp-HSC-R-",tpids[i],".simulated-n4-a.fits.fz")
+    n4b = paste0("../v4/calexp-HSC-R-",tpids[i],".simulated-n4-b.fits.fz")
     abfiles = c(n1a,n1b,n4a,n4b)
     
     # loop/read

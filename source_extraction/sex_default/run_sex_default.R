@@ -6,14 +6,14 @@ require("astro", quietly=TRUE)
 set.seed(3125)
 
 # definitions
-denlo1a = "../../sims/simdat/v3/calexp-HSC-R-8283-38.simulated-n1.fits.fz"
-denlo1b = "../../sims/simdat/v3/calexp-HSC-R-8283-38.simulated-n1-nofaint.fits.fz"
-denlo4a = "../../sims/simdat/v3/calexp-HSC-R-8283-38.simulated-n4.fits.fz"
-denlo4b = "../../sims/simdat/v3/calexp-HSC-R-8283-38.simulated-n4-nofaint.fits.fz"
-denhi1a = "../../sims/simdat/v3/calexp-HSC-R-9592-20.simulated-n1.fits.fz"
-denhi1b = "../../sims/simdat/v3/calexp-HSC-R-9592-20.simulated-n1-nofaint.fits.fz"
-denhi4a = "../../sims/simdat/v3/calexp-HSC-R-9592-20.simulated-n4.fits.fz"
-denhi4b = "../../sims/simdat/v3/calexp-HSC-R-9592-20.simulated-n4-nofaint.fits.fz"
+denlo1a = "../../sims/simdat/v4/calexp-HSC-R-8283-38.simulated-n1-a.fits.fz"
+denlo1b = "../../sims/simdat/v4/calexp-HSC-R-8283-38.simulated-n1-b.fits.fz"
+denlo4a = "../../sims/simdat/v4/calexp-HSC-R-8283-38.simulated-n4-a.fits.fz"
+denlo4b = "../../sims/simdat/v4/calexp-HSC-R-8283-38.simulated-n4-b.fits.fz"
+denhi1a = "../../sims/simdat/v4/calexp-HSC-R-9592-20.simulated-n1-a.fits.fz"
+denhi1b = "../../sims/simdat/v4/calexp-HSC-R-9592-20.simulated-n1-b.fits.fz"
+denhi4a = "../../sims/simdat/v4/calexp-HSC-R-9592-20.simulated-n4-a.fits.fz"
+denhi4b = "../../sims/simdat/v4/calexp-HSC-R-9592-20.simulated-n4-b.fits.fz"
 files = c(denlo1a, denlo1b, denlo4a, denlo4b, denhi1a, denhi1b, denhi4a, denhi4b)
 bases = c("denlo1a", "denlo1b", "denlo4a", "denlo4b", "denhi1a", "denhi1b", "denhi4a", "denhi4b")
 sex = "/usr/bin/sextractor" # local SEx binary
