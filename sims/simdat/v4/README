@@ -1,4 +1,4 @@
-* final version
+* version v4
 * modifications made to stamp_size
   > now defined as limit at which mu_r = 32.5 mag
   > minimum size of 11 pixels

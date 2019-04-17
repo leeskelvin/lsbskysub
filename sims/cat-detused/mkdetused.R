@@ -10,7 +10,7 @@ pixelsize = 0.168 # arcsec/pixel
 #n = 4 # sersic index
 n = as.numeric(commandArgs(TRUE)); if(length(n) == 0){stop("specify n")}
 #fluxfrac = 0.995 # flux fraction holding stamp box
-mulim = 32.5 # surface brightness limit
+mulim = 40 # surface brightness limit
 stampextra = 0 # extra addition to stamp_size
 stampmin = 11 # minimum stamp size
 

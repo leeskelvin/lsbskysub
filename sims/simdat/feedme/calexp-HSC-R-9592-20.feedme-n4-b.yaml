@@ -1,5 +1,5 @@
 parameters : 
-    - &output          ../v4/calexp-HSC-R-9592-20.simulated-n4-b.fits
+    - &output          ../v5/calexp-HSC-R-9592-20.simulated-n4-b.fits
     - &input ../../cat-input/calexp-HSC-R-9592-20.cat-input-n4-b.dat
     - &sky_level_pixel 1.3908086
     - &gain 563.9150705 
