@@ -16,60 +16,73 @@ denhi4a = "../../sims/simdat/v5/calexp-HSC-R-9592-20.simulated-n4-a.fits.fz"
 denhi4b = "../../sims/simdat/v5/calexp-HSC-R-9592-20.simulated-n4-b.fits.fz"
 files = c(denlo1a, denlo1b, denlo4a, denlo4b, denhi1a, denhi1b, denhi4a, denhi4b)
 bases = c("denlo1a", "denlo1b", "denlo4a", "denlo4b", "denhi1a", "denhi1b", "denhi4a", "denhi4b")
-sex = "/usr/bin/sextractor" # local SEx binary
 funpack = "/usr/bin/funpack" # local FITS unpack binary
 fpack = "/usr/bin/fpack" # local FITS pack binary
+gzip = "/bin/gzip" # local gzip binary
+statsname = paste0("stats_",basename(getwd()),".csv")
+unlink(statsname)
+if(!file.exists("cat")){system("mkdir cat")}
+if(!file.exists("map")){system("mkdir map")}
+
+# detection software
+sex = "/usr/bin/sextractor" # local SEx binary
+unlink(c("temp.fits","temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
 
 # loop
-backs = rmss = threshs = nobjs = {}
+nobjs = skymeans = skystds = {}
 for(i in 1:length(files)){
     
     # setup
     cat("", i-1, "/", length(files), "\n")
-    segmap = paste0(bases[i], ".segmap.fits")
-    magmap = paste0(bases[i], ".magmap.fits")
+    catname = paste0("cat/", bases[i], ".cat.csv")
+    mapname = paste0("map/", bases[i], ".map.fits")
+    unlink(c(catname,mapname,paste0(mapname,".fz"),paste0(mapname,".gz")))
     
     # unpack
     system(paste(funpack, "-O temp.fits", files[i]))
     
     # source extract
-    output = system(paste0(sex, " -c default.sex -CATALOG_NAME ", bases[i], ".dat -CATALOG_TYPE ASCII temp.fits -CHECKIMAGE_TYPE segmentation -CHECKIMAGE_NAME ", segmap, " 2>&1"), intern=T)
-    dat = read.table(paste0(bases[i],".dat"), stringsAsFactors=FALSE)
-    colnames(dat) = c("NUMBER", "FLUX_AUTO", "MAG_AUTO", "KRON_RADIUS", "PETRO_RADIUS", "BACKGROUND", "THRESHOLD", "X_IMAGE", "Y_IMAGE", "A_IMAGE", "B_IMAGE", "THETA_IMAGE", "ELLIPTICITY", "CLASS_STAR", "FLUX_RADIUS")
+    output = system(paste0(sex, " -c default.sex -CATALOG_NAME temp_cat.dat -CATALOG_TYPE ASCII -CHECKIMAGE_TYPE SEGMENTATION,BACKGROUND,BACKGROUND_RMS -CHECKIMAGE_NAME temp_seg.fits,temp_sky.fits,temp_std.fits temp.fits 2>&1"), intern=T)
     
-    # SEx stats
-    obits = strsplit(grep("RMS:", output, value=TRUE), " +")[[1]]
-    backs = c(backs, as.numeric(obits[3]))
-    rmss = c(rmss, as.numeric(obits[5]))
-    threshs = c(threshs, as.numeric(obits[8]))
-    nobjs = c(nobjs, nrow(dat))
+    # data read
+    catdat = read.table("temp_cat.dat", stringsAsFactors=FALSE)
+    colnames(catdat) = c("NUMBER", "FLUX_AUTO", "MAG_AUTO", "KRON_RADIUS", "PETRO_RADIUS", "BACKGROUND", "THRESHOLD", "X_IMAGE", "Y_IMAGE", "A_IMAGE", "B_IMAGE", "THETA_IMAGE", "ELLIPTICITY", "CLASS_STAR", "FLUX_RADIUS")
+    segfits = read.fits("temp_seg.fits")
+    skyfits = read.fits("temp_sky.fits")
+    stdfits = read.fits("temp_std.fits")
+    nobjs = c(nobjs, nrow(catdat))
+    skymeans = c(skymeans, mean(skyfits$dat[[1]]))
+    skystds = c(skystds, mean(stdfits$dat[[1]]))
     
-    # magmap
-    fits = read.fits(segmap)
-    segdat = fits$dat[[1]]
-    magdat = matrix(as.integer(0), nrow=nrow(segdat), ncol=ncol(segdat))
-    bw = 0.5
-    magmids = seq(0.5,30,by=bw)
-    magids = round((dat[,"MAG_AUTO"] + 27) * 2)
-    for(j in 1:length(magmids)){
-        segnums = dat[which(magids == j),"NUMBER"]
+    # cat processing
+    write.csv(catdat, file=catname, row.names=FALSE, quote=FALSE)
+    
+    # map processing
+    segdat = segfits$dat[[1]]
+    magdat = matrix(0, nrow=nrow(segdat), ncol=ncol(segdat))
+    magids = round((catdat[,"MAG_AUTO"] + 27),digits=1)
+    magmid = sort(unique(magids))
+    for(j in 1:length(magmid)){
+        segnums = catdat[which(magids == magmid[j]),"NUMBER"]
         if(length(segnums) > 0){
             pixels = which(segdat %in% segnums)
-            magdat[pixels] = as.integer(j)
+            magdat[pixels] = magmid[j]
         }
     }
-    fits$dat[[1]] = magdat
-    write.fits(fits, file=magmap, type="b")
-    system(paste(fpack, "-D -Y", magmap))
+    hdr = list(segfits$hdr[[1]], NA, skyfits$hdr[[1]], stdfits$hdr[[1]])
+    dat = list(segfits$dat[[1]], magdat, round(skyfits$dat[[1]],digits=5), round(stdfits$dat[[1]],digits=5))
+    write.fits(list(hdr=hdr,dat=dat), file=mapname)
+    system(paste(gzip, "--best --force", mapname))
+    #system(paste(fpack, "-D -Y", mapname))
     
     # clean up
-    unlink(c("temp.fits",segmap))
+    unlink(c("temp.fits","temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
     
 }
 
-# write statistics
-temp = cbind(ID=bases, BACK=backs, RMS=rmss, THRESH=threshs, NOBJ=nobjs)
-write.csv(temp, file=paste0("stats_",basename(getwd()),".csv"), row.names=FALSE, quote=FALSE)
+# write stats
+temp = cbind(ID=bases, NOBJ=nobjs, SKYMEAN=skymeans, SKYSTD=skystds)
+write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up
 cat(" 8 / 8\n")
