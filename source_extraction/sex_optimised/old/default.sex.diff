@@ -1,0 +1,14 @@
+19,20c19,20
+< DETECT_THRESH    1.5            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
+< ANALYSIS_THRESH  1.5            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
+---
+> DETECT_THRESH    0.5            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
+> ANALYSIS_THRESH  0.5            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
+27c27
+< DEBLEND_MINCONT  0.005          # Minimum contrast parameter for deblending
+---
+> DEBLEND_MINCONT  0.00005        # Minimum contrast parameter for deblending
+78c78
+< BACK_SIZE        64             # Background mesh: <size> or <width>,<height>
+---
+> BACK_SIZE        512            # Background mesh: <size> or <width>,<height>

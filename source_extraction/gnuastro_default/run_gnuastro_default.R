@@ -22,6 +22,7 @@ gzip = "/bin/gzip" # local gzip binary
 statsname = paste0("stats_",basename(getwd()),".csv")
 unlink(statsname)
 if(!file.exists("cat")){system("mkdir cat")}
+if(!file.exists("mat")){system("mkdir mat")}
 if(!file.exists("map")){system("mkdir map")}
 
 # detection software
@@ -31,7 +32,7 @@ mkcatalog = "/usr/local/bin/astmkcatalog" # local mkcatalog binary
 unlink(c("temp.fits","temp_detected.fits","temp_detected_segmented.fits","temp_detected_segmented_cat.dat"))
 
 # loop
-nobjs = skymeans = skystds = {}
+ndets = nmatchs = areafracs = areameans = areafrac5s = areamean5s = skymeans = skystds = {}
 for(i in 1:length(files)){
     
     # setup
@@ -50,15 +51,15 @@ for(i in 1:length(files)){
     system(paste(segment, "temp_detected.fits"))
     
     # mkcatalog
-    system(paste(mkcatalog, "--config=columns.conf --insky=temp_detected.fits temp_detected_segmented.fits --output=temp_detected_segmented_cat.dat"))
+    system(paste(mkcatalog, "--config=../gnuastro_default/columns.conf --insky=temp_detected.fits temp_detected_segmented.fits --output=temp_detected_segmented_cat.dat"))
     
     # data read
     catdat = read.table("temp_detected_segmented_cat.dat", stringsAsFactors=FALSE)
-    colnames(catdat) = c("OBJ_ID", "BRIGHTNESS", "MAGNITUDE", "MAX_X", "MAX_Y", "SKY", "UPPERLIMIT", "X", "Y", "GEO_SEMI_MAJOR", "GEO_SEMI_MINOR", "POSITION_ANGLE", "AXIS_RATIO", "AREA", "SEMI_MAJOR")
+    colnames(catdat) = c("OBJ_ID", "X", "Y", "BRIGHTNESS", "MAGNITUDE", "SEMI_MAJOR", "SEMI_MINOR", "MAX_X", "MAX_Y", "SN", "AXIS_RATIO", "POSITION_ANGLE", "SKY", "STD", "AREA", "UPPERLIMIT")
     segfits = read.fits("temp_detected_segmented.fits", hdu=3+1)
     skyfits = read.fits("temp_detected.fits", hdu=3+1)
     stdfits = read.fits("temp_detected.fits", hdu=4+1)
-    nobjs = c(nobjs, nrow(catdat))
+    ndets = c(ndets, nrow(catdat))
     skymeans = c(skymeans, mean(skyfits$dat[[1]]))
     skystds = c(skystds, mean(stdfits$dat[[1]]))
     
@@ -66,12 +67,24 @@ for(i in 1:length(files)){
     ellipticity = 1 - catdat[,"AXIS_RATIO"]
     catdat[,"AXIS_RATIO"] = ellipticity
     colnames(catdat)[which(colnames(catdat)=="AXIS_RATIO")] = "ELLIPTICITY"
+    catdat[,"MAGNITUDE"] = catdat[,"MAGNITUDE"] + 27
     write.csv(catdat, file=catname, row.names=FALSE, quote=FALSE)
+    
+    # cat matching
+    incat = paste0("../../sims/cat-input/", paste0(strsplit(strsplit(basename(files[i]), ".fits.fz")[[1]], "simulated")[[1]], collapse="cat-input"), ".dat")
+    system(paste("../gnuastro_default/do_match.R", incat, catname))
+    matchdat = read.csv(paste0("mat/",paste0(strsplit(basename(catname), "cat")[[1]], collapse="mat")))
+    nmatchs = c(nmatchs, nrow(matchdat))
+    areafracs = c(areafracs, mean(matchdat[,"AREA_OUTPUT"]/matchdat[,"AREA40_INPUT"]))
+    large5samp = which(matchdat[,"A40_INPUT"] >= sort(matchdat[,"A40_INPUT"],decreasing=TRUE)[5])
+    areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA40_INPUT"]))
+    areameans = c(areameans, mean(matchdat[,"AREA_OUTPUT"]))
+    areamean5s = c(areamean5s, mean(matchdat[large5samp,"AREA_OUTPUT"]))
     
     # map processing
     segdat = segfits$dat[[1]]
     magdat = matrix(0, nrow=nrow(segdat), ncol=ncol(segdat))
-    magids = round((catdat[,"MAGNITUDE"] + 27),digits=1)
+    magids = round((catdat[,"MAGNITUDE"]),digits=1)
     magmid = sort(unique(magids))
     for(j in 1:length(magmid)){
         segnums = catdat[which(magids == magmid[j]),"OBJ_ID"]
@@ -92,7 +105,7 @@ for(i in 1:length(files)){
 }
 
 # write stats
-temp = cbind(ID=bases, NOBJ=nobjs, SKYMEAN=skymeans, SKYSTD=skystds)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, AREAFRAC=areafracs, AREAMEAN=areameans, AREAFRAC5=areafrac5s, AREAMEAN5=areamean5s, SKYMEAN=skymeans, SKYSTD=skystds)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up

@@ -1,0 +1,12 @@
+NUMBER                  # 1
+X_IMAGE                 # 2
+Y_IMAGE                 # 3
+FLUX_SPHEROID           # 4
+MAG_SPHEROID            # 5
+SPHEROID_REFF_IMAGE     # 6
+SPHEROID_ASPECT_IMAGE   # 7
+SPHEROID_THETA_IMAGE    # 8
+SPHEROID_SERSICN        # 9
+CHI2_MODEL              # 10
+FLAGS_MODEL             # 11
+VECTOR_ASSOC            # 12

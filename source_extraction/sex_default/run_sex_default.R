@@ -22,6 +22,7 @@ gzip = "/bin/gzip" # local gzip binary
 statsname = paste0("stats_",basename(getwd()),".csv")
 unlink(statsname)
 if(!file.exists("cat")){system("mkdir cat")}
+if(!file.exists("mat")){system("mkdir mat")}
 if(!file.exists("map")){system("mkdir map")}
 
 # detection software
@@ -29,7 +30,7 @@ sex = "/usr/bin/sextractor" # local SEx binary
 unlink(c("temp.fits","temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
 
 # loop
-nobjs = skymeans = skystds = {}
+ndets = nmatchs = areafracs = areameans = areafrac5s = areamean5s = skymeans = skystds = {}
 for(i in 1:length(files)){
     
     # setup
@@ -42,25 +43,37 @@ for(i in 1:length(files)){
     system(paste(funpack, "-O temp.fits", files[i]))
     
     # source extract
-    output = system(paste0(sex, " -c default.sex -CATALOG_NAME temp_cat.dat -CATALOG_TYPE ASCII -CHECKIMAGE_TYPE SEGMENTATION,BACKGROUND,BACKGROUND_RMS -CHECKIMAGE_NAME temp_seg.fits,temp_sky.fits,temp_std.fits temp.fits 2>&1"), intern=T)
+    output = system(paste0(sex, " -c ../sex_default/default.sex -CATALOG_NAME temp_cat.dat -CATALOG_TYPE ASCII -CHECKIMAGE_TYPE SEGMENTATION,BACKGROUND,BACKGROUND_RMS -CHECKIMAGE_NAME temp_seg.fits,temp_sky.fits,temp_std.fits temp.fits 2>&1"), intern=T)
     
     # data read
     catdat = read.table("temp_cat.dat", stringsAsFactors=FALSE)
-    colnames(catdat) = c("NUMBER", "FLUX_AUTO", "MAG_AUTO", "KRON_RADIUS", "PETRO_RADIUS", "BACKGROUND", "THRESHOLD", "X_IMAGE", "Y_IMAGE", "A_IMAGE", "B_IMAGE", "THETA_IMAGE", "ELLIPTICITY", "CLASS_STAR", "FLUX_RADIUS")
+    colnames(catdat) = c("NUMBER", "X_IMAGE", "Y_IMAGE", "FLUX_AUTO", "MAG_AUTO", "A_IMAGE", "B_IMAGE", "KRON_RADIUS", "PETRO_RADIUS", "FLUX_RADIUS", "ELLIPTICITY", "THETA_IMAGE", "BACKGROUND", "THRESHOLD", "ISOAREA_IMAGE", "CLASS_STAR")
     segfits = read.fits("temp_seg.fits")
     skyfits = read.fits("temp_sky.fits")
     stdfits = read.fits("temp_std.fits")
-    nobjs = c(nobjs, nrow(catdat))
+    ndets = c(ndets, nrow(catdat))
     skymeans = c(skymeans, mean(skyfits$dat[[1]]))
     skystds = c(skystds, mean(stdfits$dat[[1]]))
     
     # cat processing
+    catdat[,"MAG_AUTO"] = catdat[,"MAG_AUTO"] + 27
     write.csv(catdat, file=catname, row.names=FALSE, quote=FALSE)
+    
+    # cat matching
+    incat = paste0("../../sims/cat-input/", paste0(strsplit(strsplit(basename(files[i]), ".fits.fz")[[1]], "simulated")[[1]], collapse="cat-input"), ".dat")
+    system(paste("../sex_default/do_match.R", incat, catname))
+    matchdat = read.csv(paste0("mat/",paste0(strsplit(basename(catname), "cat")[[1]], collapse="mat")))
+    nmatchs = c(nmatchs, nrow(matchdat))
+    areafracs = c(areafracs, mean(matchdat[,"AREA_OUTPUT"]/matchdat[,"AREA40_INPUT"]))
+    large5samp = which(matchdat[,"A40_INPUT"] >= sort(matchdat[,"A40_INPUT"],decreasing=TRUE)[5])
+    areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA40_INPUT"]))
+    areameans = c(areameans, mean(matchdat[,"AREA_OUTPUT"]))
+    areamean5s = c(areamean5s, mean(matchdat[large5samp,"AREA_OUTPUT"]))
     
     # map processing
     segdat = segfits$dat[[1]]
     magdat = matrix(0, nrow=nrow(segdat), ncol=ncol(segdat))
-    magids = round((catdat[,"MAG_AUTO"] + 27),digits=1)
+    magids = round((catdat[,"MAG_AUTO"]),digits=1)
     magmid = sort(unique(magids))
     for(j in 1:length(magmid)){
         segnums = catdat[which(magids == magmid[j]),"NUMBER"]
@@ -81,7 +94,7 @@ for(i in 1:length(files)){
 }
 
 # write stats
-temp = cbind(ID=bases, NOBJ=nobjs, SKYMEAN=skymeans, SKYSTD=skystds)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, AREAFRAC=areafracs, AREAMEAN=areameans, AREAFRAC5=areafrac5s, AREAMEAN5=areamean5s, SKYMEAN=skymeans, SKYSTD=skystds)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up
