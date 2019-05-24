@@ -1,6 +1,2 @@
 * version v5
-* modifications made to stamp_size
-  > now defined as limit at which mu_r = 40 mag
-  > minimum size of 11 pixels
-  > rounded up to nearest odd number
-
+* further modifications made to stamp_size, following recognition that GalSim half light radii are averaged circularised, rather than semi-major axis

@@ -2,17 +2,22 @@ parameters :
     - &output          ../v5/calexp-HSC-R-9592-20.simulated-n1-a.fits
     - &input ../../cat-input/calexp-HSC-R-9592-20.cat-input-n1-a.dat
     - &sky_level_pixel 1.3908086
-    - &gain 563.9150705 
+    - &gain 563.9150705
+    - &pixelscale 0.168
 
 psf :
     type : InterpolatedImage
     image : "../../../hsc_data/psf/calexp-HSC-R-8283-38.psf.fits"
-    scale : 0.168 # arcsec
+    scale : *pixelscale
 
 gal :
     type : Sersic
     n : { type : Catalog , col : 6 }
-    half_light_radius : { type : Catalog , col : 3 } # arcsec
+    half_light_radius : 
+        type : Eval
+        fpixelscale : *pixelscale
+        fhlrpixel : { type : Catalog , col : 3 }
+        str : 'hlrpixel * pixelscale'
     flux : { type : Catalog , col : 2 }
     ellip : 
         type : QBeta 
@@ -25,7 +30,7 @@ gal :
         maxk_threshold : 1.1e-4
 
 image : 
-    pixel_scale : 0.168 # arcsec / pixel
+    pixel_scale : *pixelscale
     sky_level : 0 # ADU / arcsec^2
     random_seed : 3125
     nproc : 3

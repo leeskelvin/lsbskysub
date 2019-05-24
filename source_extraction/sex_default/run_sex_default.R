@@ -64,9 +64,9 @@ for(i in 1:length(files)){
     system(paste("../sex_default/do_match.R", incat, catname))
     matchdat = read.csv(paste0("mat/",paste0(strsplit(basename(catname), "cat")[[1]], collapse="mat")))
     nmatchs = c(nmatchs, nrow(matchdat))
-    areafracs = c(areafracs, mean(matchdat[,"AREA_OUTPUT"]/matchdat[,"AREA40_INPUT"]))
-    large5samp = which(matchdat[,"A40_INPUT"] >= sort(matchdat[,"A40_INPUT"],decreasing=TRUE)[5])
-    areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA40_INPUT"]))
+    areafracs = c(areafracs, mean(matchdat[,"AREA_OUTPUT"]/matchdat[,"AREA35_INPUT"]))
+    large5samp = which(matchdat[,"A35_INPUT"] >= sort(matchdat[,"A35_INPUT"],decreasing=TRUE)[5])
+    areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA35_INPUT"]))
     areameans = c(areameans, mean(matchdat[,"AREA_OUTPUT"]))
     areamean5s = c(areamean5s, mean(matchdat[large5samp,"AREA_OUTPUT"]))
     

@@ -19,6 +19,10 @@ for(i in 1:length(ellips)){
     feed1[grep("type : QBeta", feed1)+1] = paste("        q :", 1-ellips[i])
     feed2[grep("# axis ratio", feed2)] = paste(" 9)", 1-ellips[i], "0 # axis ratio")
     feed3[grep("ell", feed3)] = paste("ell    ",ellips[i])
+    
+    feed1[grep("half_light_radius", feed1)] = paste("    half_light_radius :", sqrt(15*15*(1-ellips[i])))
+    
+    # write config files back out
     cat(feed1, sep="\n", file="galsim.config")
     cat(feed2, sep="\n", file="galfit.config")
     cat(feed3, sep="\n", file="imfit.config")

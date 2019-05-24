@@ -6,14 +6,8 @@
 set.seed(3125)
 
 # run GalSim : bright
-system("/usr/local/bin/galsim calexp-HSC-R-8283-38.feedme-n1-b.yaml")
 system("/usr/local/bin/galsim calexp-HSC-R-8283-38.feedme-n4-b.yaml")
-system("/usr/local/bin/galsim calexp-HSC-R-9592-20.feedme-n1-b.yaml")
 system("/usr/local/bin/galsim calexp-HSC-R-9592-20.feedme-n4-b.yaml")
-
-## run GalSim : all
-#system("/usr/local/bin/galsim calexp-HSC-R-8283-38.feedme-n1-a.yaml")
-#system("/usr/local/bin/galsim calexp-HSC-R-8283-38.feedme-n4-a.yaml")
-#system("/usr/local/bin/galsim calexp-HSC-R-9592-20.feedme-n1-a.yaml")
-#system("/usr/local/bin/galsim calexp-HSC-R-9592-20.feedme-n4-a.yaml")
+system("/usr/local/bin/galsim calexp-HSC-R-8283-38.feedme-n1-b.yaml")
+system("/usr/local/bin/galsim calexp-HSC-R-9592-20.feedme-n1-b.yaml")
 

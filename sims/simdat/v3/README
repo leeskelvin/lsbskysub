@@ -1,2 +1,6 @@
-* almost final version, but with profile stamp_size defined as box which encompasses 99.5% of total flux
+* version v3
+* modifications made to stamp_size
+  > now defined as limit at which mu_r = 32.5 mag
+  > minimum size of 11 pixels
+  > rounded up to nearest odd number
 

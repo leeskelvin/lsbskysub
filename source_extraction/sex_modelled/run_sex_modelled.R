@@ -1,0 +1,122 @@
+#!/usr/bin/Rscript --no-init-file
+
+# setup
+require("astro", quietly=TRUE)
+#palette(c("#000000", "#e66101", "#5e3c99", "#fdb863", "#b2abd2", "#edf8b1", "#7fcdbb", "#2c7fb8"))
+set.seed(3125)
+
+# definitions
+denlo1a = "../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n1-a.fits.fz"
+denlo1b = "../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n1-b.fits.fz"
+denlo4a = "../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n4-a.fits.fz"
+denlo4b = "../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n4-b.fits.fz"
+denhi1a = "../../sims/simdat/v5/calexp-HSC-R-9592-20.simulated-n1-a.fits.fz"
+denhi1b = "../../sims/simdat/v5/calexp-HSC-R-9592-20.simulated-n1-b.fits.fz"
+denhi4a = "../../sims/simdat/v5/calexp-HSC-R-9592-20.simulated-n4-a.fits.fz"
+denhi4b = "../../sims/simdat/v5/calexp-HSC-R-9592-20.simulated-n4-b.fits.fz"
+files = c(denlo1a, denlo1b, denlo4a, denlo4b, denhi1a, denhi1b, denhi4a, denhi4b)
+bases = c("denlo1a", "denlo1b", "denlo4a", "denlo4b", "denhi1a", "denhi1b", "denhi4a", "denhi4b")
+funpack = "/usr/bin/funpack" # local FITS unpack binary
+fpack = "/usr/bin/fpack" # local FITS pack binary
+gzip = "/bin/gzip" # local gzip binary
+statsname = paste0("stats_",basename(getwd()),".csv")
+unlink(statsname)
+if(!file.exists("cat")){system("mkdir cat")}
+if(!file.exists("mat")){system("mkdir mat")}
+if(!file.exists("map")){system("mkdir map")}
+
+# software
+gzip = "/bin/gzip"
+sex = "/usr/bin/sextractor" # local SEx binary
+unlink(c("temp_modsub.fits", "temp.fits", "temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
+
+# loop
+ndets = nmatchs = areafracs = areameans = areafrac5s = areamean5s = skymeans = skystds = {}
+for(i in 1:length(files)){
+    
+    # setup
+    cat("", i-1, "/", length(files), "\n")
+    catname = paste0("cat/", bases[i], ".cat.csv")
+    mapname = paste0("map/", bases[i], ".map.fits")
+    unlink(c(catname,mapname,paste0(mapname,".fz"),paste0(mapname,".gz")))
+    
+    # unpack
+    system(paste(funpack, "-O temp.fits", files[i]))
+    
+    # model manipulation
+    modelzip = paste0("model/", bases[i], ".model1.fits.fz")
+    modelname = paste0("model/", bases[i], ".model1.fits")
+    system(paste(funpack, "-O", modelname, modelzip))
+    modeldat = read.fitsim(modelname)
+    unlink(modelname)
+    scifits = read.fits("temp.fits")
+    moddat = scifits$dat[[1]] - (modeldat*1)
+    write.fits(moddat, file="temp_modsub.fits")
+    
+    # model processing
+    output = system(paste0(sex, " -c ../sex_default/default.sex -CATALOG_TYPE NONE -CHECKIMAGE_TYPE BACKGROUND,BACKGROUND_RMS -CHECKIMAGE_NAME temp_sky.fits,temp_std.fits temp_modsub.fits 2>&1"), intern=T)
+    
+    # model sky subtraction
+    skydat = read.fitsim("temp_sky.fits")
+    stddat = read.fitsim("temp_std.fits")
+    scifits$dat[[1]] = scifits$dat[[1]] - skydat
+    write.fits(scifits, file="temp.fits")
+    
+    # source extract
+    output = system(paste0(sex, " -c ../sex_default/default.sex -CATALOG_NAME temp_cat.dat -CATALOG_TYPE ASCII -CHECKIMAGE_TYPE SEGMENTATION -CHECKIMAGE_NAME temp_seg.fits -BACK_TYPE MANUAL -BACK_VALUE 0 -THRESH_TYPE ABSOLUTE -DETECT_THRESH ", 1.5*mean(stddat), " -ANALYSIS_THRESH ", 1.5*mean(stddat), " temp.fits 2>&1"), intern=T)
+    
+    # data read
+    catdat = read.table("temp_cat.dat", stringsAsFactors=FALSE)
+    colnames(catdat) = c("NUMBER", "X_IMAGE", "Y_IMAGE", "FLUX_AUTO", "MAG_AUTO", "A_IMAGE", "B_IMAGE", "KRON_RADIUS", "PETRO_RADIUS", "FLUX_RADIUS", "ELLIPTICITY", "THETA_IMAGE", "BACKGROUND", "THRESHOLD", "ISOAREA_IMAGE", "CLASS_STAR")
+    segfits = read.fits("temp_seg.fits")
+    skyfits = read.fits("temp_sky.fits")
+    stdfits = read.fits("temp_std.fits")
+    ndets = c(ndets, nrow(catdat))
+    skymeans = c(skymeans, mean(skyfits$dat[[1]]))
+    skystds = c(skystds, mean(stdfits$dat[[1]]))
+    
+    # cat processing
+    catdat[,"MAG_AUTO"] = catdat[,"MAG_AUTO"] + 27
+    write.csv(catdat, file=catname, row.names=FALSE, quote=FALSE)
+    
+    # cat matching
+    incat = paste0("../../sims/cat-input/", paste0(strsplit(strsplit(basename(files[i]), ".fits.fz")[[1]], "simulated")[[1]], collapse="cat-input"), ".dat")
+    system(paste("../sex_default/do_match.R", incat, catname))
+    matchdat = read.csv(paste0("mat/",paste0(strsplit(basename(catname), "cat")[[1]], collapse="mat")))
+    nmatchs = c(nmatchs, nrow(matchdat))
+    areafracs = c(areafracs, mean(matchdat[,"AREA_OUTPUT"]/matchdat[,"AREA35_INPUT"]))
+    large5samp = which(matchdat[,"A35_INPUT"] >= sort(matchdat[,"A35_INPUT"],decreasing=TRUE)[5])
+    areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA35_INPUT"]))
+    areameans = c(areameans, mean(matchdat[,"AREA_OUTPUT"]))
+    areamean5s = c(areamean5s, mean(matchdat[large5samp,"AREA_OUTPUT"]))
+    
+    # map processing
+    segdat = segfits$dat[[1]]
+    magdat = matrix(0, nrow=nrow(segdat), ncol=ncol(segdat))
+    magids = round((catdat[,"MAG_AUTO"]),digits=1)
+    magmid = sort(unique(magids))
+    for(j in 1:length(magmid)){
+        segnums = catdat[which(magids == magmid[j]),"NUMBER"]
+        if(length(segnums) > 0){
+            pixels = which(segdat %in% segnums)
+            magdat[pixels] = magmid[j]
+        }
+    }
+    hdr = list(segfits$hdr[[1]], NA, skyfits$hdr[[1]], stdfits$hdr[[1]])
+    dat = list(segfits$dat[[1]], magdat, round(skyfits$dat[[1]],digits=5), round(stdfits$dat[[1]],digits=5))
+    write.fits(list(hdr=hdr,dat=dat), file=mapname)
+    system(paste(gzip, "--best --force", mapname))
+    #system(paste(fpack, "-D -Y", mapname))
+    
+    # clean up
+    unlink(c("temp_modsub.fits","temp.fits","temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
+    
+}
+
+# write stats
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, AREAFRAC=areafracs, AREAMEAN=areameans, AREAFRAC5=areafrac5s, AREAMEAN5=areamean5s, SKYMEAN=skymeans, SKYSTD=skystds)
+write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
+
+# finish up
+cat(" 8 / 8\n")
+
