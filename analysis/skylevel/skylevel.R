@@ -103,7 +103,7 @@ for(i in 1:length(xdats)){
     mtext(side=3, line=1, text=simsources[i], outer=T)
     mtext(side=4, line=2, text=bquote(paste("mean sky level / mag ", arcsec^{-2})), outer=T)
     alegend("top", legend=names(files), ncol=4, byrow=T, inset=0.5, outer=TRUE, seg.len=0.8, seg.gap=0.4,  type=setNames(apply(cbind(pch=metpch,lwd=lwd,col=metcol,cex=cex), 1, as.list), rep("p",length(files))), bty="o", cex=0.9, box.pad=0.25, line.spacing=1.25)
-
+    
     # finish up
     graphics.off()
     
