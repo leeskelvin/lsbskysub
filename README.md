@@ -15,5 +15,3 @@ A project designed to test various sky subtraction methodologies to be used with
 * [sims](sims) : simulated frames 
 * [source_extraction](source_extraction) : using simulated imaging with various source extraction methods 
 
-### LEE
-
