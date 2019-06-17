@@ -34,6 +34,7 @@ for(i in 1:length(files)){
     cat1 = paste0("model/", ids[i], ".model1.csv")
     model0 = paste0("model/", ids[i], ".model0.fits")
     model1 = paste0("model/", ids[i], ".model1.fits")
+    unlink(c("temp.fits",assoc0,assoc1,cat0,cat1,model0,model1,paste0(model0,".fz"),paste0(model1,".fz")))
     
     # unpack
     system(paste(funpack, "-O temp.fits", files[i]))
@@ -53,7 +54,8 @@ for(i in 1:length(files)){
     colnames(cat0dat) = c("NUMBER", "X_IMAGE", "Y_IMAGE", "FLUX_SPHEROID", "MAG_SPHEROID", "SPHEROID_REFF_IMAGE", "SPHEROID_ASPECT_IMAGE", "SPHEROID_THETA_IMAGE", "SPHEROID_SERSICN", "CHI2_MODEL", "FLAGS_MODEL", "VECTOR_ASSOC")
     chi2median = median(cat0dat[,"CHI2_MODEL"])
     chi2mad = mad(cat0dat[,"CHI2_MODEL"])
-    good = which(cat0dat[,"CHI2_MODEL"] >= chi2median-3*chi2mad & cat0dat[,"CHI2_MODEL"] <= chi2median+3*chi2mad)
+    #good = which(cat0dat[,"CHI2_MODEL"] >= chi2median-3*chi2mad & cat0dat[,"CHI2_MODEL"] <= chi2median+3*chi2mad)
+    good = 1:nrow(cat0dat)
     Ie = sersic.Ie(Ltot=cat0dat[,"FLUX_SPHEROID"], n=cat0dat[,"SPHEROID_SERSICN"], a=cat0dat[,"SPHEROID_REFF_IMAGE"], e=1-cat0dat[,"SPHEROID_ASPECT_IMAGE"])
     rlim = sersic.r(Ir=Ilim, Ie=Ie, n=cat0dat[,"SPHEROID_SERSICN"], a=cat0dat[,"SPHEROID_REFF_IMAGE"])
     stamp_size_pixel = 1 + 2*ceiling(rlim)
