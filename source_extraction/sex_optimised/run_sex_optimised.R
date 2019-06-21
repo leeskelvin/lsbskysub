@@ -30,7 +30,7 @@ sex = "/usr/bin/sextractor" # local SEx binary
 unlink(c("temp.fits","temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
 
 # loop
-ndets = nmatchs = areafracs = areameans = areafrac5s = areamean5s = skymeans = skystds = {}
+ndets = nmatchs = areafracs = areameans = areafrac5s = areamean5s = skymeans = skystds = skysprs = medmagdiffs = medmagdiff5s = {}
 for(i in 1:length(files)){
     
     # setup
@@ -58,6 +58,8 @@ for(i in 1:length(files)){
     ndets = c(ndets, nrow(catdat))
     skymeans = c(skymeans, mean(skyfits$dat[[1]]))
     skystds = c(skystds, mean(stdfits$dat[[1]]))
+    spbgdat = regrid(skyfits$dat[[1]], f=c(2/4200,2/4100))/(2100*2050)
+    skysprs = c(skysprs, diff(range(spbgdat)))
     
     # cat processing
     catdat[,"MAG_AUTO"] = catdat[,"MAG_AUTO"] + 27
@@ -73,6 +75,8 @@ for(i in 1:length(files)){
     areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA35_INPUT"]))
     areameans = c(areameans, mean(matchdat[,"AREA_OUTPUT"]))
     areamean5s = c(areamean5s, mean(matchdat[large5samp,"AREA_OUTPUT"]))
+    medmagdiffs = c(medmagdiffs, median(matchdat[,"MAG_OUTPUT"] - matchdat[,"MAG_INPUT"]))
+    medmagdiff5s = c(medmagdiff5s, median(matchdat[large5samp,"MAG_OUTPUT"] - matchdat[large5samp,"MAG_INPUT"]))
     
     # map processing
     segdat = segfits$dat[[1]]
@@ -98,10 +102,10 @@ for(i in 1:length(files)){
 }
 
 # write stats
-temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, AREAFRAC=areafracs, AREAMEAN=areameans, AREAFRAC5=areafrac5s, AREAMEAN5=areamean5s, SKYMEAN=skymeans, SKYSTD=skystds)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, AREAFRAC=areafracs, AREAMEAN=areameans, AREAFRAC5=areafrac5s, AREAMEAN5=areamean5s, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDMAGDIFF=medmagdiffs, MEDMAGDIFF5=medmagdiff5s)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up
 cat(" 8 / 8\n")
-system("cd /home/lee/lsbskysub/analysis/skylevel/; ./skylevel.R")
+#system("cd /home/lee/lsbskysub/analysis/skylevel/; ./skylevel.R")
 

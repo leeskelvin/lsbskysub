@@ -44,8 +44,9 @@ out.output = cbind(
     ,XY_OUTPUT = dat.output[,"xy"]
     ,AREA_OUTPUT = dat.output[,"area_pixel"]
 )
-bad = which(is.na(out.output[,"MAG_OUTPUT"]))
-if(length(bad) > 0){out.output[bad,"MAG_OUTPUT"] = Inf}
+#bad = which(is.na(out.output[,"MAG_OUTPUT"]))
+#if(length(bad) > 0){out.output[bad,"MAG_OUTPUT"] = Inf}
+if(any(is.na(out.output))){out.output[is.na(out.output)] = Inf}
 write.csv(out.input, file="temp_input.csv", quote=FALSE, row.names=FALSE)
 write.csv(out.output, file="temp_output.csv", quote=FALSE, row.names=FALSE)
 
