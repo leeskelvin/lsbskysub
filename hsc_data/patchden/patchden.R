@@ -2,9 +2,9 @@
 
 # definitions
 indir = "../sourcecats/"
-inlist = dir(indir)
-incats = grep(".dat", inlist, value=TRUE)
-areas = read.csv("../sourcecats/areas.csv", stringsAsFactors=FALSE)
+imstats = read.csv("../sourcecats/imstats.csv", stringsAsFactors=FALSE)
+incats = paste0(unlist(strsplit(imstats[,"FILE"],".fits.fz")),".dat")
+#areas = imstats[,"AREA"]
 
 # loop
 numden = {}
@@ -15,8 +15,8 @@ for(i in 1:length(incats)){
     
     dat = read.table(paste0(indir,"/",incats[i]), stringsAsFactors=FALSE)
     fitsim = paste0(strsplit(incats[i], ".dat")[[1]], ".fits.fz")
-    myrow = which(areas[,"FILE"] == fitsim)
-    area = areas[myrow,"AREA"]
+    myrow = which(imstats[,"FILE"] == fitsim)
+    area = imstats[myrow,"AREA"]
     numden = c(numden, nrow(dat)/area)
     newareas = c(newareas, area)
     

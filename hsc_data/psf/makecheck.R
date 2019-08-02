@@ -102,13 +102,19 @@ shade(rads, sbslo, sbshi, col="#f1a340")
 #yval = -2.5*log10(gauss1d(r=rads, I0=gfit$par$I0, fwhm=gfit$par$fwhm) / (0.168^2)) + 27
 #lines(rads, yval, col="red", lwd=5)
 
-# moffat
-cdat = counts; cdat[rads>3.5] = NA
-#err = sqrt(errs[,"ERR95LO"]^2 + errs[,"ERR95HI"]^2)
-err = sqrt(cdat)
-mfit = fit(data=cdat, par=list(I0=c(20), beta=c(2), fwhm=c(0.6)), fn=moffat1d, arg=list(r=rads), sigma=err, method="BFGS", lower=c(0,0,0))
-yval = -2.5*log10(moffat1d(r=seq(0,max(rads),len=1001), I0=mfit$par$I0, beta=mfit$par$beta, fwhm=mfit$par$fwhm) / (0.168^2)) + 27
-lines(seq(0,max(rads),len=1001), yval, col="#998ec3", lwd=2.5)
+## moffat
+#cdat = counts; cdat[rads>3.5] = NA
+##err = sqrt(errs[,"ERR95LO"]^2 + errs[,"ERR95HI"]^2)
+#err = sqrt(cdat)
+#mfit = fit(data=cdat, par=list(I0=c(20), beta=c(2), fwhm=c(0.6)), fn=moffat1d, arg=list(r=rads), sigma=err, method="BFGS", lower=c(0,0,0))
+#yval = -2.5*log10(moffat1d(r=seq(0,max(rads),len=1001), I0=mfit$par$I0, beta=mfit$par$beta, fwhm=mfit$par$fwhm) / (0.168^2)) + 27
+#lines(seq(0,max(rads),len=1001), yval, col="#998ec3", lwd=2.5)
+
+# moffat2d
+m2d = moffat2d(size=79, beta=2.04, fwhm=0.68/0.168, discrete=TRUE)
+yval.counts = (m2d[40,40:79] / m2d[40,40]) * counts[1]
+yval = suppressWarnings(-2.5 * log10(yval.counts / (0.168^2)) + 27)
+lines(rads, yval, col="#998ec3", lwd=2.5)
 
 ## sersic
 #cdat = counts; cdat[cdat == 0] = NA
@@ -122,10 +128,12 @@ lines(rads, sbs, type="p", pch=16, col="white", cex=1.5)
 lines(rads, sbs, type="p", pch=16, col="black", lwd=2, lend=3)
 #legend("topright", fill=c("#f1a340",NA), bty="n", legend=c("95% CI",paste0("Moffat (Γ = ", formatC(mfit$par$fwhm,format="f",digits=2), ", β = ", formatC(mfit$par$beta,format="f",digits=2), ")")), cex=1.25, inset=0.05, border=c("#f1a340",NA), lty=c(NA,1), lwd=c(NA,5), col=c(NA,"#998ec3"), merge=TRUE, xjust=1, seg.len=c(1.25,2))
 legend("topright", fill="#f1a340", bty="n", legend="95% CI", cex=1.25, inset=c(0.05,0.15), border="#f1a340")
-legend("topright", col="#998ec3", lty=1, lwd=2.5, bty="n", legend=paste0("Moffat: Γ = ", formatC(mfit$par$fwhm,format="f",digits=2), "'', β = ", formatC(mfit$par$beta,format="f",digits=2)), cex=1.25, inset=0.05)
+#legend("topright", col="#998ec3", lty=1, lwd=2.5, bty="n", legend=paste0("Moffat: Γ = ", formatC(mfit$par$fwhm,format="f",digits=2), "'', β = ", formatC(mfit$par$beta,format="f",digits=2)), cex=1.25, inset=0.05)
+legend("topright", col="#998ec3", lty=1, lwd=2.5, bty="n", legend=paste0("Moffat: Γ = 0.68'', β = 2.04"), cex=1.25, inset=0.05)
 box(col="grey75"); aaxes(las=1, xnmin=3, ynmin=1)
 
 # finish up
 graphics.off()
 unlink(c(samp,resid))
+#system(paste0("/usr/bin/convert -resize 1890x psfcheck.png psfcheck.jpeg"))
 

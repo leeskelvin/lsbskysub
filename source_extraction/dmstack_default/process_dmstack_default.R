@@ -19,7 +19,7 @@ fpack = "/usr/bin/fpack"
 gzip = "/bin/gzip"
 
 # loop
-bases = ndets = nmatchs = areafracs = areameans = areafrac5s = areamean5s = skymeans = skystds = skysprs = medmagdiffs = medmagdiff5s = {}
+bases = ndets = nmatchs = areafracs = areameans = areafrac5s = areamean5s = skymeans = skymeanerrs = skystds = skysprs = medmagdiffs = medmagdiff5s = {}
 for(i in 1:length(incats)){
     
     # setup
@@ -72,7 +72,8 @@ for(i in 1:length(incats)){
     write.fits(list(detdat,blank,bgdat,blank), file=mapname)
     system(paste0(fpack, " -D -Y ", mapname))
     skymeans = c(skymeans, mean(bgdat))
-    skystds = c(skystds, NA)
+    skymeanerrs = c(skymeanerrs, sd(bgdat)/sqrt(length(bgdat)))
+    skystds = c(skystds, sd(bgdat))
     spbgdat = regrid(bgdat, f=c(2/4200,2/4100))/(2100*2050)
     skysprs = c(skysprs, diff(range(spbgdat)))
     
@@ -82,7 +83,7 @@ for(i in 1:length(incats)){
 }
 
 # write stats
-temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, AREAFRAC=areafracs, AREAMEAN=areameans, AREAFRAC5=areafrac5s, AREAMEAN5=areamean5s, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDMAGDIFF=medmagdiffs, MEDMAGDIFF5=medmagdiff5s)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, AREAFRAC=areafracs, AREAMEAN=areameans, AREAFRAC5=areafrac5s, AREAMEAN5=areamean5s, SKYMEAN=skymeans, SKYMEANERR=skymeanerrs, SKYSTD=skystds, SKYSPR=skysprs, MEDMAGDIFF=medmagdiffs, MEDMAGDIFF5=medmagdiff5s)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up
