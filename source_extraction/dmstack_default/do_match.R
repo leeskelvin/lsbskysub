@@ -42,11 +42,11 @@ out.output = cbind(
     ,XX_OUTPUT = dat.output[,"xx"]
     ,YY_OUTPUT = dat.output[,"yy"]
     ,XY_OUTPUT = dat.output[,"xy"]
-    ,AREA_OUTPUT = dat.output[,"area_pixel"]
+    ,AREA_OUTPUT = NA
 )
 #bad = which(is.na(out.output[,"MAG_OUTPUT"]))
 #if(length(bad) > 0){out.output[bad,"MAG_OUTPUT"] = Inf}
-if(any(is.na(out.output))){out.output[is.na(out.output)] = Inf}
+if(any(is.na(out.output))){out.output[is.na(out.output)] = -999}
 write.csv(out.input, file="temp_input.csv", quote=FALSE, row.names=FALSE)
 write.csv(out.output, file="temp_output.csv", quote=FALSE, row.names=FALSE)
 

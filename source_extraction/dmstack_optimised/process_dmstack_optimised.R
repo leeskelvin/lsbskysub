@@ -7,9 +7,9 @@ set.seed(3125)
 
 # definitions
 incats = grep(".csv", dir("raw", full.names=TRUE), value=TRUE)
-if(!file.exists("cat")){system("mkdir cat")}
-if(!file.exists("map")){system("mkdir map")}
-if(!file.exists("mat")){system("mkdir mat")}
+if(file.exists("cat")){system("rm -R cat")}; system("mkdir cat")
+if(file.exists("map")){system("rm -R map")}; system("mkdir map")
+if(file.exists("mat")){system("rm -R mat")}; system("mkdir mat")
 statsname = paste0("stats_",basename(getwd()),".csv")
 unlink(statsname)
 
@@ -19,7 +19,7 @@ fpack = "/usr/bin/fpack"
 gzip = "/bin/gzip"
 
 # loop
-bases = ndets = nmatchs = areafracs = areameans = areafrac5s = areamean5s = skymeans = skystds = skysprs = medmagdiffs = medmagdiff5s = {}
+bases = ndets = nmatchs = skymeans = skystds = skysprs = medlumfracs = medlumfrac5s = {}
 for(i in 1:length(incats)){
     
     # setup
@@ -44,7 +44,6 @@ for(i in 1:length(incats)){
         , xx = catdat[,"base_SdssShape_xx"]
         , yy = catdat[,"base_SdssShape_yy"]
         , xy = catdat[,"base_SdssShape_xy"]
-        , area_pixel = catdat[,"base_FootprintArea_value"]
     )
     write.csv(temp, file=catname, row.names=FALSE, quote=FALSE)
     ndets = c(ndets, nrow(catdat))
@@ -55,13 +54,15 @@ for(i in 1:length(incats)){
     system(paste("../dmstack_default/do_match.R", incat, catname))
     matchdat = read.csv(paste0("mat/",paste0(strsplit(basename(catname), "cat")[[1]], collapse="mat")))
     nmatchs = c(nmatchs, nrow(matchdat))
-    areafracs = c(areafracs, mean(matchdat[,"AREA_OUTPUT"]/matchdat[,"AREA35_INPUT"]))
     large5samp = which(matchdat[,"A35_INPUT"] >= sort(matchdat[,"A35_INPUT"],decreasing=TRUE)[5])
-    areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA35_INPUT"]))
-    areameans = c(areameans, mean(matchdat[,"AREA_OUTPUT"]))
-    areamean5s = c(areamean5s, mean(matchdat[large5samp,"AREA_OUTPUT"]))
-    medmagdiffs = c(medmagdiffs, median(matchdat[,"MAG_OUTPUT"] - matchdat[,"MAG_INPUT"]))
-    medmagdiff5s = c(medmagdiff5s, median(matchdat[large5samp,"MAG_OUTPUT"] - matchdat[large5samp,"MAG_INPUT"]))
+    #areafracs = c(areafracs, mean(matchdat[,"AREA_OUTPUT"]/matchdat[,"AREA35_INPUT"]))
+    #areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA35_INPUT"]))
+    #areameans = c(areameans, mean(matchdat[,"AREA_OUTPUT"]))
+    #areamean5s = c(areamean5s, mean(matchdat[large5samp,"AREA_OUTPUT"]))
+    luminput = 10^(-0.4*(matchdat[,"MAG_INPUT"] - 27))
+    lumoutput = 10^(-0.4*(matchdat[,"MAG_OUTPUT"] - 27))
+    medlumfracs = c(medlumfracs, median(lumoutput/luminput))
+    medlumfrac5s = c(medlumfrac5s, median(lumoutput[large5samp]/luminput[large5samp]))
     
     # map data
     system(paste(funpack, "-O temp_bg.fits", inback))
@@ -69,10 +70,12 @@ for(i in 1:length(incats)){
     bgdat = read.fitsim("temp_bg.fits")
     detdat = read.fitsim("temp_det.fits")
     blank = matrix(0, nrow=nrow(bgdat), ncol=ncol(detdat))
-    write.fits(list(detdat,blank,bgdat,blank), file=mapname)
-    system(paste0(fpack, " -D -Y ", mapname))
+    fitslist = list(dat=list(detdat,blank,round(bgdat,digits=5)), hdr=list(cbind(key="EXTNAME",value="SEGMAP"), cbind(key="EXTNAME",value="MAGMAP"), cbind(key="EXTNAME",value="SKYMAP")))
+    write.fits(fitslist, file=mapname)
+    system(paste(gzip, "--best --force", mapname))
+    #system(paste0(fpack, " -D -Y ", mapname))
     skymeans = c(skymeans, mean(bgdat))
-    skystds = c(skystds, NA)
+    skystds = c(skystds, sd(bgdat))
     spbgdat = regrid(bgdat, f=c(2/4200,2/4100))/(2100*2050)
     skysprs = c(skysprs, diff(range(spbgdat)))
     
@@ -82,7 +85,7 @@ for(i in 1:length(incats)){
 }
 
 # write stats
-temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, AREAFRAC=areafracs, AREAMEAN=areameans, AREAFRAC5=areafrac5s, AREAMEAN5=areamean5s, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDMAGDIFF=medmagdiffs, MEDMAGDIFF5=medmagdiff5s)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up

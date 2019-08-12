@@ -21,16 +21,16 @@ fpack = "/usr/bin/fpack" # local FITS pack binary
 gzip = "/bin/gzip" # local gzip binary
 statsname = paste0("stats_",basename(getwd()),".csv")
 unlink(statsname)
-if(!file.exists("cat")){system("mkdir cat")}
-if(!file.exists("mat")){system("mkdir mat")}
-if(!file.exists("map")){system("mkdir map")}
+if(file.exists("cat")){system("rm -R cat")}; system("mkdir cat")
+if(file.exists("map")){system("rm -R map")}; system("mkdir map")
+if(file.exists("mat")){system("rm -R mat")}; system("mkdir mat")
 
 # detection software
 sex = "/usr/bin/sextractor" # local SEx binary
 unlink(c("temp.fits","temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
 
 # loop
-ndets = nmatchs = areafracs = areameans = areafrac5s = areamean5s = skymeans = skystds = skysprs = medmagdiffs = medmagdiff5s = {}
+ndets = nmatchs = skymeans = skystds = skysprs = medlumfracs = medlumfrac5s = {}
 for(i in 1:length(files)){
     
     # setup
@@ -50,10 +50,10 @@ for(i in 1:length(files)){
     colnames(catdat) = c("NUMBER", "X_IMAGE", "Y_IMAGE", "FLUX_AUTO", "MAG_AUTO", "A_IMAGE", "B_IMAGE", "KRON_RADIUS", "PETRO_RADIUS", "FLUX_RADIUS", "ELLIPTICITY", "THETA_IMAGE", "BACKGROUND", "THRESHOLD", "ISOAREA_IMAGE", "CLASS_STAR")
     segfits = read.fits("temp_seg.fits")
     skyfits = read.fits("temp_sky.fits")
-    stdfits = read.fits("temp_std.fits")
+    #stdfits = read.fits("temp_std.fits")
     ndets = c(ndets, nrow(catdat))
     skymeans = c(skymeans, mean(skyfits$dat[[1]]))
-    skystds = c(skystds, mean(stdfits$dat[[1]]))
+    skystds = c(skystds, sd(skyfits$dat[[1]]))
     spbgdat = regrid(skyfits$dat[[1]], f=c(2/4200,2/4100))/(2100*2050)
     skysprs = c(skysprs, diff(range(spbgdat)))
     
@@ -66,13 +66,15 @@ for(i in 1:length(files)){
     system(paste("../sex_default/do_match.R", incat, catname))
     matchdat = read.csv(paste0("mat/",paste0(strsplit(basename(catname), "cat")[[1]], collapse="mat")))
     nmatchs = c(nmatchs, nrow(matchdat))
-    areafracs = c(areafracs, mean(matchdat[,"AREA_OUTPUT"]/matchdat[,"AREA35_INPUT"]))
     large5samp = which(matchdat[,"A35_INPUT"] >= sort(matchdat[,"A35_INPUT"],decreasing=TRUE)[5])
-    areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA35_INPUT"]))
-    areameans = c(areameans, mean(matchdat[,"AREA_OUTPUT"]))
-    areamean5s = c(areamean5s, mean(matchdat[large5samp,"AREA_OUTPUT"]))
-    medmagdiffs = c(medmagdiffs, median(matchdat[,"MAG_OUTPUT"] - matchdat[,"MAG_INPUT"]))
-    medmagdiff5s = c(medmagdiff5s, median(matchdat[large5samp,"MAG_OUTPUT"] - matchdat[large5samp,"MAG_INPUT"]))
+    #areafracs = c(areafracs, mean(matchdat[,"AREA_OUTPUT"]/matchdat[,"AREA35_INPUT"]))
+    #areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA35_INPUT"]))
+    #areameans = c(areameans, mean(matchdat[,"AREA_OUTPUT"]))
+    #areamean5s = c(areamean5s, mean(matchdat[large5samp,"AREA_OUTPUT"]))
+    luminput = 10^(-0.4*(matchdat[,"MAG_INPUT"] - 27))
+    lumoutput = 10^(-0.4*(matchdat[,"MAG_OUTPUT"] - 27))
+    medlumfracs = c(medlumfracs, median(lumoutput/luminput))
+    medlumfrac5s = c(medlumfrac5s, median(lumoutput[large5samp]/luminput[large5samp]))
     
     # map processing
     segdat = segfits$dat[[1]]
@@ -86,8 +88,8 @@ for(i in 1:length(files)){
             magdat[pixels] = magmid[j]
         }
     }
-    hdr = list(segfits$hdr[[1]], NA, skyfits$hdr[[1]], stdfits$hdr[[1]])
-    dat = list(segfits$dat[[1]], magdat, round(skyfits$dat[[1]],digits=5), round(stdfits$dat[[1]],digits=5))
+    hdr = list(rbind(segfits$hdr[[1]],c("EXTNAME","SEGMAP","")), cbind(key="EXTNAME",value="MAGMAP",comment=""), rbind(skyfits$hdr[[1]],c("EXTNAME","SKYMAP","")))
+    dat = list(segfits$dat[[1]], magdat, round(skyfits$dat[[1]],digits=5))
     write.fits(list(hdr=hdr,dat=dat), file=mapname)
     system(paste(gzip, "--best --force", mapname))
     #system(paste(fpack, "-D -Y", mapname))
@@ -98,7 +100,7 @@ for(i in 1:length(files)){
 }
 
 # write stats
-temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, AREAFRAC=areafracs, AREAMEAN=areameans, AREAFRAC5=areafrac5s, AREAMEAN5=areamean5s, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDMAGDIFF=medmagdiffs, MEDMAGDIFF5=medmagdiff5s)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up
