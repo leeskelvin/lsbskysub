@@ -44,6 +44,7 @@ for(i in 1:length(incats)){
         , xx = catdat[,"base_SdssShape_xx"]
         , yy = catdat[,"base_SdssShape_yy"]
         , xy = catdat[,"base_SdssShape_xy"]
+        , area_pixel = catdat[,"base_FootprintArea_value"]
     )
     write.csv(temp, file=catname, row.names=FALSE, quote=FALSE)
     ndets = c(ndets, nrow(catdat))

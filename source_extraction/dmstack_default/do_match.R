@@ -42,7 +42,7 @@ out.output = cbind(
     ,XX_OUTPUT = dat.output[,"xx"]
     ,YY_OUTPUT = dat.output[,"yy"]
     ,XY_OUTPUT = dat.output[,"xy"]
-    ,AREA_OUTPUT = NA
+    ,AREA_OUTPUT = dat.output[,"area_pixel"]
 )
 #bad = which(is.na(out.output[,"MAG_OUTPUT"]))
 #if(length(bad) > 0){out.output[bad,"MAG_OUTPUT"] = Inf}
