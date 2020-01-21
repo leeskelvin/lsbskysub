@@ -17,7 +17,7 @@ colnames(dat) = c("NUMBER", "FLUX_AUTO", "MAG_AUTO", "KRON_RADIUS", "PETRO_RADIU
 if(any(dat[,"MAG_AUTO"] == 99)){dat = dat[-which(dat[,"MAG_AUTO"]==99),]}
 dat[,"FLUX_RADIUS"] = dat[,"FLUX_RADIUS"] * pixelsize # now in arcsec
 dat[,"MAG_AUTO"] = dat[,"MAG_AUTO"] + 27 # zero point correction
-starthresh = 0.0285
+starthresh = 0.05 #0.0285
 cat("\nRemoved due to star-like : ", length(which(dat[,"CLASS_STAR"] > starthresh)), "/", nrow(dat), "\n")
 dat = dat[dat[,"CLASS_STAR"]<=starthresh,] # remove probable stars
 dat = dat[sample(x=nrow(dat)),] # randomise for plotting

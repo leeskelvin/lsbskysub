@@ -7,7 +7,7 @@ set.seed(3125)
 
 # definitions
 datas = paste0("../../hsc_data/calexp/", grep(".dat", dir("../../hsc_data/calexp/"), value=TRUE))
-sims = paste0("../../sims/cat-input/", grep("-n1.dat", dir("../../sims/cat-input/"), value=TRUE))
+sims = paste0("../../sims/cat-input/", grep("-n1-b.dat", dir("../../sims/cat-input/"), value=TRUE))
 dat1 = read.table(datas[1], stringsAsFactors=FALSE)
 dat2 = read.table(datas[2], stringsAsFactors=FALSE)
 dat = rbind(cbind(dat1,SOURCE=1), cbind(dat2,SOURCE=2))
@@ -31,14 +31,14 @@ par("lwd"=2.5)
 par("ljoin"=1)
 
 # plot
-hist(dellip, axes=FALSE, breaks=breaks, freq=T, xlab="", ylab="", col=col2rgba(2,alpha), border="white", main="")
-hist(sellip, breaks=breaks, freq=T, add=T, col=NA, border=col2rgba(3,1))
+hist(dellip, axes=FALSE, breaks=breaks, freq=T, xlab="", ylab="", col=col2hex(2,alpha), border="white", main="")
+hist(sellip, breaks=breaks, freq=T, add=T, col=NA, border=col2hex(3,1))
 aaxes(side=c(1,2,3,4), labels=c(1,2), xnmin=3, ynmin=4, las=1)
 abox()
 mtext(side=1, text="ellipticity", line=1.75)
 mtext(side=2, text="number frequency", line=2.25)
-alegend("topright", legend=c("observed","simulated (bright only)"), type=list(f=list(col=col2rgba(2,alpha),border="white"),f=list(col="white",border=col2rgba(3,1))))
+alegend("topright", legend=c("observed","simulated (bright only)"), type=list(f=list(col=col2hex(2,alpha),border="white"),f=list(col="white",border=col2hex(3,1))))
 
-# finish up 
+# finish up
 graphics.off()
 
