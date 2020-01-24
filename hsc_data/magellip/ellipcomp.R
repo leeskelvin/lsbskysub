@@ -12,10 +12,17 @@ dat1 = read.table(datas[1], stringsAsFactors=FALSE)
 dat2 = read.table(datas[2], stringsAsFactors=FALSE)
 dat = rbind(cbind(dat1,SOURCE=1), cbind(dat2,SOURCE=2))
 colnames(dat) = c("NUMBER", "FLUX_AUTO", "MAG_AUTO", "KRON_RADIUS", "PETRO_RADIUS", "BACKGROUND", "THRESHOLD", "X_IMAGE", "Y_IMAGE", "A_IMAGE", "B_IMAGE", "THETA_IMAGE", "ELLIPTICITY", "CLASS_STAR", "FLUX_RADIUS", "SOURCE")
+dat[,"MAG_AUTO"] = dat[,"MAG_AUTO"] + 27
 sim1 = read.table(sims[1], stringsAsFactors=FALSE)
 sim2 = read.table(sims[2], stringsAsFactors=FALSE)
 sim = rbind(cbind(sim1,SOURCE=1), cbind(sim2,SOURCE=2))
 colnames(sim) = c("X", "Y", "FLUX", "HALF_LIGHT_RADIUS", "Q", "THETA", "N", "STAMP_SIZE", "SOURCE")
+simmag = -2.5*log10(sim[,"FLUX"]) + 27
+# trim to bright end alone
+datsamp = which(dat[,"MAG_AUTO"] < 22.25 & dat[,"MAG_AUTO"] <= 24.75)
+simsamp = which(simmag < 22.25 & simmag <= 24.75)
+dat = dat[datsamp,]
+sim = sim[simsamp,]
 dellip = dat[,"ELLIPTICITY"]
 sellip = 1 - sim[,"Q"]
 
@@ -31,12 +38,12 @@ par("lwd"=2.5)
 par("ljoin"=1)
 
 # plot
-hist(dellip, axes=FALSE, breaks=breaks, freq=T, xlab="", ylab="", col=col2hex(2,alpha), border="white", main="")
-hist(sellip, breaks=breaks, freq=T, add=T, col=NA, border=col2hex(3,1))
+hist(dellip, axes=FALSE, breaks=breaks, freq=F, xlab="", ylab="", col=col2hex(2,alpha), border="white", main="")
+hist(sellip, breaks=breaks, freq=F, add=T, col=NA, border=col2hex(3,1))
 aaxes(side=c(1,2,3,4), labels=c(1,2), xnmin=3, ynmin=4, las=1)
 abox()
 mtext(side=1, text="ellipticity", line=1.75)
-mtext(side=2, text="number frequency", line=2.25)
+mtext(side=2, text="number density", line=2.25)
 alegend("topright", legend=c("observed","simulated (bright only)"), type=list(f=list(col=col2hex(2,alpha),border="white"),f=list(col="white",border=col2hex(3,1))))
 
 # finish up
