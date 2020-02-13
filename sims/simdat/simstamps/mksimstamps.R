@@ -100,7 +100,7 @@ for(i in 1:length(tpids)){
     yhi = round(ycen[i] + ((ydim[i]+1)/2))
 
     # dev
-    png(file=paste0("simstamp-zoom-", tpids[i], ".png"), width=8, height=8*(4100/4200), units="in", res=155)
+    png(file=paste0("simstamp-zoom-", tpids[i], ".png"), width=8, height=8, units="in", res=160)
 
     # par
     layout(cbind(c(1,2),c(3,4)))
