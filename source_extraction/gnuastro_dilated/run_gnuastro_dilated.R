@@ -36,16 +36,16 @@ unlink(c("temp_masked.fits", "temp.fits", "temp_detected.fits", "temp_detected_s
 # loop
 ndets = nmatchs = skymeans = skystds = skysprs = medlumfracs = medlumfrac5s = {}
 for(i in 1:length(files)){
-    
+
     # setup
     cat("", i-1, "/", length(files), "\n")
     catname = paste0("cat/", bases[i], ".cat.csv")
     mapname = paste0("map/", bases[i], ".map.fits")
     unlink(c(catname,mapname,paste0(mapname,".fz"),paste0(mapname,".gz")))
-    
+
     # unpack
     system(paste(funpack, "-O temp.fits", files[i]))
-    
+
     # mask construction
     maskzip = paste0("mask/", bases[i], ".mask.fits.gz")
     maskname = paste0("mask/", bases[i], ".mask.fits")
@@ -55,10 +55,10 @@ for(i in 1:length(files)){
     scifits = read.fits("temp.fits")
     nandat = scifits$dat[[1]]; nandat[maskdat==1] = 1e5
     write.fits(nandat, file="temp_masked.fits")
-    
+
     # mask processing
     system(paste(noisechisel, "-h0 temp_masked.fits --ignoreblankintiles"))
-    
+
     # mask sky subtraction
     scifits = read.fits("temp.fits")
     detfits = read.fits("temp_masked_detected.fits")
@@ -72,13 +72,13 @@ for(i in 1:length(files)){
     detfits$dat[[2+1]] = dets
     write.fits(detfits, file="temp_detected.fits")
     unlink(c("temp_masked.fits", "temp_masked_detected.fits", "temp_skysub.fits", "temp_skysub_detected.fits"))
-    
+
     # segment
     system(paste(segment, "temp_detected.fits"))
-    
+
     # mkcatalog
     system(paste(mkcatalog, "--config=../gnuastro_default/columns.conf --insky=temp_detected.fits temp_detected_segmented.fits --output=temp_detected_segmented_cat.dat"))
-    
+
     # data read
     catdat = read.table("temp_detected_segmented_cat.dat", stringsAsFactors=FALSE)
     colnames(catdat) = c("OBJ_ID", "X", "Y", "BRIGHTNESS", "MAGNITUDE", "SEMI_MAJOR", "SEMI_MINOR", "MAX_X", "MAX_Y", "SN", "AXIS_RATIO", "POSITION_ANGLE", "SKY", "STD", "AREA", "UPPERLIMIT")
@@ -90,14 +90,14 @@ for(i in 1:length(files)){
     skystds = c(skystds, sd(skyfits$dat[[1]]))
     spbgdat = regrid(skyfits$dat[[1]], f=c(2/4200,2/4100))/(2100*2050)
     skysprs = c(skysprs, diff(range(spbgdat)))
-    
+
     # cat processing
     ellipticity = 1 - catdat[,"AXIS_RATIO"]
     catdat[,"AXIS_RATIO"] = ellipticity
     colnames(catdat)[which(colnames(catdat)=="AXIS_RATIO")] = "ELLIPTICITY"
     catdat[,"MAGNITUDE"] = catdat[,"MAGNITUDE"] + 27
     write.csv(catdat, file=catname, row.names=FALSE, quote=FALSE)
-    
+
     # cat matching
     incat = paste0("../../sims/cat-input/", paste0(strsplit(strsplit(basename(files[i]), ".fits.fz")[[1]], "simulated")[[1]], collapse="cat-input"), ".dat")
     system(paste("../gnuastro_default/do_match.R", incat, catname))
@@ -112,7 +112,7 @@ for(i in 1:length(files)){
     lumoutput = 10^(-0.4*(matchdat[,"MAG_OUTPUT"] - 27))
     medlumfracs = c(medlumfracs, median(lumoutput/luminput))
     medlumfrac5s = c(medlumfrac5s, median(lumoutput[large5samp]/luminput[large5samp]))
-    
+
     # map processing
     segdat = segfits$dat[[1]]
     magdat = matrix(0, nrow=nrow(segdat), ncol=ncol(segdat))
@@ -130,10 +130,10 @@ for(i in 1:length(files)){
     write.fits(list(hdr=hdr,dat=dat), file=mapname)
     system(paste(gzip, "--best --force", mapname))
     #system(paste(fpack, "-D -Y", mapname))
-    
+
     # clean up
     unlink(c("temp_masked.fits", "temp.fits", "temp_detected.fits", "temp_detected_segmented.fits", "temp_detected_segmented_cat.dat"))
-    
+
 }
 
 # write stats
