@@ -42,6 +42,7 @@ xhi = round(xcen + ((xdim+1)/2))
 ylo = round(ycen - ((ydim+1)/2))
 yhi = round(ycen + ((ydim+1)/2))
 simdat = read.fitsim(simfile, hdu=1)[xlo:xhi,ylo:yhi]
+maskdat = read.fitsim(defmapfile, hdu=1)[xlo:xhi,ylo:yhi]
 model0dat = read.fitsim(model0file, hdu=1)[xlo:xhi,ylo:yhi]
 model1dat = read.fitsim(model1file, hdu=1)[xlo:xhi,ylo:yhi]
 skyold = read.fitsim(defmapfile, hdu=3)[xlo:xhi,ylo:yhi]
@@ -49,20 +50,23 @@ skynew = read.fitsim(modelmapfile, hdu=3)[xlo:xhi,ylo:yhi]
 resdat = simdat - model1dat
 
 # png
-png(file="modmask.png", width=8, height=5.25, units="in", res=250)
+png(file="modmask.png", width=8, height=5.5, units="in", res=255)
 par("mar"=c(0.5,0.5,1.5,0.5))
 par("oma"=c(0,0,0.5,0))
 
 # par
 layout(rbind(c(1,3,5),c(2,4,6)))
 line = 0.15
+maskalpha = 1
 
 # plot
 aimage(simdat, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.025, scale.hi=5, xlab="", ylab="", smooth.fwhm=3)
-mtext(side=3, line=line, text="original image")
+image(1:537, 1:537, maskdat, zlim=c(1.5,50000), col=col2hex("red",maskalpha), add=TRUE)
+mtext(side=3, line=line, text="original image & seg. map")
 
 aimage(resdat, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.025, scale.hi=5, xlab="", ylab="", smooth.fwhm=3)
-mtext(side=3, line=line, text="residual image")
+image(1:537, 1:537, maskdat, zlim=c(1.5,50000), col=col2hex("red",maskalpha), add=TRUE)
+mtext(side=3, line=line, text="residual image & seg. map")
 
 aimage(model0dat, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.025, scale.hi=5, xlab="", ylab="", smooth.fwhm=0)
 mtext(side=3, line=line, text="initial model")

@@ -48,9 +48,9 @@ skyold = read.fitsim(defmapfile, hdu=3)[xlo:xhi,ylo:yhi]
 skynew = read.fitsim(dilmapfile, hdu=3)[xlo:xhi,ylo:yhi]
 
 # png
-png(file="dilmask.png", width=8, height=5.25, units="in", res=250)
+png(file="dilmask.png", width=8, height=5.5, units="in", res=255)
 par("mar"=c(0.5,0.5,1.5,0.5))
-par("oma"=c(0,5,0.5,0))
+par("oma"=c(0,0,0.5,0))
 
 # par
 layout(rbind(c(1,3,5),c(2,4,6)))
@@ -63,8 +63,8 @@ mtext(side=3, line=line, text="original image")
 aimage(magdat, col.map="sls", scale.type="lin", axes=FALSE, scale.lo=30, scale.hi=15, xlab="", ylab="", smooth.fwhm=0)
 rect(xl=1, xr=537, yb=1, yt=537, border="black")
 mtext(side=3, line=line, text="magnitude map")
-col.bar("left", n=4, col.map="sls", scale.lo=30, scale.hi=15, scale.type="lin", flip=TRUE, inset=-3, seg.num=499, seg.gap=0.25)
-mtext(side=2, line=3.75, text=bquote(paste(m[r])), las=1)
+col.bar("bottom", horizontal=TRUE, n=4, col.map="sls", scale.lo=30, scale.hi=15, scale.type="lin", flip=TRUE, inset=-0.25, seg.num=499, seg.gap=0.25, seg.width=0.5)
+#mtext(side=2, line=3.75, text=bquote(paste(m[r])), las=1)
 
 aimage(simdat, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.025, scale.hi=5, xlab="", ylab="", smooth.fwhm=3)
 image(1:537, 1:537, magdat, zlim=c(0.5,100), col="red", add=TRUE)
