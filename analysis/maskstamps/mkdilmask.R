@@ -14,24 +14,25 @@ xcen = 370
 ycen = 2650
 xdim = 535
 ydim = 535
-simzipped = paste0("../../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n4-a.fits.fz")
-defmapzipped = paste0("../../sex_default/map/denlo4a.map.fits.gz")
-maskzipped = paste0("../mask/denlo4a.mask.fits.gz")
-dilmapzipped = paste0("../../sex_dilated/map/denlo4a.map.fits.gz")
+simzipped = paste0("../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n4-a.fits.fz")
+defmapzipped = paste0("../../source_extraction/sex_default/map/denlo4a.map.fits.gz")
+dilmaskzipped = paste0("../../source_extraction/sex_dilated/mask/denlo4a.mask.fits.gz")
+dilmapzipped = paste0("../../source_extraction/sex_dilated/map/denlo4a.map.fits.gz")
+# modelmaskzipped = paste0("../../source_extraction/sex_modelled/model/denlo4a.model1.mask.fits.fz")
 
 # extract
 simfile = "simfile.fits"
 defmaptemp = strsplit(defmapzipped, ".gz")[[1]]
 defmapfile = "defmapfile.fits"
-masktemp = strsplit(maskzipped, ".gz")[[1]]
-maskfile = "maskfile.fits"
+dilmasktemp = strsplit(dilmaskzipped, ".gz")[[1]]
+dilmaskfile = "dilmaskfile.fits"
 dilmaptemp = strsplit(dilmapzipped, ".gz")[[1]]
 dilmapfile = "dilmapfile.fits"
 system(paste(funpack, "-O", simfile, simzipped))
 system(paste0(gzip, " -d -k ", defmapzipped))
 system(paste("mv", defmaptemp, defmapfile))
-system(paste0(gzip, " -d -k ", maskzipped))
-system(paste("mv", masktemp, maskfile))
+system(paste0(gzip, " -d -k ", dilmaskzipped))
+system(paste("mv", dilmasktemp, dilmaskfile))
 system(paste0(gzip, " -d -k ", dilmapzipped))
 system(paste("mv", dilmaptemp, dilmapfile))
 
@@ -42,12 +43,12 @@ ylo = round(ycen - ((ydim+1)/2))
 yhi = round(ycen + ((ydim+1)/2))
 simdat = read.fitsim(simfile, hdu=1)[xlo:xhi,ylo:yhi]
 magdat = read.fitsim(defmapfile, hdu=2)[xlo:xhi,ylo:yhi]
-dildat = read.fitsim(maskfile, hdu=1)[xlo:xhi,ylo:yhi]
+dildat = read.fitsim(dilmaskfile, hdu=1)[xlo:xhi,ylo:yhi]
 skyold = read.fitsim(defmapfile, hdu=3)[xlo:xhi,ylo:yhi]
 skynew = read.fitsim(dilmapfile, hdu=3)[xlo:xhi,ylo:yhi]
 
 # png
-png(file="maskstamps.png", width=8, height=5.25, units="in", res=250)
+png(file="dilmask.png", width=8, height=5.25, units="in", res=250)
 par("mar"=c(0.5,0.5,1.5,0.5))
 par("oma"=c(0,5,0.5,0))
 
@@ -80,5 +81,5 @@ aimage(skynew, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.025, sca
 mtext(side=3, line=line, text="dilated mask background sky")
 
 # finish up
-unlink(c(simfile, defmapfile, maskfile, dilmapfile))
+unlink(c(simfile, defmapfile, dilmaskfile, dilmapfile))
 graphics.off()
