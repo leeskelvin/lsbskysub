@@ -14,11 +14,12 @@ xcen = 370
 ycen = 2650
 xdim = 535
 ydim = 535
+codebase = "gnuastro"
 simzipped = paste0("../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n4-a.fits.fz")
-defmapzipped = paste0("../../source_extraction/sex_default/map/denlo4a.map.fits.gz")
-dilmaskzipped = paste0("../../source_extraction/sex_dilated/mask/denlo4a.mask.fits.gz")
-dilmapzipped = paste0("../../source_extraction/sex_dilated/map/denlo4a.map.fits.gz")
-# modelmaskzipped = paste0("../../source_extraction/sex_modelled/model/denlo4a.model1.mask.fits.fz")
+defmapzipped = paste0("../../source_extraction/",codebase,"_default/map/denlo4a.map.fits.gz")
+dilmaskzipped = paste0("../../source_extraction/",codebase,"_dilated/mask/denlo4a.mask.fits.gz")
+dilmapzipped = paste0("../../source_extraction/",codebase,"_dilated/map/denlo4a.map.fits.gz")
+# modelmaskzipped = paste0("../../source_extraction/",codebase,"_modelled/model/denlo4a.model1.mask.fits.fz")
 
 # extract
 simfile = "simfile.fits"
@@ -48,7 +49,7 @@ skyold = read.fitsim(defmapfile, hdu=3)[xlo:xhi,ylo:yhi]
 skynew = read.fitsim(dilmapfile, hdu=3)[xlo:xhi,ylo:yhi]
 
 # png
-png(file="dilmask.png", width=8, height=5.5, units="in", res=255)
+png(file=paste0("dilmask_",codebase,".png"), width=8, height=5.5, units="in", res=255)
 par("mar"=c(0.5,0.5,1.5,0.5))
 par("oma"=c(0,0,0.5,0))
 
@@ -74,10 +75,10 @@ aimage(simdat, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.025, sca
 image(1:537, 1:537, dildat, zlim=c(0.5,100), col="red", add=TRUE)
 mtext(side=3, line=line, text="dilated mask")
 
-aimage(skyold, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.025, scale.hi=5, xlab="", ylab="", smooth.fwhm=0)
+aimage(skyold, col.map="sls", scale.type="lin", axes=FALSE, scale.lo=0.001, scale.hi=0.014, xlab="", ylab="", smooth.fwhm=0)
 mtext(side=3, line=line, text="original background sky")
 
-aimage(skynew, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.025, scale.hi=5, xlab="", ylab="", smooth.fwhm=0)
+aimage(skynew, col.map="sls", scale.type="lin", axes=FALSE, scale.lo=0.001, scale.hi=0.014, xlab="", ylab="", smooth.fwhm=0)
 mtext(side=3, line=line, text="dilated mask background sky")
 
 # finish up

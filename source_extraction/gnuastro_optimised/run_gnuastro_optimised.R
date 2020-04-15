@@ -32,53 +32,52 @@ mkcatalog = "/usr/local/bin/astmkcatalog" # local mkcatalog binary
 unlink(c("temp.fits","temp_detected.fits","temp_detected_segmented.fits","temp_detected_segmented_cat.dat"))
 
 # loop
-ndets = nmatchs = skymeans = skystds = skysprs = medlumfracs = medlumfrac5s = {}
+ndets = nmatchs = skymeans = skystds = medlumfracs = medlumfrac5s = {}
 for(i in 1:length(files)){
-    
+
     # setup
     cat("", i-1, "/", length(files), "\n")
     catname = paste0("cat/", bases[i], ".cat.csv")
     mapname = paste0("map/", bases[i], ".map.fits")
     unlink(c(catname,mapname,paste0(mapname,".fz"),paste0(mapname,".gz")))
-    
+
     # unpack
     system(paste(funpack, "-O temp.fits", files[i]))
-    
+
     # general and specific optimised options
     system("./make_kernel.R 2 5")
     genopt = "--tilesize=15,15"
     ncopt = "--kernel=kernel.fits --detgrowquant 0.7" # --meanmedqdiff 0.002 --qthresh 0.3 --noerodequant=0.999 --minskyfrac 0.85 --snquant 0.999"
     segopt = "--kernel=kernel.fits" #--minskyfrac 0.5
-    # segopt rejected: 
-    
+    # segopt rejected:
+
     # noisechisel
     system(paste(noisechisel, "-h0 temp.fits", genopt, ncopt))
-    
+
     # segment
     system(paste(segment, "temp_detected.fits", genopt, segopt))
-    
+
     # mkcatalog
     system(paste(mkcatalog, "--config=../gnuastro_default/columns.conf --insky=temp_detected.fits temp_detected_segmented.fits --output=temp_detected_segmented_cat.dat", genopt))
-    
+
     # data read
     catdat = read.table("temp_detected_segmented_cat.dat", stringsAsFactors=FALSE)
-    colnames(catdat) = c("OBJ_ID", "X", "Y", "BRIGHTNESS", "MAGNITUDE", "SEMI_MAJOR", "SEMI_MINOR", "MAX_X", "MAX_Y", "SN", "AXIS_RATIO", "POSITION_ANGLE", "SKY", "STD", "AREA", "UPPERLIMIT")
+    colnames(catdat) = c("OBJ_ID", "X", "Y", "BRIGHTNESS", "MAGNITUDE", "SEMI_MAJOR", "SEMI_MINOR", "GEO_SEMI_MAJOR", "GEO_SEMI_MINOR", "SN", "AXIS_RATIO", "POSITION_ANGLE", "SKY", "STD", "AREA", "UPPERLIMIT")
     segfits = read.fits("temp_detected_segmented.fits", hdu=3+1)
     skyfits = read.fits("temp_detected.fits", hdu=3+1)
     #stdfits = read.fits("temp_detected.fits", hdu=4+1)
     ndets = c(ndets, nrow(catdat))
-    skymeans = c(skymeans, mean(skyfits$dat[[1]]))
-    skystds = c(skystds, sd(skyfits$dat[[1]]))
-    spbgdat = regrid(skyfits$dat[[1]], f=c(2/4200,2/4100))/(2100*2050)
-    skysprs = c(skysprs, diff(range(spbgdat)))
-    
+    spbgdat = regrid(skyfits$dat[[1]][1:4200,26:4075], fact=1/c(30,30)) / (30*30)
+    skymeans = c(skymeans, mean(spbgdat))
+    skystds = c(skystds, sd(spbgdat))
+
     # cat processing
     ellipticity = 1 - catdat[,"AXIS_RATIO"]
     catdat[,"AXIS_RATIO"] = ellipticity
     colnames(catdat)[which(colnames(catdat)=="AXIS_RATIO")] = "ELLIPTICITY"
     catdat[,"MAGNITUDE"] = catdat[,"MAGNITUDE"] + 27
     write.csv(catdat, file=catname, row.names=FALSE, quote=FALSE)
-    
+
     # cat matching
     incat = paste0("../../sims/cat-input/", paste0(strsplit(strsplit(basename(files[i]), ".fits.fz")[[1]], "simulated")[[1]], collapse="cat-input"), ".dat")
     system(paste("../gnuastro_default/do_match.R", incat, catname))
@@ -93,7 +92,7 @@ for(i in 1:length(files)){
     lumoutput = 10^(-0.4*(matchdat[,"MAG_OUTPUT"] - 27))
     medlumfracs = c(medlumfracs, median(lumoutput/luminput))
     medlumfrac5s = c(medlumfrac5s, median(lumoutput[large5samp]/luminput[large5samp]))
-    
+
     # map processing
     segdat = segfits$dat[[1]]
     magdat = matrix(0, nrow=nrow(segdat), ncol=ncol(segdat))
@@ -111,14 +110,14 @@ for(i in 1:length(files)){
     write.fits(list(hdr=hdr,dat=dat), file=mapname)
     system(paste(gzip, "--best --force", mapname))
     #system(paste(fpack, "-D -Y", mapname))
-    
+
     # clean up
     unlink(c("temp.fits","temp_detected.fits","temp_detected_segmented.fits","temp_detected_segmented_cat.dat"))
-    
+
 }
 
 # write stats
-temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up

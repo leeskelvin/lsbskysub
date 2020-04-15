@@ -19,9 +19,9 @@ fpack = "/usr/bin/fpack"
 gzip = "/bin/gzip"
 
 # loop
-bases = ndets = nmatchs = skymeans = skystds = skysprs = medlumfracs = medlumfrac5s = {}
+bases = ndets = nmatchs = skymeans = skystds = medlumfracs = medlumfrac5s = {}
 for(i in 1:length(incats)){
-    
+
     # setup
     cat("", i-1, "/", length(incats), "\n")
     if(length(grep("8283-38",incats[i]))>0){base1="denlo"}else{base1="denhi"}
@@ -33,7 +33,7 @@ for(i in 1:length(incats)){
     indet = paste0("raw/det_", strsplit(strsplit(incats[[i]],"raw/")[[1]][2],".csv")[[1]][1], ".fz")
     catname = paste0("cat/",base,".cat.csv")
     mapname = paste0("map/",base,".map.fits")
-    
+
     # catalogue data
     catdat = read.csv(incats[i])
     temp = cbind(
@@ -48,7 +48,7 @@ for(i in 1:length(incats)){
     )
     write.csv(temp, file=catname, row.names=FALSE, quote=FALSE)
     ndets = c(ndets, nrow(catdat))
-    
+
     # cat matching
     bits = strsplit(strsplit(strsplit(incats[i], "raw/")[[1]][2], ".fits.csv")[[1]], ".simulated")[[1]]
     incat = paste0("../../sims/cat-input/", bits[1], ".cat-input", bits[2], ".dat")
@@ -64,7 +64,7 @@ for(i in 1:length(incats)){
     lumoutput = 10^(-0.4*(matchdat[,"MAG_OUTPUT"] - 27))
     medlumfracs = c(medlumfracs, median(lumoutput/luminput))
     medlumfrac5s = c(medlumfrac5s, median(lumoutput[large5samp]/luminput[large5samp]))
-    
+
     # map data
     system(paste(funpack, "-O temp_bg.fits", inback))
     system(paste(funpack, "-O temp_det.fits", indet))
@@ -75,18 +75,17 @@ for(i in 1:length(incats)){
     write.fits(fitslist, file=mapname)
     system(paste(gzip, "--best --force", mapname))
     #system(paste0(fpack, " -D -Y ", mapname))
-    skymeans = c(skymeans, mean(bgdat))
-    skystds = c(skystds, sd(bgdat))
-    spbgdat = regrid(bgdat, f=c(2/4200,2/4100))/(2100*2050)
-    skysprs = c(skysprs, diff(range(spbgdat)))
-    
+    spbgdat = regrid(bgdat[1:4200,26:4075], fact=1/c(30,30)) / (30*30)
+    skymeans = c(skymeans, mean(spbgdat))
+    skystds = c(skystds, sd(spbgdat))
+
     # clean up
     unlink(c("temp_bg.fits", "temp_det.fits"))
-    
+
 }
 
 # write stats
-temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up

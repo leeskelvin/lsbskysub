@@ -34,7 +34,7 @@ mkcatalog = "/usr/local/bin/astmkcatalog" # local mkcatalog binary
 unlink(c("temp_masked.fits", "temp.fits", "temp_detected.fits", "temp_detected_segmented.fits", "temp_detected_segmented_cat.dat"))
 
 # loop
-ndets = nmatchs = skymeans = skystds = skysprs = medlumfracs = medlumfrac5s = {}
+ndets = nmatchs = skymeans = skystds = medlumfracs = medlumfrac5s = {}
 for(i in 1:length(files)){
 
     # setup
@@ -81,15 +81,14 @@ for(i in 1:length(files)){
 
     # data read
     catdat = read.table("temp_detected_segmented_cat.dat", stringsAsFactors=FALSE)
-    colnames(catdat) = c("OBJ_ID", "X", "Y", "BRIGHTNESS", "MAGNITUDE", "SEMI_MAJOR", "SEMI_MINOR", "MAX_X", "MAX_Y", "SN", "AXIS_RATIO", "POSITION_ANGLE", "SKY", "STD", "AREA", "UPPERLIMIT")
+    colnames(catdat) = c("OBJ_ID", "X", "Y", "BRIGHTNESS", "MAGNITUDE", "SEMI_MAJOR", "SEMI_MINOR", "GEO_SEMI_MAJOR", "GEO_SEMI_MINOR", "SN", "AXIS_RATIO", "POSITION_ANGLE", "SKY", "STD", "AREA", "UPPERLIMIT")
     segfits = read.fits("temp_detected_segmented.fits", hdu=3+1)
     skyfits = read.fits("temp_detected.fits", hdu=3+1)
     #stdfits = read.fits("temp_detected.fits", hdu=4+1)
     ndets = c(ndets, nrow(catdat))
-    skymeans = c(skymeans, mean(skyfits$dat[[1]]))
-    skystds = c(skystds, sd(skyfits$dat[[1]]))
-    spbgdat = regrid(skyfits$dat[[1]], f=c(2/4200,2/4100))/(2100*2050)
-    skysprs = c(skysprs, diff(range(spbgdat)))
+    spbgdat = regrid(skyfits$dat[[1]][1:4200,26:4075], fact=1/c(30,30)) / (30*30)
+    skymeans = c(skymeans, mean(spbgdat))
+    skystds = c(skystds, sd(spbgdat))
 
     # cat processing
     ellipticity = 1 - catdat[,"AXIS_RATIO"]
@@ -137,7 +136,7 @@ for(i in 1:length(files)){
 }
 
 # write stats
-temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up

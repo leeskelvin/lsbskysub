@@ -30,21 +30,21 @@ sex = "/usr/bin/sextractor" # local SEx binary
 unlink(c("temp.fits","temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
 
 # loop
-ndets = nmatchs = skymeans = skystds = skysprs = medlumfracs = medlumfrac5s = {}
+ndets = nmatchs = skymeans = skystds = medlumfracs = medlumfrac5s = {}
 for(i in 1:length(files)){
-    
+
     # setup
     cat("", i-1, "/", length(files), "\n")
     catname = paste0("cat/", bases[i], ".cat.csv")
     mapname = paste0("map/", bases[i], ".map.fits")
     unlink(c(catname,mapname,paste0(mapname,".fz"),paste0(mapname,".gz")))
-    
+
     # unpack
     system(paste(funpack, "-O temp.fits", files[i]))
-    
+
     # source extract
     output = system(paste0(sex, " -c ../sex_default/default.sex -CATALOG_NAME temp_cat.dat -CATALOG_TYPE ASCII -CHECKIMAGE_TYPE SEGMENTATION,BACKGROUND,BACKGROUND_RMS -CHECKIMAGE_NAME temp_seg.fits,temp_sky.fits,temp_std.fits temp.fits 2>&1"), intern=T)
-    
+
     # data read
     catdat = read.table("temp_cat.dat", stringsAsFactors=FALSE)
     colnames(catdat) = c("NUMBER", "X_IMAGE", "Y_IMAGE", "FLUX_AUTO", "MAG_AUTO", "A_IMAGE", "B_IMAGE", "KRON_RADIUS", "PETRO_RADIUS", "FLUX_RADIUS", "ELLIPTICITY", "THETA_IMAGE", "BACKGROUND", "THRESHOLD", "ISOAREA_IMAGE", "CLASS_STAR")
@@ -52,15 +52,14 @@ for(i in 1:length(files)){
     skyfits = read.fits("temp_sky.fits")
     #stdfits = read.fits("temp_std.fits")
     ndets = c(ndets, nrow(catdat))
-    skymeans = c(skymeans, mean(skyfits$dat[[1]]))
-    skystds = c(skystds, sd(skyfits$dat[[1]]))
-    spbgdat = regrid(skyfits$dat[[1]], f=c(2/4200,2/4100))/(2100*2050)
-    skysprs = c(skysprs, diff(range(spbgdat)))
-    
+    spbgdat = regrid(skyfits$dat[[1]][1:4200,26:4075], fact=1/c(30,30)) / (30*30)
+    skymeans = c(skymeans, mean(spbgdat))
+    skystds = c(skystds, sd(spbgdat))
+
     # cat processing
     catdat[,"MAG_AUTO"] = catdat[,"MAG_AUTO"] + 27
     write.csv(catdat, file=catname, row.names=FALSE, quote=FALSE)
-    
+
     # cat matching
     incat = paste0("../../sims/cat-input/", paste0(strsplit(strsplit(basename(files[i]), ".fits.fz")[[1]], "simulated")[[1]], collapse="cat-input"), ".dat")
     system(paste("../sex_default/do_match.R", incat, catname))
@@ -75,7 +74,7 @@ for(i in 1:length(files)){
     lumoutput = 10^(-0.4*(matchdat[,"MAG_OUTPUT"] - 27))
     medlumfracs = c(medlumfracs, median(lumoutput/luminput))
     medlumfrac5s = c(medlumfrac5s, median(lumoutput[large5samp]/luminput[large5samp]))
-    
+
     # map processing
     segdat = segfits$dat[[1]]
     magdat = matrix(0, nrow=nrow(segdat), ncol=ncol(segdat))
@@ -93,14 +92,14 @@ for(i in 1:length(files)){
     write.fits(list(hdr=hdr,dat=dat), file=mapname)
     system(paste(gzip, "--best --force", mapname))
     #system(paste(fpack, "-D -Y", mapname))
-    
+
     # clean up
     unlink(c("temp.fits","temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
-    
+
 }
 
 # write stats
-temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up

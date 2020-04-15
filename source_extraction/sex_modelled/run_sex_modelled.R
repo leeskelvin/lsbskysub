@@ -31,7 +31,7 @@ sex = "/usr/bin/sextractor" # local SEx binary
 unlink(c("temp_modsub.fits", "temp.fits", "temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
 
 # loop
-ndets = nmatchs = skymeans = skystds = skysprs = medlumfracs = medlumfrac5s = {}
+ndets = nmatchs = skymeans = skystds = medlumfracs = medlumfrac5s = {}
 for(i in 1:length(files)){
 
     # setup
@@ -80,10 +80,9 @@ for(i in 1:length(files)){
     skyfits = read.fits("temp_sky.fits")
     #stdfits = read.fits("temp_std.fits")
     ndets = c(ndets, nrow(catdat))
-    skymeans = c(skymeans, mean(skyfits$dat[[1]]))
-    skystds = c(skystds, sd(skyfits$dat[[1]]))
-    spbgdat = regrid(skyfits$dat[[1]], f=c(2/4200,2/4100))/(2100*2050)
-    skysprs = c(skysprs, diff(range(spbgdat)))
+    spbgdat = regrid(skyfits$dat[[1]][1:4200,26:4075], fact=1/c(30,30)) / (30*30)
+    skymeans = c(skymeans, mean(spbgdat))
+    skystds = c(skystds, sd(spbgdat))
 
     # cat processing
     catdat[,"MAG_AUTO"] = catdat[,"MAG_AUTO"] + 27
@@ -128,7 +127,7 @@ for(i in 1:length(files)){
 }
 
 # write stats
-temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, SKYSPR=skysprs, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up

@@ -24,7 +24,7 @@ galsim = "/usr/local/bin/galsim"
 
 # loop
 for(i in 1:length(files)){
-    
+
     # setup
     cat("", i, "/", length(files), "\n")
     input = cats[grep(ids[i], cats)]
@@ -35,20 +35,20 @@ for(i in 1:length(files)){
     model0 = paste0("model/", ids[i], ".model0.fits")
     model1 = paste0("model/", ids[i], ".model1.fits")
     unlink(c("temp.fits",assoc0,assoc1,cat0,cat1,model0,model1,paste0(model0,".fz"),paste0(model1,".fz")))
-    
+
     # unpack
     system(paste(funpack, "-O temp.fits", files[i]))
-    
+
     # model0 ASSOC
     catdat = read.csv(input)
-    samp = which(catdat[,"MAGNITUDE"] <= 22)
+    samp = which(catdat[,"MAGNITUDE"] <= 25)
     write.table(cbind(1:length(samp), catdat[samp,"X"], catdat[samp,"Y"], catdat[samp,"MAGNITUDE"]), file=assoc0, quote=FALSE, row.names=FALSE, col.names=FALSE)
-    
+
     # model0 SEx
     output = system(paste0(sex, " -c ../sex_default/default.sex -ASSOC_NAME ", assoc0, " -PARAMETERS_NAME model.param -PSF_NAME ", psf, " -CHECKIMAGE_TYPE MODELS -CHECKIMAGE_NAME ", model0, " -CATALOG_NAME ", cat0, " -MAG_ZEROPOINT 27 temp.fits 2>&1"), intern=T)
     #system(paste(gzip, "--best --force", model0))
     system(paste0(fpack, " -D -Y ", model0))
-    
+
     # model1 ASSOC
     cat0dat = read.table(cat0)
     colnames(cat0dat) = c("NUMBER", "X_IMAGE", "Y_IMAGE", "FLUX_SPHEROID", "MAG_SPHEROID", "SPHEROID_REFF_IMAGE", "SPHEROID_ASPECT_IMAGE", "SPHEROID_THETA_IMAGE", "SPHEROID_SERSICN", "CHI2_MODEL", "FLAGS_MODEL", "VECTOR_ASSOC")
@@ -62,7 +62,7 @@ for(i in 1:length(files)){
     # digits: x=1, y=1, luminosity_counts=4, hlr_pixels=3, q=2, theta=1, n=1 (max 4.5)
     # n to 1 digit, as Henkel transforms in GalSim pre-compute Sersic models -> significant speed up
     # n max 4.5 due to: RuntimeError: Roundoff error 2 prevents tolerance from being achieved in intGKP
-    # maximum_fft_size updated due to error: 
+    # maximum_fft_size updated due to error:
         # galsim.errors.GalSimFFTSizeError: drawFFT requires an FFT that is too large.
         # The required FFT size would be 8256 x 8256, which requires 1.52 GB of memory.
         # If you can handle the large FFT, you may update gsparams.maximum_fft_size.
@@ -77,7 +77,7 @@ for(i in 1:length(files)){
         , STAMP_SIZE_PIXEL = stamp_size_pixel[good]
     )
     write.table(temp, file="temp-input.dat", quote=FALSE, row.names=FALSE, col.names=FALSE)
-    
+
     # model1 GalSim
     system(paste(galsim, "feedme.yaml"))
     if(!file.exists("temp-model.fits")){stop("GalSim output file missing")}
@@ -87,9 +87,9 @@ for(i in 1:length(files)){
     system(paste0(fpack, " -D -Y ", model1))
     temp = cbind(NTOTALDEFAULT=nrow(catdat), NBRIGHT=length(samp), NGOOD=length(good), CHI2MEDIAN=chi2median, CHI2MAD=chi2mad)
     write.csv(temp, file=cat1, row.names=FALSE, quote=FALSE)
-    
+
     # finish up
     unlink("temp.fits")
-    
+
 }
 
