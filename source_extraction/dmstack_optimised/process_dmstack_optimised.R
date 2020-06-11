@@ -19,7 +19,7 @@ fpack = "/usr/bin/fpack"
 gzip = "/bin/gzip"
 
 # loop
-bases = ndets = nmatchs = skymeans = skystds = medlumfracs = medlumfrac5s = {}
+bases = ndets = nmatchs = skymeans = skystds = lumfrac25Alls = lumfrac50Alls = lumfrac75Alls = lumfrac25Bigs = lumfrac50Bigs = lumfrac75Bigs = {}
 for(i in 1:length(incats)){
 
     # setup
@@ -55,15 +55,21 @@ for(i in 1:length(incats)){
     system(paste("../dmstack_default/do_match.R", incat, catname))
     matchdat = read.csv(paste0("mat/",paste0(strsplit(basename(catname), "cat")[[1]], collapse="mat")))
     nmatchs = c(nmatchs, nrow(matchdat))
-    large5samp = which(matchdat[,"A35_INPUT"] >= sort(matchdat[,"A35_INPUT"],decreasing=TRUE)[5])
+    largesamp = which(matchdat[,"A35_INPUT"] >= sort(matchdat[,"A35_INPUT"],decreasing=TRUE)[25])
     #areafracs = c(areafracs, mean(matchdat[,"AREA_OUTPUT"]/matchdat[,"AREA35_INPUT"]))
-    #areafrac5s = c(areafrac5s, mean(matchdat[large5samp,"AREA_OUTPUT"]/matchdat[large5samp,"AREA35_INPUT"]))
+    #areafrac5s = c(areafrac5s, mean(matchdat[largesamp,"AREA_OUTPUT"]/matchdat[largesamp,"AREA35_INPUT"]))
     #areameans = c(areameans, mean(matchdat[,"AREA_OUTPUT"]))
-    #areamean5s = c(areamean5s, mean(matchdat[large5samp,"AREA_OUTPUT"]))
+    #areamean5s = c(areamean5s, mean(matchdat[largesamp,"AREA_OUTPUT"]))
     luminput = 10^(-0.4*(matchdat[,"MAG_INPUT"] - 27))
     lumoutput = 10^(-0.4*(matchdat[,"MAG_OUTPUT"] - 27))
-    medlumfracs = c(medlumfracs, median(lumoutput/luminput))
-    medlumfrac5s = c(medlumfrac5s, median(lumoutput[large5samp]/luminput[large5samp]))
+    lumstatsAll = quantile(lumoutput/luminput, probs=c(0.25,0.5,0.75))
+    lumstatsBig = quantile((lumoutput[largesamp])/(luminput[largesamp]), probs=c(0.25,0.5,0.75))
+    lumfrac25Alls = c(lumfrac25Alls, as.numeric(lumstatsAll["25%"]))
+    lumfrac50Alls = c(lumfrac50Alls, as.numeric(lumstatsAll["50%"]))
+    lumfrac75Alls = c(lumfrac75Alls, as.numeric(lumstatsAll["75%"]))
+    lumfrac25Bigs = c(lumfrac25Bigs, as.numeric(lumstatsBig["25%"]))
+    lumfrac50Bigs = c(lumfrac50Bigs, as.numeric(lumstatsBig["50%"]))
+    lumfrac75Bigs = c(lumfrac75Bigs, as.numeric(lumstatsBig["75%"]))
 
     # map data
     system(paste(funpack, "-O temp_bg.fits", inback))
@@ -85,7 +91,7 @@ for(i in 1:length(incats)){
 }
 
 # write stats
-temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, MEDLUMFRAC=medlumfracs, MEDLUMFRAC5=medlumfrac5s)
+temp = cbind(ID=bases, NDET=ndets, NMATCH=nmatchs, SKYMEAN=skymeans, SKYSTD=skystds, LUMFRAC25ALL=lumfrac25Alls, LUMFRAC50ALL=lumfrac50Alls, LUMFRAC75ALL=lumfrac75Alls, LUMFRAC25BIG=lumfrac25Bigs, LUMFRAC50BIG=lumfrac50Bigs, LUMFRAC75BIG=lumfrac75Bigs)
 write.csv(temp, file=statsname, row.names=FALSE, quote=FALSE)
 
 # finish up

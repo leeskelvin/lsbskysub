@@ -10,16 +10,16 @@ incats = paste0(unlist(strsplit(imstats[,"FILE"],".fits.fz")),".dat")
 numden = {}
 newareas = {}
 for(i in 1:length(incats)){
-    
+
     cat("\b\b\b\b\b     \b\b\b\b\b", i, " ", sep="", collapse="")
-    
+
     dat = read.table(paste0(indir,"/",incats[i]), stringsAsFactors=FALSE)
     fitsim = paste0(strsplit(incats[i], ".dat")[[1]], ".fits.fz")
     myrow = which(imstats[,"FILE"] == fitsim)
     area = imstats[myrow,"AREA"]
     numden = c(numden, nrow(dat)/area)
     newareas = c(newareas, area)
-    
+
 }
 
 # dev
@@ -34,7 +34,7 @@ rug(numden, col="#998ec3", lwd=1.25, lend=3)
 axis(side=1)
 axis(side=2, las=1)
 box()
-mtext(side=1, text=bquote(paste(N["obj"], " / sq. degree")), line=2.5)
+mtext(side=1, text=bquote(paste("tract-patch field density : ", N["obj"], " / sq. degree")), line=2.5)
 mtext(side=2, text="frequency", line=2)
 
 # finish up
