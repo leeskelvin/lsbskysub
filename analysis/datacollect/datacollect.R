@@ -14,8 +14,8 @@ files = c(  "SExtractor default"="../../source_extraction/sex_default/stats_sex_
             ,"Gnuastro modified"="../../source_extraction/gnuastro_optimised/stats_gnuastro_optimised.csv"
             ,"Gnuastro w. dilated masks"="../../source_extraction/gnuastro_dilated/stats_gnuastro_dilated.csv"
             ,"Gnuastro w. modelled masks"="../../source_extraction/gnuastro_modelled/stats_gnuastro_modelled.csv"
-            ,"DM stack P6"="../../source_extraction/dmstack_default/stats_dmstack_default.csv"
-            ,"DM stack S128"="../../source_extraction/dmstack_optimised/stats_dmstack_optimised.csv"
+            ,"LSST Pipelines P6"="../../source_extraction/dmstack_default/stats_dmstack_default.csv"
+            ,"LSST Pipelines S128"="../../source_extraction/dmstack_optimised/stats_dmstack_optimised.csv"
 )
 mats = tolower(colnames(read.csv(files[1], stringsAsFactors=FALSE)))
 ids = read.csv(files[1], stringsAsFactors=FALSE)[,"ID"]

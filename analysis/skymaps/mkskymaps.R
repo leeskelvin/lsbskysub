@@ -25,7 +25,7 @@ cex = 0.85
 
 # map locations
 mapids = c("sex_default", "sex_optimised", "sex_dilated", "sex_modelled", "gnuastro_default", "gnuastro_optimised", "gnuastro_dilated", "gnuastro_modelled", "dmstack_default", "dmstack_optimised")
-#mapnames = c("SExtractor\ndefault", "SExtractor\nmodified", "SExtractor\ndil. msk", "SExtractor\nmodel msk", "Gnuastro\ndefault", "Gnuastro\nmodified", "Gnuastro\ndil. msk", "Gnuastro\nmodel msk", "DM stack\nc. 2018", "DM stack\nc. 2020")
+#mapnames = c("SExtractor\ndefault", "SExtractor\nmodified", "SExtractor\ndil. msk", "SExtractor\nmodel msk", "Gnuastro\ndefault", "Gnuastro\nmodified", "Gnuastro\ndil. msk", "Gnuastro\nmodel msk", "LSST Pipelines\nc. 2018", "LSST Pipelines\nc. 2020")
 mapnames = c("\ndefault", "\nmodified", "\ndil. msk", "\nmodel msk", "\ndefault", "\nmodified", "\ndil. msk", "\nmodel msk", "\nP6", "\nS128")
 simids = c("denlo1a", "denlo4a", "denhi1a", "denhi4a")
 simnames = c("\nexponential", "\nde Vauc.", "\nexponential", "\nde Vauc.")
@@ -108,9 +108,9 @@ lines(x=c(xat,xat), y=c(ysex-0.05,ysex-0.15))
 mtext(side=2, line=xlabline, at=ygnu, text="Gnuastro", cex=cex)
 arrows(x0=xat, y0=ygnu+0.05, y1=ygnu+0.185, length=arrowlength, angle=90, code=2, lend=1)
 arrows(x0=xat, y0=ygnu-0.05, y1=ygnu-0.185, length=arrowlength, angle=90, code=2, lend=1)
-mtext(side=2, line=xlabline, at=ydm, text="DM stack", cex=cex)
-arrows(x0=xat, y0=ydm+0.05, y1=ydm+0.075, length=arrowlength, angle=90, code=2, lend=1)
-arrows(x0=xat, y0=ydm-0.05, y1=ydm-0.075, length=arrowlength, angle=90, code=2, lend=1)
+mtext(side=2, line=xlabline, at=ydm, text="LSST Pipelines", cex=cex)
+arrows(x0=xat, y0=ydm+0.065, y1=ydm+0.075, length=arrowlength, angle=90, code=2, lend=1)
+arrows(x0=xat, y0=ydm-0.065, y1=ydm-0.075, length=arrowlength, angle=90, code=2, lend=1)
 ylabline = -1.25
 yat = 1.02
 xdenlo = 0.248 #; abline(v=xdenlo)
