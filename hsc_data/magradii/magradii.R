@@ -26,7 +26,7 @@ dat = dat[sample(x=nrow(dat)),] # randomise for plotting
 aa = 2.8
 bb = -0.1
 b = -0.15
-good = which(dat[,"MAG_AUTO"] >= 22.25 & dat[,"FLUX_RADIUS"] >= aa + bb*dat[,"MAG_AUTO"])
+# good = which(dat[,"MAG_AUTO"] >= 22.25 & dat[,"FLUX_RADIUS"] >= aa + bb*dat[,"MAG_AUTO"])
 good = which(dat[,"FLUX_RADIUS"] >= aa + bb*dat[,"MAG_AUTO"])
 x = dat[good,"MAG_AUTO"]
 y = dat[good,"FLUX_RADIUS"]
@@ -37,6 +37,8 @@ yy = data.frame((fit$coef[2] * xx) + fit$coef[1])
 px = c(seq(15,(0.01-aa)/bb,len=101),15)
 py = c((aa+bb*seq(15,(0.01-aa)/bb,len=101)),0.01)
 zone = 0.25 # shaded region
+alpha = 0.5
+pch = '.'
 
 # dev
 pdf(file="magradii.pdf", width=5, height=4.5)
@@ -46,10 +48,10 @@ par("mar"=c(3,3,1,3))
 palette(c("#000000", "#e66101", "#5e3c99", "#fdb863", "#b2abd2", "#edf8b1", "#7fcdbb", "#2c7fb8"))
 aplot(NA, xlim=c(18.5,27.5), ylim=c(0.18,2.5), log="y", xlab=NA, ylab=NA, las=1, xnmin=1, axes=FALSE)
 #apolygon(x=px, y=py, lend=1, ljoin=1, col=col2hex(3,0.5), border=col2hex(3,0.5), lwd=2, density=10)
-points(dat[,"MAG_AUTO"], dat[,"FLUX_RADIUS"], pch=".", cex=0.25, col=col2hex(dat[,"SOURCE"]+1,0.5))
+points(dat[,"MAG_AUTO"], dat[,"FLUX_RADIUS"], pch=pch, cex=0.2, col=col2hex(dat[,"SOURCE"]+1,alpha))
 shade(x=xx, ylo=yy[,1]-zone*yy[,1], yhi=yy[,1]+zone*yy[,1], col=col2hex(1,0.25), border=1, lty=2, lend=1)
 lines(xx, yy[,1], col=1, lwd=2.5)
-alegend("bottomleft", inset=0.5, bg=NA, bty="o", box.col=NA, legend=c("low density data", "high density data", bquote(paste(r[e], " = ", .(fit$coef[2]), m[r], " + ", .(formatC(fit$coef[1],format="f",digits=2)))), paste0("trendline ± ",zone*100,"%")), type=list(p=list(pch=".",cex=5,col=2), p=list(pch=".",cex=5,col=3), l=list(col=col2hex(1), lwd=2.5, lend=1), f=list(col=col2hex(1,0.25), border=1, lty=2, lend=1)), cex=0.75)
+alegend("bottomleft", inset=0.5, bg=NA, bty="o", box.col=NA, legend=c("low density data", "high density data", bquote(paste(r[e], " = ", .(fit$coef[2]), m[r], " + ", .(formatC(fit$coef[1],format="f",digits=2)))), paste0("trendline ± ",zone*100,"%")), type=list(p=list(pch=pch,cex=5,col=2), p=list(pch=pch,cex=5,col=3), l=list(col=col2hex(1), lwd=2.5, lend=1), f=list(col=col2hex(1,0.25), border=1, lty=2, lend=1)), cex=0.75)
 aaxes(side=1:3, xnmin=3, las=1)
 aaxis(side=4, fn=function(x){x/pixelsize}, las=1)
 abox()

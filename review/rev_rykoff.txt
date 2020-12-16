@@ -1,0 +1,109 @@
+The paper is in very good shape, and is very interesting and thorough.  Thank
+you very much!  I do have some comments, of course.  Nothing major, I'm going
+to go through section by section with my comments.
+
+Abstract:
+
+- "...undetected faint galaxies and wings of brighter objects..."  One
+of the things I am very interested in, and do not know and was hoping this
+paper could answer: which is more important of these two effects, the faint
+galaxies or the wings of bright objects?  Or are they equally important?  Is
+this something that could be addressed with the current data used in the paper?
+
+S1:
+
+- I don't know what an "intensity moments apodization filter" is...
+
+- "Neither SExtractor nor FOCAS are user supported".  I don't know what this is
+  referring to.
+
+- Thank you for using round numbers for your reference cosmology where it is
+  important.
+
+S2.1:
+
+- I believe these data that you're using are _coadd_ calexps, and not
+  single-epoch calexps, correct?  Throughout the paper the fact that these
+  analyses are run on coadds is not explicitly addressed, which makes a big
+  difference when using sextractor, doing units, etc.  In fact, one of my more
+  substantial questions involves the units employed.  The units of the DM stack
+  coadds are not ADU, and I'm not sure if the units quoted in the paper are
+  therefore correct.  When using sextractor on coadds, it can get very confused
+  about the discontinuous PSF.  However, I believe the actual runs are done on
+  simulations based on the not-great-modeled PSF, and this should be internally
+  consistent.
+
+- When quoting object densities, number per arcmin^2 is the "standard" unit.
+
+S3.1:
+
+- Is any star/galaxy separation done at the step when you compute number as a
+  function of magnitude?  (On the data side or the sim side?)
+
+- In Figure 5, is it possible to show an overplot of one of the curves from the
+  low density region on the high density region plot to see how the sides stack
+  up against each other?
+
+S3.2:
+
+- For the apparent bias in half light radius, is this because we have higher
+  density or just deeper with better seeing?
+
+S3.8:
+
+- This makes sense to get the sky level and noise which we can't recover
+  directly from the coadds (Unfortunately! We should fix this!).  However, the
+  units are not actually "gain" because we're talking about coadds here which
+  have already been transformed.  This is somewhat of an "equivalent gain", but
+  the units quoted here aren't correct.
+
+Figure 9:
+
+- The caption says "the impact of source density (contrasting the top row with
+  the bottom)", but the top/bottom is all/bright not anything to do with source
+  density.
+
+S4.2:
+
+- "...bright sources are the primary culprits...".  Is this demonstrated here,
+  or just asserted?
+
+- As mentioned above, fitting coadd psfs with psfex and sextractor is a world
+  of hurt (technical term), but as a reference psf to use for sims should
+  probably be fine.
+
+S5:
+
+- Units are not actually e-/pixel.
+
+- "Simulated datasets with faint EBL sources excluded always outperform...";
+  "mischaracterization of such sources is the single largest contributor".  So
+  is this in conflict to the "bright sources are the primary culprits" line
+  from S4.2?
+
+- "Sky misestimation produced by a default sextractor run was reduced by 8sigma
+  in the case of a random galaxy distribution".  I'm not sure what this
+  sentence means or the 8sigma is referring to.
+
+- "background map level of deltaf = 0.91 +/- 0.81".  Is this significant?
+
+- "Global mean offsets do not tell the whole story...": Just to confirm, is the
+  background brightness of the sims 0 flux?  I don't believe this is explicitly
+  stated.  And this implies that the sky is always overestimated, and never
+  underestimated?  Also, what is the variance of the background for each mode
+  of operation?  If the background is truly flat and 0, the variance in the
+  recovered background is equally important to the mean, I believe.  I think
+  more about the background variance comparison of the different runs would be
+  interesting.
+
+- "Default GNUAstro operational modes...".  This worries me that it's removing
+  noise and not actually getting to where we need it to be finding the
+  _background_.
+
+ S6:
+
+ - The conclusion section is a bit wordy.  This either needs to be distilled
+   down, or the section renamed and Conclusions rewritten with a distillation.
+
+   
+

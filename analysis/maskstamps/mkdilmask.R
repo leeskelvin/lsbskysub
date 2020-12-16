@@ -10,14 +10,14 @@ funpack = "/usr/bin/funpack"
 gzip = "/bin/gzip"
 
 # definitions
-zlo = -0.025
-zhi = 5
-ztype = 'log'
+zlo = -0.04
+zhi = 0.2
+ztype = 'atan'
 xcen = 370
 ycen = 2650
 xdim = 535
 ydim = 535
-codebase = "gnuastro"
+codebase = "sex"
 simzipped = paste0("../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n4-a.fits.fz")
 defmapzipped = paste0("../../source_extraction/",codebase,"_default/map/denlo4a.map.fits.gz")
 dilmaskzipped = paste0("../../source_extraction/",codebase,"_dilated/mask/denlo4a.mask.fits.gz")
@@ -64,7 +64,7 @@ par("oma"=c(0,0,0.5,0))
 # par
 layout(rbind(c(1,3,5,7),c(2,4,6,7)), widths=c(3,3,3,1))
 line = 0.25
-colmap = "sls"
+colmap = "grey"
 colinvert = FALSE
 colmask = "hotpink"
 

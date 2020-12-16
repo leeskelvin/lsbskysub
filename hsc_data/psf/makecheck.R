@@ -71,23 +71,24 @@ linecol = "grey75"
 linewd = 2
 fwhm = 1
 zlo = 1*-0.07
-zhi = 15*0.07
+zhi = 5*0.07
 cextext = 2
 insettext = c(0.5,0.5)
 insetscale = 3
 scalelen = 2
+cmap = 'grey'
 
-aimage(sampdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=9*size, ydim=3*size, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=size), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=size), col=linecol, lwd=linewd); box(col="white", lwd=3)
+aimage(sampdat, col.map=cmap, scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=9*size, ydim=3*size, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=size), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=size), col=linecol, lwd=linewd); box(col="white", lwd=3)
 label("topleft", lab="Point Source Samples", col="white", cex=cextext, inset=insettext)
 
-#aimage(psfdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab="", xdim=size, ydim=size, padvalue=0)
-aimage(psfdat, col.map="sls", scale.type="log", scale.mode=99.5, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab="", xdim=size, ydim=size, padvalue=0)
+#aimage(psfdat, col.map=cmap, scale.type="asinh", scale.lo=zlo, scale.hi=zhi, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab="", xdim=size, ydim=size, padvalue=0)
+aimage(psfdat, col.map=cmap, scale.type="log", scale.mode=99.5, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab="", xdim=size, ydim=size, padvalue=0)
 box(col="white", lwd=3)
 label("topleft", lab="PSF", col="white", cex=cextext, inset=insettext)
 lines(x=c((par("usr")[2]-insetscale),((par("usr")[2]-insetscale-(scalelen/0.168)))), y=rep(par("usr")[3]+insetscale,2), lwd=5, lend=3, col="white")
 text(x=(par("usr")[2]-insetscale), y=(par("usr")[3]+insetscale+2), lab=paste(scalelen, "arcsec"), col="white", adj=c(1,0), cex=1.25)
 
-aimage(residdat, col.map="sls", scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=9*size, ydim=3*size, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=size), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=size), col=linecol, lwd=linewd); box(col="white", lwd=3)
+aimage(residdat, col.map=cmap, scale.type="asinh", scale.lo=zlo, scale.hi=zhi, xlo=1, ylo=1, xdim=9*size, ydim=3*size, smooth.fwhm=fwhm, axes=FALSE, xlab="", ylab=""); abline(h=seq(1,1000,by=size), col=linecol, lwd=linewd); abline(v=seq(1,1000,by=size), col=linecol, lwd=linewd); box(col="white", lwd=3)
 label("topleft", lab="Residuals", col="white", cex=cextext, inset=insettext)
 
 # line plot

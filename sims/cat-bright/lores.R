@@ -46,20 +46,24 @@ for(i in 1:length(infiles)){
     ycen = c(2770, 2280)
     xdim = c(535, 535)
     ydim = c(535, 535)
+    cmap = 'grey'
     xlo = round(xcen[i] - ((xdim[i]+1)/2))
     xhi = round(xcen[i] + ((xdim[i]+1)/2))
     ylo = round(ycen[i] - ((ydim[i]+1)/2))
     yhi = round(ycen[i] + ((ydim[i]+1)/2))
     par("mar"=c(0.25,0.25,0.25,0.25))
-    aimage(imdat, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.025, scale.hi=5, smooth.fwhm=fwhm, xlab="", ylab="")
+    scaletype = 'atan'
+    scalelo = -0.04
+    scalehi = 0.2
+    aimage(imdat, col.map=cmap, scale.type=scaletype, axes=FALSE, scale.lo=scalelo, scale.hi=scalehi, smooth.fwhm=fwhm, xlab="", ylab="")
     #rect(xl=xlo, xr=xhi, yb=ylo, yt=yhi, border="grey0", lwd=3)
     mtext(side=3, line=0.5, text=c("8283-38 (low density region)", "9592-20 (high density region)")[i], cex=1.25)
     if(i==1){mtext(side=2, line=0.5, text="full resolution image", cex=1.25)}
     #par("mar"=c(0,0,0,0))
-    #aimage(imdat, col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.025, scale.hi=5, smooth.fwhm=fwhm, xcen=xcen[i], ycen=ycen[i], xdim=xdim[i], ydim=ydim[i], xlab="", ylab="")
+    #aimage(imdat, col.map=cmap, scale.type="log", axes=FALSE, scale.lo=-0.025, scale.hi=5, smooth.fwhm=fwhm, xcen=xcen[i], ycen=ycen[i], xdim=xdim[i], ydim=ydim[i], xlab="", ylab="")
     #box(lwd=5, col="grey0")
     par("mar"=c(0.25,0.25,0.25,0.25))
-    aimage(imdat.small/(100*100), col.map="sls", scale.type="log", axes=FALSE, scale.lo=-0.1/10, scale.hi=25/10, xlab="", ylab="")
+    aimage(imdat.small/(100*100), col.map=cmap, scale.type=scaletype, axes=FALSE, scale.lo=scalelo, scale.hi=scalehi, xlab="", ylab="")
     if(i==1){mtext(side=2, line=0.5, text="low resolution image", cex=1.25)}
 
 }

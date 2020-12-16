@@ -22,19 +22,22 @@ for(i in 1:length(incats)){
 
 }
 
+# convert numden from sq. deg to sq. arcsec
+numden = numden / (60*60)
+
 # dev
 cairo_pdf(file="patchden.pdf", width=5, height=5)
 par("mar"=c(4,3.5,1,1))
 
 # analysis plot
-xlims = c(150000,350000,12500)
+xlims = c(150000,350000,12500)/(60*60)
 hist(numden, breaks=seq(xlims[1],xlims[2],by=xlims[3]), freq=TRUE, axes=FALSE, main="", xlab="", ylab="", col="#f1a340", border=NA, xlim=c(xlims[1],xlims[2]))
 abline(v=seq(xlims[1],xlims[2],by=xlims[3]), col="white", lwd=5)
 rug(numden, col="#998ec3", lwd=1.25, lend=3)
 axis(side=1)
 axis(side=2, las=1)
 box()
-mtext(side=1, text=bquote(paste("tract-patch field density : ", N["obj"], " / sq. degree")), line=2.5)
+mtext(side=1, text=bquote(paste("tract-patch field density : ", N["obj"], " / ", arcmin^{2})), line=2.5)
 mtext(side=2, text="frequency", line=2)
 
 # finish up

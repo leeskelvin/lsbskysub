@@ -10,9 +10,9 @@ funpack = "/usr/bin/funpack"
 gzip = "/bin/gzip"
 
 # definitions
-zlo = -0.025
-zhi = 5
-ztype = 'log'
+zlo = -0.04
+zhi = 0.2
+ztype = 'atan'
 xcen = 370
 ycen = 2650
 xdim = 535
@@ -66,7 +66,7 @@ par("oma"=c(0,0,0.5,0))
 # par
 layout(rbind(c(1,3,5,7),c(2,4,6,7)), widths=c(3,3,3,1))
 line = 0.25
-colmap = "sls"
+colmap = "grey"
 colinvert = FALSE
 colmask = "hotpink"
 maskalpha = 1
@@ -121,17 +121,17 @@ par("oma"=c(0,1.5,1.5,0))
 layout(rbind(c(1,2),c(3,4)))
 line = 0.25
 
-aimage(model0dat, col.map="sls", scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=0)
+aimage(model0dat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=0)
 mtext(side=3, line=line, text="SExtractor model image")
 mtext(side=2, line=line, text="standard stretch")
 
-aimage(model1dat, col.map="sls", scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=0)
+aimage(model1dat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=0)
 mtext(side=3, line=line, text="GalSim model image")
 
-aimage(model0dat, col.map="sls", scale.type="asinh", axes=FALSE, scale.lo=-0.0025, scale.hi=0.02, xlab="", ylab="", smooth.fwhm=0)
+aimage(model0dat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo/10, scale.hi=zhi/10, xlab="", ylab="", smooth.fwhm=0)
 mtext(side=2, line=line, text="narrow stretch")
 
-aimage(model1dat, col.map="sls", scale.type="asinh", axes=FALSE, scale.lo=-0.0025, scale.hi=0.02, xlab="", ylab="", smooth.fwhm=0)
+aimage(model1dat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo/10, scale.hi=zhi/10, xlab="", ylab="", smooth.fwhm=0)
 
 # finish up
 graphics.off()
