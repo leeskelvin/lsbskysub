@@ -1,2 +1,4 @@
 * version v6
 * addition of flag 'no_pixel' turned on in GalSim when generating simulated imaging.
+* these data have not been used - turning this on/off has only a minimal effect.
+* v5 is used in the paper.

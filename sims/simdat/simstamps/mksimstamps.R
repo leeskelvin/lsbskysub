@@ -10,7 +10,7 @@ cmap = 'grey'
 scaletype = 'atan'
 scalelo = -0.04
 scalehi = 0.2
-version = 'v6'
+version = 'v5'
 
 # loop
 for(i in 1:length(tpids)){

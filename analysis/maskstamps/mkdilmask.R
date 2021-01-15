@@ -17,7 +17,7 @@ xcen = 370
 ycen = 2650
 xdim = 535
 ydim = 535
-codebase = "sex"
+codebase = "gnuastro"
 simzipped = paste0("../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n4-a.fits.fz")
 defmapzipped = paste0("../../source_extraction/",codebase,"_default/map/denlo4a.map.fits.gz")
 dilmaskzipped = paste0("../../source_extraction/",codebase,"_dilated/mask/denlo4a.mask.fits.gz")
@@ -72,11 +72,12 @@ colmask = "hotpink"
 aimage(simdat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=3, col.invert=colinvert)
 mtext(side=3, line=line, text="original image")
 
-aimage(magdat, col.map="sls", scale.type="lin", axes=FALSE, scale.lo=30, scale.hi=15, xlab="", ylab="", smooth.fwhm=0)
+magcmap = 'topo'
+aimage(magdat, col.map=magcmap, scale.type="lin", axes=FALSE, scale.lo=30, scale.hi=15, xlab="", ylab="", smooth.fwhm=0)
 bgdat = magdat; bgdat[bgdat!=0] = NaN; image(x=1:nrow(magdat), y=1:ncol(magdat), bgdat, col='grey90', add=TRUE)
 #rect(xl=1, xr=537, yb=1, yt=537, border="black")
 mtext(side=3, line=line, text="magnitude map")
-col.bar("bottom", horizontal=TRUE, n=4, col.map="sls", scale.lo=30, scale.hi=15, scale.type="lin", flip=TRUE, inset=-0.25, seg.num=499, seg.gap=0.25, seg.width=0.5)
+col.bar("bottom", horizontal=TRUE, n=4, col.map=magcmap, scale.lo=30, scale.hi=15, scale.type="lin", flip=TRUE, inset=-0.25, seg.num=499, seg.gap=0.25, seg.width=0.5)
 #mtext(side=2, line=3.75, text=bquote(paste(m[r])), las=1)
 
 aimage(simdat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=3, col.invert=colinvert)
