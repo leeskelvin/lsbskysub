@@ -17,7 +17,7 @@ xcen = 370
 ycen = 2650
 xdim = 535
 ydim = 535
-codebase = "gnuastro"
+codebase = "sex"
 simzipped = paste0("../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n4-a.fits.fz")
 defmapzipped = paste0("../../source_extraction/",codebase,"_default/map/denlo4a.map.fits.gz")
 model0zipped = paste0("../../source_extraction/",codebase,"_modelled/model/denlo4a.model0.fits.fz")
@@ -75,12 +75,12 @@ maskalpha = 1
 aimage(simdat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=3, col.invert=colinvert)
 mtext(side=3, line=line, text="original image")
 
+aimage(model1dat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=0, col.invert=colinvert)
+mtext(side=3, line=line, text="fitted model")
+
 aimage(simdat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=3, col.invert=colinvert)
 image(1:537, 1:537, maskdat, zlim=c(1.5,50000), col=col2hex(colmask,maskalpha), add=TRUE)
 mtext(side=3, line=line, text="original image & seg. map")
-
-aimage(model1dat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=0, col.invert=colinvert)
-mtext(side=3, line=line, text="fitted model")
 
 aimage(resdat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=3, col.invert=colinvert)
 image(1:537, 1:537, maskdat, zlim=c(1.5,50000), col=col2hex(colmask,maskalpha), add=TRUE)

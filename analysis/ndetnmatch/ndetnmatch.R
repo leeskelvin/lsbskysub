@@ -45,7 +45,7 @@ for(i in 1:length(xdats)){
         if(j==3){labs = c(1,2)}
         if(j==4){labs = c(1,4)}
         #aplot(NA, xlim=c(2e3,7e4), ylim=c(0.15,0.9), xlab="", ylab="", las=1, side=NA, log="x", labels=labs, tick=FALSE, bty="n")
-        aplot(NA, xlim=c(2e3,7e4), ylim=c(6e2,2e4), xlab="", ylab="", las=1, side=NA, log="xy", labels=labs, tick=FALSE, bty="n")
+        aplot(NA, xlim=c(2.5e3,7e4), ylim=c(6e2,2e4), xlab="", ylab="", las=1, side=NA, log="xy", labels=labs, tick=FALSE, bty="n")
         #abline(h=seq(0,1,by=0.2), col="grey75", lty=2, lend=1)
         #abline(v=c(1,10,100,1000,10000,100000), col="grey75", lty=2, lend=1)
         aaxes(labels=labs, ynmin=1, las=1, xformat="f", mgp=c(2,0.5,0), xdigits=0)
@@ -80,15 +80,22 @@ for(i in 1:length(xdats)){
         # % lines
         xx = c(1,100000)
         lines(xx, xx*1, lty=2, col="grey75")
+        lines(xx, xx*0.9, lty=2, col="grey75")
+        lines(xx, xx*0.8, lty=2, col="grey75")
+        lines(xx, xx*0.7, lty=2, col="grey75")
+        lines(xx, xx*0.6, lty=2, col="grey75")
         lines(xx, xx*0.5, lty=2, col="grey75")
+        lines(xx, xx*0.4, lty=2, col="grey75")
+        lines(xx, xx*0.3, lty=2, col="grey75")
         lines(xx, xx*0.2, lty=2, col="grey75")
         lines(xx, xx*0.1, lty=2, col="grey75")
-        if(j==1){
-            xat=1e4; label(x=xat, y=xat*1.0, lab="100%", col="grey75", outline="white", outline.lwd=5000, srt=31)
-            xat=1.55e4; label(x=xat, y=xat*0.5, lab="50%", col="grey75", outline="white", outline.lwd=5000, srt=31)
-            xat=2.65e4; label(x=xat, y=xat*0.2, lab="20%", col="grey75", outline="white", outline.lwd=5000, srt=31)
-            xat=4e4; label(x=xat, y=xat*0.1, lab="10%", col="grey75", outline="white", outline.lwd=5000, srt=31)
-        }
+        #if(j==1){
+            srt = 28
+            xat=1e4; label(x=xat, y=xat*1.0, lab="100%", col="grey75", outline="white", outline.lwd=5000, srt=srt)
+            xat=1.55e4; label(x=xat, y=xat*0.5, lab="50%", col="grey75", outline="white", outline.lwd=5000, srt=srt)
+            xat=2.65e4; label(x=xat, y=xat*0.2, lab="20%", col="grey75", outline="white", outline.lwd=5000, srt=srt)
+            xat=4e4; label(x=xat, y=xat*0.1, lab="10%", col="grey75", outline="white", outline.lwd=5000, srt=srt)
+        #}
 
         # points
         apoints(xdats[[i]][,j], ydats[[i]][,j], pch=metpch, lwd=lwd, cex=cex, lend=1, col=metcol)

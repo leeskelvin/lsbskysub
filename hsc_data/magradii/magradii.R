@@ -46,7 +46,7 @@ par("mar"=c(3,3,1,3))
 
 # plot
 palette(c("#000000", "#e66101", "#5e3c99", "#fdb863", "#b2abd2", "#edf8b1", "#7fcdbb", "#2c7fb8"))
-aplot(NA, xlim=c(18.5,27.5), ylim=c(0.18,2.5), log="y", xlab=NA, ylab=NA, las=1, xnmin=1, axes=FALSE)
+aplot(NA, xlim=c(18.5,27.5), ylim=c(0.105,2.5), log="y", xlab=NA, ylab=NA, las=1, xnmin=1, axes=FALSE)
 #apolygon(x=px, y=py, lend=1, ljoin=1, col=col2hex(3,0.5), border=col2hex(3,0.5), lwd=2, density=10)
 points(dat[,"MAG_AUTO"], dat[,"FLUX_RADIUS"], pch=pch, cex=0.2, col=col2hex(dat[,"SOURCE"]+1,alpha))
 shade(x=xx, ylo=yy[,1]-zone*yy[,1], yhi=yy[,1]+zone*yy[,1], col=col2hex(1,0.25), border=1, lty=2, lend=1)

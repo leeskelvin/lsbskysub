@@ -48,7 +48,7 @@ for(i in 1:length(datmeans)){
         aplot(NA, xlim=c(1-0.25,nrow(datmeans[[1]])+0.25), ylim=c(ylimlo[i],ylimhi[i]), xlab="", ylab="", las=1, side=NA, log="", labels=labs, tick=FALSE, bty="n")
         abline(h=seq(27.5,35,by=0.5), col="grey75", lty=2, lend=1)
         #abline(v=c(0.00001,0.0001,0.001,0.01,0.1,1), col="grey75", lty=2, lend=1)
-        aaxes(side=c(2,4), labels=labs, ynmin=1, las=1, mgp=c(2,0.5,0))
+        aaxes(side=c(2,4), labels=labs, ynmin=4, las=1, mgp=c(2,0.5,0))
         if(j%in%c(1,2)){mtext(side=3, line=0.25, text=c("low density simulated region","high density simulated region")[j], cex=1)}
         if(j%in%c(1,2)){labtext="exponential sources"}else{labtext="de Vaucouleurs sources"}
         label("bottomright", lab=colnames(datmeans[[i]])[j], inset=c(0.75,0.65), outline="white")
