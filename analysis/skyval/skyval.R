@@ -94,8 +94,9 @@ for(i in 1:length(datmeans)){
 
 # print latex tabular data
 oo = c(1,3,2,4,1,3,2,4)
-gainlo = 557.926737435189
-gainhi = 563.915070480379
+# gainlo = 557.926737435189
+# gainhi = 563.915070480379
+nJy = 57.543993733715446 / (0.168*0.168)
 means = cbind(datmeans[[1]][,oo[1]], datmeans[[1]][,oo[2]], datmeans[[1]][,oo[3]], datmeans[[1]][,oo[4]], datmeans[[2]][,oo[1]], datmeans[[2]][,oo[2]], datmeans[[2]][,oo[3]], datmeans[[2]][,oo[4]])
 colnames(means) = c(colnames(datmeans[[1]])[oo[1:4]], colnames(datmeans[[2]])[oo[5:8]])
 stds = cbind(datstds[[1]][,oo[1]], datstds[[1]][,oo[2]], datstds[[1]][,oo[3]], datstds[[1]][,oo[4]], datstds[[2]][,oo[1]], datstds[[2]][,oo[2]], datstds[[2]][,oo[3]], datstds[[2]][,oo[4]])
@@ -106,18 +107,20 @@ for(i in 1:nrow(means)){
     }
     if(i==1){cat("\\hline\n    \\SExtractor & & & & & & & & \\\\\n    ", file="results.tex", append=TRUE)}
     if(i==5){cat("\\hline\n    \\Gnuastro & & & & & & & & \\\\\n    ", file="results.tex", append=TRUE)}
-    if(i==9){cat("\\hline\n    \\DMStack & & & & & & & & \\\\\n    ", file="results.tex", append=TRUE)}
+    if(i==9){cat("\\hline\n    \\LSSTPs & & & & & & & & \\\\\n    ", file="results.tex", append=TRUE)}
     if(i>=1 & i<=4){frontmatter = strsplit(rownames(means)[i], "SExtractor ")[[1]][2]}
     if(i>=5 & i<=8){frontmatter = strsplit(rownames(means)[i], "Gnuastro ")[[1]][2]}
-    if(i>=9 & i<=10){frontmatter = strsplit(rownames(means)[i], "DM stack ")[[1]][2]}
+    # if(i>=9 & i<=10){frontmatter = strsplit(rownames(means)[i], "DM stack ")[[1]][2]}
+    if(i==9){frontmatter = '\\DMA'}
+    if(i==10){frontmatter = '\\DMB'}
     cat(paste0("\\hspace{25pt}", frontmatter), file="results.tex", append=TRUE)
     for(j in 1:ncol(means)){
-        jgain = ifelse((length(grep("denlo", colnames(means)[j])) > 0), gainlo, gainhi)
+        #jgain = ifelse((length(grep("denlo", colnames(means)[j])) > 0), gainlo, gainhi)
         cat(" & ", file="results.tex", append=TRUE)
 
-        cat("$", formatC(means[i,j]*jgain, format='f', digits=1), sep="", file="results.tex", append=TRUE)
+        cat("$", formatC(means[i,j]*nJy, format='f', digits=1), sep="", file="results.tex", append=TRUE)
         cat("\\pm", file="results.tex", append=TRUE)
-        cat(formatC(stds[i,j]*jgain, format='f', digits=1), "$", sep="", file="results.tex", append=TRUE)
+        cat(formatC(stds[i,j]*nJy, format='f', digits=1), "$", sep="", file="results.tex", append=TRUE)
     }
     if(j==ncol(means) & i!=nrow(means)){
         cat("\\\\\n    ", file="results.tex", append=TRUE)
@@ -127,22 +130,22 @@ for(i in 1:nrow(means)){
 }
 
 # print mean binary offset statistics
-denlo1a = as.numeric(datmeans[[1]][,"denlo1a"] * gainlo)
-denlo4a = as.numeric(datmeans[[1]][,"denlo4a"] * gainlo)
-denlo1b = as.numeric(datmeans[[2]][,"denlo1b"] * gainlo)
-denlo4b = as.numeric(datmeans[[2]][,"denlo4b"] * gainlo)
-denhi1a = as.numeric(datmeans[[1]][,"denhi1a"] * gainhi)
-denhi4a = as.numeric(datmeans[[1]][,"denhi4a"] * gainhi)
-denhi1b = as.numeric(datmeans[[2]][,"denhi1b"] * gainhi)
-denhi4b = as.numeric(datmeans[[2]][,"denhi4b"] * gainhi)
-std_denlo1a = as.numeric(datstds[[1]][,"denlo1a"] * gainlo)
-std_denlo4a = as.numeric(datstds[[1]][,"denlo4a"] * gainlo)
-std_denlo1b = as.numeric(datstds[[2]][,"denlo1b"] * gainlo)
-std_denlo4b = as.numeric(datstds[[2]][,"denlo4b"] * gainlo)
-std_denhi1a = as.numeric(datstds[[1]][,"denhi1a"] * gainhi)
-std_denhi4a = as.numeric(datstds[[1]][,"denhi4a"] * gainhi)
-std_denhi1b = as.numeric(datstds[[2]][,"denhi1b"] * gainhi)
-std_denhi4b = as.numeric(datstds[[2]][,"denhi4b"] * gainhi)
+denlo1a = as.numeric(datmeans[[1]][,"denlo1a"] * nJy)
+denlo4a = as.numeric(datmeans[[1]][,"denlo4a"] * nJy)
+denlo1b = as.numeric(datmeans[[2]][,"denlo1b"] * nJy)
+denlo4b = as.numeric(datmeans[[2]][,"denlo4b"] * nJy)
+denhi1a = as.numeric(datmeans[[1]][,"denhi1a"] * nJy)
+denhi4a = as.numeric(datmeans[[1]][,"denhi4a"] * nJy)
+denhi1b = as.numeric(datmeans[[2]][,"denhi1b"] * nJy)
+denhi4b = as.numeric(datmeans[[2]][,"denhi4b"] * nJy)
+std_denlo1a = as.numeric(datstds[[1]][,"denlo1a"] * nJy)
+std_denlo4a = as.numeric(datstds[[1]][,"denlo4a"] * nJy)
+std_denlo1b = as.numeric(datstds[[2]][,"denlo1b"] * nJy)
+std_denlo4b = as.numeric(datstds[[2]][,"denlo4b"] * nJy)
+std_denhi1a = as.numeric(datstds[[1]][,"denhi1a"] * nJy)
+std_denhi4a = as.numeric(datstds[[1]][,"denhi4a"] * nJy)
+std_denhi1b = as.numeric(datstds[[2]][,"denhi1b"] * nJy)
+std_denhi4b = as.numeric(datstds[[2]][,"denhi4b"] * nJy)
 sampa = c(denlo1a, denlo4a, denhi1a, denhi4a)
 sampb = c(denlo1b, denlo4b, denhi1b, denhi4b)
 #sampstd = c(std_denlo1a, std_denlo4a, std_denhi1a, std_denhi4a)
