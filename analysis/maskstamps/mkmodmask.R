@@ -17,7 +17,7 @@ xcen = 370
 ycen = 2650
 xdim = 535
 ydim = 535
-codebase = "sex"
+codebase = "gnuastro"
 simzipped = paste0("../../sims/simdat/v5/calexp-HSC-R-8283-38.simulated-n4-a.fits.fz")
 defmapzipped = paste0("../../source_extraction/",codebase,"_default/map/denlo4a.map.fits.gz")
 model0zipped = paste0("../../source_extraction/",codebase,"_modelled/model/denlo4a.model0.fits.fz")
@@ -122,7 +122,7 @@ layout(rbind(c(1,2),c(3,4)))
 line = 0.25
 
 aimage(model0dat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=0)
-mtext(side=3, line=line, text="SExtractor model image")
+mtext(side=3, line=line, text="Source Extractor model image")
 mtext(side=2, line=line, text="standard stretch")
 
 aimage(model1dat, col.map=colmap, scale.type=ztype, axes=FALSE, scale.lo=zlo, scale.hi=zhi, xlab="", ylab="", smooth.fwhm=0)

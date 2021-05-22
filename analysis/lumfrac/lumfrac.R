@@ -68,7 +68,7 @@ for(j in 1:ncol(lfA)){
 par("xpd"=NA)
 mtext(side=1, line=2.5, text=bquote(paste("median recovered luminosity fraction: f = median(", L["out"], " / ", L["in"], ")")), outer=T)
 mtext(side=2, line=2, text=bquote(paste(f[25])), outer=T, las=1)
-alegend("top", legend=names(dat$files), ncol=4, byrow=T, inset=0.5, outer=TRUE, seg.len=0.8, seg.gap=0.4,  type=setNames(apply(cbind(pch=metpch,lwd=lwd,col=metcol,cex=cex), 1, as.list), rep("p",length(dat$files))), bty="o", cex=1, box.pad=0.25, line.spacing=1.15)
+alegend("top", legend=names(dat$files), ncol=4, byrow=T, inset=0.5, outer=TRUE, seg.len=0.8, seg.gap=0.4,  type=setNames(apply(cbind(pch=metpch,lwd=lwd,col=metcol,cex=cex), 1, as.list), rep("p",length(dat$files))), bty="o", cex=0.9, box.pad=0.25, line.spacing=1.15)
 
 # finish up
 graphics.off()

@@ -107,7 +107,7 @@ for(i in 1:length(xdats)){
     mtext(side=1, line=2, text=alabs[i], outer=T)
     mtext(side=2, line=2.5, text=bquote(paste("number of matched objects")), outer=T)
     #mtext(side=3, line=1.5, text=simsources[i], outer=T)
-    alegend("top", legend=names(dat$files), ncol=4, byrow=T, inset=0.5, outer=TRUE, seg.len=0.8, seg.gap=0.4,  type=setNames(apply(cbind(pch=metpch,lwd=lwd,col=metcol,cex=cex), 1, as.list), rep("p",length(dat$files))), bty="o", cex=0.9, box.pad=0.25, line.spacing=1.25)
+    alegend("top", legend=names(dat$files), ncol=4, byrow=T, inset=0.5, outer=TRUE, seg.len=0.8, seg.gap=0.4,  type=setNames(apply(cbind(pch=metpch,lwd=lwd,col=metcol,cex=cex), 1, as.list), rep("p",length(dat$files))), bty="o", cex=0.8, box.pad=0.25, line.spacing=1.25)
 
     # finish up
     graphics.off()

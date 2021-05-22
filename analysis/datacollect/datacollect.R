@@ -6,10 +6,10 @@
 set.seed(3125)
 
 # definitions
-files = c(  "SExtractor default"="../../source_extraction/sex_default/stats_sex_default.csv"
-            ,"SExtractor modified"="../../source_extraction/sex_optimised/stats_sex_optimised.csv"
-            ,"SExtractor w. dilated masks"="../../source_extraction/sex_dilated/stats_sex_dilated.csv"
-            ,"SExtractor w. modelled masks"="../../source_extraction/sex_modelled/stats_sex_modelled.csv"
+files = c(  "Source Extractor default"="../../source_extraction/sex_default/stats_sex_default.csv"
+            ,"Source Extractor modified"="../../source_extraction/sex_optimised/stats_sex_optimised.csv"
+            ,"Source Extractor w. dilated masks"="../../source_extraction/sex_dilated/stats_sex_dilated.csv"
+            ,"Source Extractor w. modelled masks"="../../source_extraction/sex_modelled/stats_sex_modelled.csv"
             ,"Gnuastro default"="../../source_extraction/gnuastro_default/stats_gnuastro_default.csv"
             ,"Gnuastro modified"="../../source_extraction/gnuastro_optimised/stats_gnuastro_optimised.csv"
             ,"Gnuastro w. dilated masks"="../../source_extraction/gnuastro_dilated/stats_gnuastro_dilated.csv"
