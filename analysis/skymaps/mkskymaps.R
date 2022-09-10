@@ -50,7 +50,7 @@ for(i in 1:length(mapids)){
     for(j in 1:length(simids)){
 
         # setup
-        cat("\b\b\b\b\b     \b\b\b\b\b", j+((i-1)*4), "/40", sep="")
+        cat("     \r", j+((i-1)*4), "/40", sep="")
         mapfile = paste0(mapdir, simids[j], ".map.fits")
         mapfilegz = paste0(mapfile, ".gz")
         unlink(mapfile)

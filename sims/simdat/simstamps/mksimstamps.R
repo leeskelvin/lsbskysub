@@ -6,6 +6,7 @@ funpack = "/usr/bin/funpack"
 
 # definitions
 tpids = c("8283-38","9592-20")
+tpnames = list(c('denlo1a', 'denlo1b', 'denlo4a', 'denlo4b'), c('denhi1a', 'denhi1b', 'denhi4a', 'denhi4b'))
 cmap = 'grey'
 scaletype = 'atan'
 scalelo = -0.04
@@ -20,6 +21,7 @@ for(i in 1:length(tpids)){
     n4a = paste0("../",version,"/calexp-HSC-R-",tpids[i],".simulated-n4-a.fits.fz")
     n4b = paste0("../",version,"/calexp-HSC-R-",tpids[i],".simulated-n4-b.fits.fz")
     abfiles = c(n1a,n1b,n4a,n4b)
+    abnames = tpnames[[i]]
 
     # loop/read
     abfile = paste0("~/Desktop/abdat-", tpids[i], ".rds")
@@ -53,6 +55,7 @@ for(i in 1:length(tpids)){
         ydim = dim(abdat[[j]])[2]
         par("mar"=c(0.25,0.25,0.25,0.25))
         aimage(abdat[[j]], col.map=cmap, scale.type=scaletype, axes=FALSE, scale.lo=scalelo, scale.hi=scalehi, xlab="", ylab="")
+        label('topleft', lab=abnames[j], inset=0.2, col='white', cex=1.5)
         if(j == 1){mtext(side=2, line=0.5, text="all simulated sources", cex=1.25)}
         if(j == 1){mtext(side=3, line=0.5, text="disk-like : n = 1", cex=1.25)}
         if(j == 2){mtext(side=2, line=0.5, text="bright sources only (excludes faint)", cex=1.25)}
@@ -118,6 +121,7 @@ for(i in 1:length(tpids)){
         #scale.hi = 2
         par("mar"=c(0.25,0.25,0.25,0.25))
         aimage(abdat[[j]], col.map=cmap, scale.type=scaletype, axes=FALSE, scale.lo=scalelo, scale.hi=scalehi, xlab="", ylab="", xdim=xdim[1], ydim=ydim[1], xcen=xcen[1], ycen=ycen[1])
+        label('topleft', lab=abnames[j], inset=0.2, col='white', cex=1.5)
         if(j == 1){mtext(side=2, line=0.5, text="all simulated sources", cex=1.25)}
         if(j == 1){mtext(side=3, line=0.5, text="disk-like : n = 1", cex=1.25)}
         if(j == 2){mtext(side=2, line=0.5, text="bright sources only (excludes faint)", cex=1.25)}

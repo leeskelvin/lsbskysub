@@ -27,7 +27,7 @@ if(file.exists("mat")){system("rm -R mat")}; system("mkdir mat")
 
 # software
 gzip = "/bin/gzip"
-sex = "/usr/bin/sextractor" # local SEx binary
+sex = "/usr/local/bin/sex" # local SEx binary
 unlink(c("temp_modsub.fits", "temp.fits", "temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
 
 # loop

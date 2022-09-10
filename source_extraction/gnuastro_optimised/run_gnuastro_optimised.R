@@ -46,7 +46,7 @@ for(i in 1:length(files)){
 
     # general and specific optimised options
     system("./make_kernel.R 2 5")
-    genopt = "--tilesize=15,15"
+    genopt = "--tilesize=64,64"
     ncopt = "--kernel=kernel.fits --detgrowquant 0.7" # --meanmedqdiff 0.002 --qthresh 0.3 --noerodequant=0.999 --minskyfrac 0.85 --snquant 0.999"
     segopt = "--kernel=kernel.fits" #--minskyfrac 0.5
     # segopt rejected:

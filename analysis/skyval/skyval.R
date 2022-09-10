@@ -15,7 +15,7 @@ orderb = c(2,6,4,8)
 datmeans = list(dat$skymean[,ordera],dat$skymean[,orderb])
 datstds = list(dat$skystd[,ordera],dat$skystd[,orderb])
 pdfnames = paste0("skyval-", c("a","b","a5","b5"), ".pdf")
-ylimlo = c(30.45,32.5,29.6,32.5)
+ylimlo = c(29.95,32.5,29.6,32.5)
 ylimhi = c(27.70,28.5,27.6,28.5)
 
 # par
@@ -108,7 +108,7 @@ for(i in 1:nrow(means)){
     if(i==1){cat("\\hline\n    \\SExtractor & & & & & & & & \\\\\n    ", file="results.tex", append=TRUE)}
     if(i==5){cat("\\hline\n    \\Gnuastro & & & & & & & & \\\\\n    ", file="results.tex", append=TRUE)}
     if(i==9){cat("\\hline\n    \\LSSTPs & & & & & & & & \\\\\n    ", file="results.tex", append=TRUE)}
-    if(i>=1 & i<=4){frontmatter = strsplit(rownames(means)[i], "SExtractor ")[[1]][2]}
+    if(i>=1 & i<=4){frontmatter = strsplit(rownames(means)[i], "Source Extractor ")[[1]][2]}
     if(i>=5 & i<=8){frontmatter = strsplit(rownames(means)[i], "Gnuastro ")[[1]][2]}
     # if(i>=9 & i<=10){frontmatter = strsplit(rownames(means)[i], "DM stack ")[[1]][2]}
     if(i==9){frontmatter = '\\DMA'}

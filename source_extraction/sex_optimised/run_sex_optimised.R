@@ -26,7 +26,7 @@ if(file.exists("map")){system("rm -R map")}; system("mkdir map")
 if(file.exists("mat")){system("rm -R mat")}; system("mkdir mat")
 
 # detection software
-sex = "/usr/bin/sextractor" # local SEx binary
+sex = "/usr/local/bin/sex" # local SEx binary
 unlink(c("temp.fits","temp_cat.dat", "temp_seg.fits", "temp_sky.fits", "temp_std.fits"))
 
 # loop

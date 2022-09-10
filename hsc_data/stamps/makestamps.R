@@ -55,6 +55,9 @@ for(i in 1:length(tractpatch)){
     lines(x=par("usr")[1]+c(0.05*4200,(0.05*4200)+(200/0.168)), y=par("usr")[3]+c(0.05*4100,0.05*4100), lwd=80, col="white", lend=1)
     text(x=par("usr")[1]+0.05*4200, y=par("usr")[3]+0.1*4100, lab="200 arcsec", col="white", adj=c(0,0.5), cex=16)
 
+    # rect
+    rect(xleft=xcen[i]-(xdim[i]/2), xright=xcen[i]+(xdim[i]/2), ybottom=ycen[i]-(ydim[i]/2), ytop=ycen[i]+(ydim[i]/2), border='white', lend=1, lwd=10)
+
     # finish up
     graphics.off()
     system(paste0("/usr/bin/convert -resize 945x ", fullrgb, " ", strsplit(fullrgb, ".png")[[1]], ".jpeg"))

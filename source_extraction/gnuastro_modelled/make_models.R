@@ -16,7 +16,7 @@ Ilim = (10^(-0.4*(mulim-27))) * (0.168^2)
 stampmin = 11
 
 # software
-sex = "/usr/bin/sextractor"
+sex = "/usr/local/bin/sex"
 funpack = "/usr/bin/funpack"
 fpack = "/usr/bin/fpack"
 gzip = "/bin/gzip"
